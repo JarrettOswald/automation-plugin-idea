@@ -1,0 +1,34 @@
+<idea-plugin>
+    <id>ru.lanit.qa.ideaplugin.simplegit</id>
+    <name>Simple Git</name>
+    <version>1.0</version>
+    <vendor email="schurin@lanit.ru" url="http://lanit.ru">ООО "Ланит Экспертиза"</vendor>
+
+    <description>This plugin helps to use git in simple cases</description>
+
+    <change-notes>First try</change-notes>
+
+    <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
+    <idea-version since-build="173.0"/>
+
+    <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
+         on how to target different products -->
+    <!-- uncomment to enable plugin in all products
+    <depends>com.intellij.modules.lang</depends>
+    -->
+
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- Add your extensions here -->
+    </extensions>
+
+    <actions>
+        <!-- Add your actions here -->
+        <action id="GitPush" class="ru.lanit.ideaplugin.simplegit.GitPush" text="Push" description="Push changes to git">
+            <keyboard-shortcut keymap="$default" first-keystroke="ctrl P"/>
+            <add-to-group group-id="ToolbarRunGroup" anchor="first"/>
+        </action>
+    </actions>
+
+    <depends>Git4Idea</depends>
+
+</idea-plugin>
