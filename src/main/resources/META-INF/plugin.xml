@@ -13,14 +13,19 @@
 <!--  <depends optional="true" config-file="idea.xml">com.intellij.modules.java</depends>-->
   <depends>Git4Idea</depends>
 
-    <extensions defaultExtensionNs="com.intellij">
-        <postStartupActivity implementation="ru.lanit.ideaplugin.simplegit.PluginStartupActivity"/>
-    </extensions>
+  <extensions defaultExtensionNs="com.intellij">
+      <postStartupActivity implementation="ru.lanit.ideaplugin.simplegit.PluginStartupActivity"/>
+  </extensions>
 
-    <actions>
+  <actions>
       <action id="GitPush" class="ru.lanit.ideaplugin.simplegit.actions.GitPush" text="Push" description="Push changes to git">
           <keyboard-shortcut keymap="$default" first-keystroke="ctrl P"/>
           <add-to-group group-id="ToolbarRunGroup" anchor="first"/>
       </action>
+      <action id="ScenarioSelector" class="ru.lanit.ideaplugin.simplegit.actions.ScenarioSelector" text="Select scenario" description="Select current scenario">
+          <add-to-group group-id="ToolbarRunGroup" anchor="first"/>
+      </action>
   </actions>
+
+<!--  <project-components>-->
 </idea-plugin>

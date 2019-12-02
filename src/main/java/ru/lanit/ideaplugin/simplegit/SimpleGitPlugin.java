@@ -1,5 +1,6 @@
 package ru.lanit.ideaplugin.simplegit;
 
+import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
@@ -12,8 +13,11 @@ public class SimpleGitPlugin {
     private static ConcurrentHashMap<Project, SimpleGitPlugin> plugins = new ConcurrentHashMap<>();
 
     private Project project;
+    private PropertiesComponent properties;
+
     private SimpleGitPlugin(Project project) {
         this.project = project;
+        PropertiesComponent properties = PropertiesComponent.getInstance(project);
         System.out.println("Created new plugin for opened project " + project.getBasePath());
     }
 
@@ -24,6 +28,18 @@ public class SimpleGitPlugin {
 
     public static SimpleGitPlugin getPluginFor(AnActionEvent event) {
         return getPluginFor(event.getData(PlatformDataKeys.PROJECT));
+    }
+
+    public Project getProject() {
+        return project;
+    }
+
+    public String getTaskName() {
+        return properties.getValue("taskName");
+    }
+
+    public void setTaskName(String taskName) {
+        properties.setValue("taskName", taskName);
     }
 
     public void gitPush() {
