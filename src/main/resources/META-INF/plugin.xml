@@ -14,7 +14,7 @@
   <depends>Git4Idea</depends>
 
   <extensions defaultExtensionNs="com.intellij">
-      <postStartupActivity implementation="ru.lanit.ideaplugin.simplegit.PluginStartupActivity"/>
+      <postStartupActivity implementation="ru.lanit.ideaplugin.simplegit.activity.PluginStartupActivity"/>
   </extensions>
 
   <actions>
