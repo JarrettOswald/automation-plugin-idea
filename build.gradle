@@ -3,7 +3,7 @@ plugins {
     id("org.jetbrains.intellij") version ('0.4.14')
 }
 
-description = "Idea Plugin Sample"
+description = "This plugin helps in community development of Cucumber scenarios by simplifying process of Git interaction."
 group 'ru.lanit.ideaplugin'
 version '1.0-SNAPSHOT'
 
@@ -17,11 +17,17 @@ dependencies {
     compile("info.cukes:cucumber-java:1.2.6")
 }
 
-//intellij {
-//    version '2019.1'
-//}
+intellij {
+    version 'IC-2017.2'
+}
+
 patchPluginXml {
     changeNotes """
-      Add change notes here.<br>
-      <em>most HTML tags may be used</em>"""
+      Версия 1.0<br><ul>
+      <li>[+] Добавлен парсер feature файлов Cucumber
+      <li>[+] Добавлен шаблон диалогового окна</li>
+      <li>[+] Добавлен селектор сценария</li>
+      <li>[+] Добавлена работа с настройками плагина</li>
+      <li>[+] Добавлен обработчик postStartupActivity</li>
+      <li>[+] Добавлен класс состояния плагина</li></ul>"""
 }
