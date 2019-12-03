@@ -1,30 +1,43 @@
 package ru.lanit.ideaplugin.simplegit.actions;
 
-import com.intellij.designer.actions.AbstractComboBoxAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
+import com.intellij.openapi.project.Project;
+import cucumber.runtime.model.CucumberFeature;
 import org.jetbrains.annotations.NotNull;
-import ru.lanit.ideaplugin.simplegit.scenario.ScenarioWrapper;
+import ru.lanit.ideaplugin.simplegit.SimpleGitPlugin;
 
-import java.util.Arrays;
-
-public class ScenarioSelector extends AbstractComboBoxAction<ScenarioWrapper> {
+public class ScenarioSelector extends AbstractComboBoxAction<CucumberFeature> {
 
     public ScenarioSelector() {
-        setItems(Arrays.asList(new ScenarioWrapper("Scenario 1"), new ScenarioWrapper("Scenario 2")), null);
+        super();
         System.out.println("Create scenario selector");
     }
 
     @Override
-    public void actionPerformed(@NotNull AnActionEvent e) {
-        System.out.println("ACTION");
+    public void update(@NotNull AnActionEvent event) {
+        super.update(event);
+        Presentation presentation = event.getPresentation();
+        Project project = event.getProject();
+        if (project == null) {
+            presentation.setEnabled(false);
+        } else {
+            presentation.setEnabled(true);
+            showDisabledActions(true);
+            setItems(SimpleGitPlugin.getPluginFor(event).getFeatures(), null);
+        }
     }
 
-    protected void update(ScenarioWrapper item, Presentation presentation, boolean popup) {
-        System.out.println("Updated item " + item);
-//        presentation.setEnabled(true);
+    protected void update(CucumberFeature item, Presentation presentation, boolean popup) {
+        presentation.setEnabled(true);
         if (item != null) {
-            if (!popup && item.getScenarioName().contains("2")) {
+            System.out.println("Updated item " + item.getGherkinFeature().getName());
+            if (popup) {
+                presentation.setText(item.getGherkinFeature().getName());
+            } else {
+                presentation.setText(item.getGherkinFeature().getName());
+            }
+            /*if (!popup && item.getScenarioName().contains("2")) {
                 presentation.setText(item.getScenarioName());
             }
             else if (!popup) {
@@ -32,15 +45,15 @@ public class ScenarioSelector extends AbstractComboBoxAction<ScenarioWrapper> {
             }
             else {
                 presentation.setText("      " + item.getScenarioName());
-            }
+            }*/
         }
         else {
-            presentation.setText("[None]");
+//            presentation.setText("[None]");
         }
     }
 
-    protected boolean selectionChanged(ScenarioWrapper item) {
-        System.out.println("New scenario: " + item);
+    protected boolean selectionChanged(CucumberFeature item) {
+        System.out.println("New scenario selected: " + item.getPath());
         return true;
     }
 }
