@@ -22,7 +22,12 @@
           <keyboard-shortcut keymap="$default" first-keystroke="ctrl P"/>
           <add-to-group group-id="ToolbarRunGroup" anchor="first"/>
       </action>
-      <action id="ScenarioSelector" class="ru.lanit.ideaplugin.simplegit.actions.ScenarioSelector" text="Select scenario" description="Select current scenario">
+      <action id="CreateNewScenario" class="ru.lanit.ideaplugin.simplegit.actions.CreateNewScenario" text="New scenario" description="Create new scenario">
+        <add-to-group group-id="ToolbarRunGroup" anchor="first"/>
+      </action>
+      <action id="ru.lanit.ideaplugin.simplegit.actions.ScenarioSelector"
+              class="ru.lanit.ideaplugin.simplegit.actions.ScenarioSelector" text="Select scenario"
+              description="Select current scenario">
           <add-to-group group-id="ToolbarRunGroup" anchor="first"/>
       </action>
   </actions>
