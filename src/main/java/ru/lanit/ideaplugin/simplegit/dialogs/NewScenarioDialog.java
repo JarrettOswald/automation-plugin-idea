@@ -11,6 +11,7 @@ public class NewScenarioDialog extends DialogWrapper {
         super(project);
         init();
         setTitle("Create new scenario");
+        setResizable(false);
     }
 /*
     private class MyCustomAction extends DialogWrapperAction {
@@ -34,7 +35,6 @@ public class NewScenarioDialog extends DialogWrapper {
         // return true if dialog can be closed
         return true;
     }
-
 
     @Nullable
     @Override
