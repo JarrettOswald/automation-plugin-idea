@@ -8,6 +8,7 @@ import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.vcs.impl.ProjectLevelVcsManagerImpl;
 
+/*
 public class GitTest extends AnAction {
 
     public GitTest() {
@@ -24,18 +25,18 @@ public class GitTest extends AnAction {
         if (vcsManager != null) {
             Messages.showMessageDialog(project, "Hello, " + txt + "!\nhaveVcses: " + vcsManager.haveVcses(),
                     "Information", Messages.getInformationIcon());
-//            GitPushSupport pushSupport = ServiceManager.getService(e.getProject(), GitPushSupport.class);
-//            GitPushSource source = pushSupport.getSource(repository); // this simply creates the GitPushSource wrapper around the current branch or current revision in case of the detached HEAD
-//            GitPushTarget target = // create target either directly, or by using some methods from GitPushSupport. Just check them, most probably you'll find what's needed.
-//            Map<GitRepository, PushSpec<GitPushSource, GitPushTarget> pushSpecs = Collections.singletonMap(repository, new PushSpec(source, target));
-//            pushSupport.getPusher().push(specs, null, false);
+            GitPushSupport pushSupport = ServiceManager.getService(e.getProject(), GitPushSupport.class);
+            GitPushSource source = pushSupport.getSource(repository); // this simply creates the GitPushSource wrapper around the current branch or current revision in case of the detached HEAD
+            GitPushTarget target = // create target either directly, or by using some methods from GitPushSupport. Just check them, most probably you'll find what's needed.
+            Map<GitRepository, PushSpec<GitPushSource, GitPushTarget> pushSpecs = Collections.singletonMap(repository, new PushSpec(source, target));
+            pushSupport.getPusher().push(specs, null, false);
         } else {
             Messages.showMessageDialog(project, "Hello, " + txt + "!\n I am glad to see you.",
                     "Information", Messages.getInformationIcon());
         }
         System.out.println("Hello world!");
     }
-/*
+
     private boolean repositoryChanging = false;
 
     private void subscribeToRepoChangeEvents(@NotNull final Project project) {
@@ -103,5 +104,6 @@ public class GitTest extends AnAction {
             if (remoteBranch.getRemote().equals(remote) && remoteBranch.getName().equals("master")) return remoteBranch;
         }
         return new GitStandardRemoteBranch(remote, "master", GitBranch.DUMMY_HASH);
-    }*/
+    }
 }
+*/

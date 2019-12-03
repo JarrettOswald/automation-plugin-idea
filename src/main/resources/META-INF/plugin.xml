@@ -18,11 +18,15 @@
   </extensions>
 
   <actions>
-      <action id="GitPush" class="ru.lanit.ideaplugin.simplegit.actions.GitPush" text="Push" description="Push changes to git">
-          <keyboard-shortcut keymap="$default" first-keystroke="ctrl P"/>
+      <action id="ru.lanit.ideaplugin.simplegit.actions.GitSynchronize"
+              class="ru.lanit.ideaplugin.simplegit.actions.GitSynchronize" text="Git synchronize"
+              description="Synchronize local changes with git">
+<!--          <keyboard-shortcut keymap="$default" first-keystroke="ctrl P"/>-->
           <add-to-group group-id="ToolbarRunGroup" anchor="first"/>
       </action>
-      <action id="CreateNewScenario" class="ru.lanit.ideaplugin.simplegit.actions.CreateNewScenario" text="New scenario" description="Create new scenario">
+      <action id="ru.lanit.ideaplugin.simplegit.actions.CreateNewScenario"
+              class="ru.lanit.ideaplugin.simplegit.actions.CreateNewScenario" text="New scenario"
+              description="Create new scenario">
         <add-to-group group-id="ToolbarRunGroup" anchor="first"/>
       </action>
       <action id="ru.lanit.ideaplugin.simplegit.actions.ScenarioSelector"

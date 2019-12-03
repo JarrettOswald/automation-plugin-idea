@@ -14,12 +14,12 @@ repositories {
 
 dependencies {
     compile("com.github.adedayo.intellij.sdk:git4idea:142.1")
+    compile("info.cukes:cucumber-java:1.2.6")
 }
 
-// See https://github.com/JetBrains/gradle-intellij-plugin/
-intellij {
-    version '2019.1'
-}
+//intellij {
+//    version '2019.1'
+//}
 patchPluginXml {
     changeNotes """
       Add change notes here.<br>
