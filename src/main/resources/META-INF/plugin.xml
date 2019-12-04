@@ -6,8 +6,18 @@
 <!--  <idea-version since-build="173.0"/>-->
   <vendor email="lanit@lanit.ru" url="https://lanit.ru">Ланит</vendor>
 
-  <description>This plugin helps to use git in simple cases</description>
-  <change-notes>First try</change-notes>
+  <description>This plugin helps in community development of Cucumber scenarios by simplifying process of Git interaction.</description>
+  <change-notes>
+      <![CDATA[
+          Версия 1.0<br><ul>
+          <li>[+] Добавлен парсер feature файлов Cucumber
+          <li>[+] Добавлен шаблон диалогового окна</li>
+          <li>[+] Добавлен селектор сценария</li>
+          <li>[+] Добавлена работа с настройками плагина</li>
+          <li>[+] Добавлен обработчик postStartupActivity</li>
+          <li>[+] Добавлен класс состояния плагина</li></ul>
+      ]]>
+  </change-notes>
 
   <depends>com.intellij.modules.lang</depends>
 <!--  <depends optional="true" config-file="idea.xml">com.intellij.modules.java</depends>-->
