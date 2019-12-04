@@ -2,7 +2,7 @@
   <id>ru.lanit.ideaplugin</id>
   <name>Simple Git</name>
   <version>1.0.1</version>
-  <idea-version since-build="172.3317" until-build="300.*"/>
+  <idea-version since-build="172" until-build="999.*"/>
 <!--  <idea-version since-build="173.0"/>-->
   <vendor email="lanit@lanit.ru" url="https://lanit.ru">Ланит</vendor>
 

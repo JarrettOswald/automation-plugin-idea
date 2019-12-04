@@ -19,6 +19,7 @@ dependencies {
 
 intellij {
     version 'IC-2017.2'
+    updateSinceUntilBuild false
 }
 
 patchPluginXml {
