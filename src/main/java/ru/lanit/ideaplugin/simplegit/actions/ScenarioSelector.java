@@ -1,59 +1,62 @@
 package ru.lanit.ideaplugin.simplegit.actions;
 
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.actionSystem.Presentation;
+import com.intellij.openapi.actionSystem.ex.ComboBoxAction;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.popup.JBPopup;
+import com.intellij.openapi.ui.popup.JBPopupFactory;
+import com.intellij.openapi.ui.popup.ListPopup;
+import com.intellij.util.PlatformIcons;
 import cucumber.runtime.model.CucumberFeature;
 import org.jetbrains.annotations.NotNull;
+import ru.lanit.ideaplugin.simplegit.ScenarioList;
 import ru.lanit.ideaplugin.simplegit.SimpleGitPlugin;
 
-public class ScenarioSelector extends AbstractComboBoxAction<CucumberFeature> {
+import javax.swing.*;
+import java.awt.*;
 
-    public ScenarioSelector() {
-        super();
-        System.out.println("Create scenario selector");
-    }
+public class ScenarioSelector extends ComboBoxAction {
 
     @Override
     public void update(@NotNull AnActionEvent event) {
-        super.update(event);
-        Presentation presentation = event.getPresentation();
-        Project project = event.getProject();
-        if (project == null) {
-            presentation.setEnabled(false);
-        } else {
-            presentation.setEnabled(true);
-            showDisabledActions(true);
-            setItems(SimpleGitPlugin.getPluginFor(event).getFeatures(), null);
-        }
+        SimpleGitPlugin.registerScenarioComboBox(event);
     }
 
-    protected void update(CucumberFeature item, Presentation presentation, boolean popup) {
-        presentation.setEnabled(true);
-        if (item != null) {
-            System.out.println("Updated item " + item.getGherkinFeature().getName());
-            if (popup) {
-                presentation.setText(item.getGherkinFeature().getName());
-            } else {
-                presentation.setText(item.getGherkinFeature().getName());
-            }
-            /*if (!popup && item.getScenarioName().contains("2")) {
-                presentation.setText(item.getScenarioName());
-            }
-            else if (!popup) {
-                presentation.setText(item.getScenarioName());
-            }
-            else {
-                presentation.setText("      " + item.getScenarioName());
-            }*/
-        }
-        else {
-//            presentation.setText("[None]");
-        }
+    @NotNull
+    @Override
+    protected DefaultActionGroup createPopupActionGroup(JComponent button) {
+        return ScenarioList.createPopupActionGroup(button);
     }
 
-    protected boolean selectionChanged(CucumberFeature item) {
-        System.out.println("New scenario selected: " + item.getPath());
-        return true;
+    @NotNull
+    @Override
+    public JComponent createCustomComponent(Presentation presentation) {
+//    public JComponent createCustomComponent(@NotNull Presentation presentation, @NotNull String place) {
+
+        JPanel panel = new JPanel(new GridBagLayout());
+        panel.add(
+                createComboBoxButton(presentation),
+                new GridBagConstraints(0, 0, 1, 1, 1, 1, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(2, 1, 2, 1), 0, 0));
+        ScenarioList.registerJComponent(presentation, panel);
+        return panel;
     }
+
+    @Override
+    protected ComboBoxButton createComboBoxButton(Presentation presentation) {
+        ScenarioList scenarioList = ScenarioList.getScenarioListFor(presentation);
+        if (scenarioList.isShowDisabledActions()) {
+            return new ComboBoxButton(presentation) {
+                @Override
+                protected JBPopup createPopup(Runnable onDispose) {
+                    ListPopup popup = JBPopupFactory.getInstance().createActionGroupPopup(null, createPopupActionGroup(this), getDataContext(), true, onDispose, getMaxRows());
+                    popup.setMinimumSize(new Dimension(getMinWidth(), getMinHeight()));
+                    return popup;
+                }
+            };
+        }
+        return super.createComboBoxButton(presentation);
+    }
+
 }

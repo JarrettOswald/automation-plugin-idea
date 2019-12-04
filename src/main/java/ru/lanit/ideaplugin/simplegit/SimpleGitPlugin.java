@@ -3,6 +3,7 @@ package ru.lanit.ideaplugin.simplegit;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
+import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import cucumber.runtime.io.FileResourceLoader;
@@ -20,12 +21,36 @@ public class SimpleGitPlugin {
     private Project project;
     private PropertiesComponent properties;
     private List<CucumberFeature> features;
+    private ScenarioList scenarioList;
 
     private SimpleGitPlugin(Project project) {
         this.project = project;
         PropertiesComponent properties = PropertiesComponent.getInstance(project);
         System.out.println("Created new plugin for opened project " + project.getBasePath());
         updateFeatures();
+    }
+
+    public static SimpleGitPlugin getPluginFor(Project project) {
+        System.out.println("Try get plugin for opened project " + project.getBasePath());
+        return plugins.computeIfAbsent(project, SimpleGitPlugin::new);
+    }
+
+    public static SimpleGitPlugin getPluginFor(AnActionEvent event) {
+        return getPluginFor(event.getData(PlatformDataKeys.PROJECT));
+    }
+
+    public static void registerScenarioComboBox(AnActionEvent event) {
+        Presentation presentation = event.getPresentation();
+        Project project = event.getProject();
+        if (project == null) {
+            presentation.setEnabled(false);
+        } else {
+            SimpleGitPlugin plugin = getPluginFor(project);
+            if (plugin.scenarioList == null) {
+                plugin.scenarioList = ScenarioList.getScenarioListFor(presentation);
+                plugin.scenarioList.registerPlugin(plugin);
+            }
+        }
     }
 
     public List<CucumberFeature> getFeatures() {
@@ -43,15 +68,6 @@ public class SimpleGitPlugin {
                 System.out.println("    " + segment.getGherkinModel().getKeyword() + ": " + segment.getGherkinModel().getName());
             }
         }
-    }
-
-    public static SimpleGitPlugin getPluginFor(Project project) {
-        System.out.println("Try get plugin for opened project " + project.getBasePath());
-        return plugins.computeIfAbsent(project, SimpleGitPlugin::new);
-    }
-
-    public static SimpleGitPlugin getPluginFor(AnActionEvent event) {
-        return getPluginFor(event.getData(PlatformDataKeys.PROJECT));
     }
 
     public Project getProject() {
