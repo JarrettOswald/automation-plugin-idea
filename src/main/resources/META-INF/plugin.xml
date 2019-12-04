@@ -1,8 +1,8 @@
 <idea-plugin>
   <id>ru.lanit.ideaplugin</id>
   <name>Simple Git</name>
-  <version>1.0</version>
-  <idea-version since-build="163.7743.44" />
+  <version>1.0.1</version>
+  <idea-version since-build="172.3317" until-build="300.*"/>
 <!--  <idea-version since-build="173.0"/>-->
   <vendor email="lanit@lanit.ru" url="https://lanit.ru">Ланит</vendor>
 
