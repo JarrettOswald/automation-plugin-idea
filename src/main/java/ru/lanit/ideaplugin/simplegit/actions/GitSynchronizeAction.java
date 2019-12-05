@@ -6,9 +6,9 @@ import com.intellij.openapi.util.IconLoader;
 import org.jetbrains.annotations.NotNull;
 import ru.lanit.ideaplugin.simplegit.SimpleGitPlugin;
 
-public class GitSynchronize extends AnAction {
+public class GitSynchronizeAction extends AnAction {
 
-    public GitSynchronize() {
+    public GitSynchronizeAction() {
          super(IconLoader.getIcon("/synchronize-icon.png"));
     }
 
