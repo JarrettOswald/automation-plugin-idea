@@ -33,15 +33,21 @@
   </extensions>
 
   <actions>
+      <action id="ru.lanit.ideaplugin.simplegit.actions.PluginOptionsAction"
+              class="ru.lanit.ideaplugin.simplegit.actions.PluginOptionsAction" text="SimpleGit options"
+              description="SimpleGit plugin options" icon="/plugin-options-icon.png">
+          <!--          <keyboard-shortcut keymap="$default" first-keystroke="ctrl P"/>-->
+          <add-to-group group-id="ToolbarRunGroup" anchor="first"/>
+      </action>
       <action id="ru.lanit.ideaplugin.simplegit.actions.GitSynchronizeAction"
               class="ru.lanit.ideaplugin.simplegit.actions.GitSynchronizeAction" text="Git synchronize"
-              description="Synchronize local changes with git">
+              description="Synchronize local changes with git" icon="/synchronize-icon.png">
 <!--          <keyboard-shortcut keymap="$default" first-keystroke="ctrl P"/>-->
           <add-to-group group-id="ToolbarRunGroup" anchor="first"/>
       </action>
       <action id="ru.lanit.ideaplugin.simplegit.actions.CreateNewScenarioAction"
               class="ru.lanit.ideaplugin.simplegit.actions.CreateNewScenarioAction" text="New scenario"
-              description="Create new scenario">
+              description="Create new scenario" icon="/create-icon.png">
         <add-to-group group-id="ToolbarRunGroup" anchor="first"/>
       </action>
       <action id="ru.lanit.ideaplugin.simplegit.actions.ScenarioSelectorAction"

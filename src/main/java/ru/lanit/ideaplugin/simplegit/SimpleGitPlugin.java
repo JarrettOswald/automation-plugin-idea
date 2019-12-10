@@ -6,6 +6,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.newvfs.RefreshQueue;
 import com.intellij.openapi.vfs.newvfs.RefreshSession;
@@ -14,6 +15,7 @@ import cucumber.runtime.model.CucumberFeature;
 import cucumber.runtime.model.CucumberTagStatement;
 import gherkin.formatter.model.Feature;
 import ru.lanit.ideaplugin.simplegit.dialogs.NewScenarioDialog;
+import ru.lanit.ideaplugin.simplegit.dialogs.PluginOptionsDialog;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -88,5 +90,15 @@ public class SimpleGitPlugin {
         Messages.showMessageDialog(project, "Push is not implemented",
                 "Information", Messages.getInformationIcon());
         scenarioList.updateFeatures();
+    }
+
+    public void openOptionsWindow() {
+        System.out.println("Create new scenario in project " + project.getBasePath());
+        PluginOptionsDialog newScenarioDialog = new PluginOptionsDialog(project);
+        newScenarioDialog.show();
+        if (newScenarioDialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
+            Messages.showMessageDialog(project, "Selected feature catalog: " + newScenarioDialog.getFeatureCatalog(),
+                    "Information", Messages.getInformationIcon());
+        }
     }
 }

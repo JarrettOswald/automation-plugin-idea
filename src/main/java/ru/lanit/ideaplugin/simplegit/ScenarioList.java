@@ -148,6 +148,11 @@ public class ScenarioList implements BulkFileListener {
         }
     }
 
+    public void before(@NotNull List<? extends VFileEvent> events) {
+        System.out.println("Updating features");
+        this.updateFeatures();
+    }
+
     public void after(@NotNull List<? extends VFileEvent> events) {
         System.out.println("Updating features");
         this.updateFeatures();
