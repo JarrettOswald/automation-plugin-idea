@@ -1,7 +1,7 @@
 <idea-plugin>
   <id>ru.lanit.ideaplugin</id>
   <name>Simple Git</name>
-  <version>1.1</version>
+  <version>1.2</version>
   <idea-version since-build="172" until-build="999.*"/>
 <!--  <idea-version since-build="173.0"/>-->
   <vendor email="lanit@lanit.ru" url="https://lanit.ru">Ланит</vendor>
@@ -9,6 +9,10 @@
   <description>This plugin helps in community development of Cucumber scenarios by simplifying process of Git interaction.</description>
   <change-notes>
       <![CDATA[
+          Версия 1.2<br><ul>
+          <li>[+] Добавлены валидация и сохранение настроек</li>
+          <li>[+] Добавлена кнопка и диалог настроек плагина</li>
+          </ul><br>
           Версия 1.1<br><ul>
           <li>[/] Фикс: селектор сценариев работает правильно в нескольких открытых проектах</li>
           <li>[+] Выбранный сценарий открывается в редакторе</li>

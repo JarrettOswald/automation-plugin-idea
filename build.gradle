@@ -5,7 +5,7 @@ plugins {
 
 description = "This plugin helps in community development of Cucumber scenarios by simplifying process of Git interaction."
 group 'ru.lanit.ideaplugin'
-version '1.1-SNAPSHOT'
+version '1.2-SNAPSHOT'
 
 repositories {
     mavenCentral()
@@ -24,6 +24,10 @@ intellij {
 
 patchPluginXml {
     changeNotes """
+          Версия 1.2<br><ul>
+          <li>[+] Добавлены валидация и сохранение настроек</li>
+          <li>[+] Добавлена кнопка и диалог настроек плагина</li>
+          </ul><br>
           Версия 1.1<br><ul>
           <li>[/] Фикс: селектор сценариев работает правильно в нескольких открытых проектах</li>
           <li>[+] Выбранный сценарий открывается в редакторе</li>
@@ -35,5 +39,6 @@ patchPluginXml {
           <li>[+] Добавлена работа с настройками плагина</li>
           <li>[+] Добавлен обработчик postStartupActivity</li>
           <li>[+] Добавлен класс состояния плагина</li>
+          </ul>
     """
 }
