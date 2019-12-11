@@ -1,4 +1,4 @@
-package ru.lanit.ideaplugin.simplegit.dialogs.pluginoptions;
+package ru.lanit.ideaplugin.simplegit.dialogs.pluginsettings;
 
 import com.intellij.ide.actions.OpenProjectFileChooserDescriptor;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
@@ -7,7 +7,6 @@ import com.intellij.openapi.fileChooser.FileChooserFactory;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.TextBrowseFolderListener;
-import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.ui.ValidationInfo;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -17,18 +16,17 @@ import ru.lanit.ideaplugin.simplegit.SimpleGitPlugin;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 
-public class PluginOptionsDialog extends DialogWrapper {
+public class PluginSettingsDialog extends DialogWrapper {
     private SimpleGitPlugin plugin;
-    private PluginOptionsDialogGUI dialogGUI;
+    private PluginSettingsDialogGUI dialogGUI;
 
-    public PluginOptionsDialog(@Nullable Project project) {
+    public PluginSettingsDialog(@Nullable Project project) {
         super(project);
         this.plugin = SimpleGitPlugin.getPluginFor(project);
         init();
-        setTitle("SimpleGit project options");
+        setTitle("SimpleGit project settings");
         setResizable(false);
     }
 
@@ -40,7 +38,7 @@ public class PluginOptionsDialog extends DialogWrapper {
     @Nullable
     @Override
     protected JComponent createCenterPanel() {
-        dialogGUI = new PluginOptionsDialogGUI();
+        dialogGUI = new PluginSettingsDialogGUI();
 
         FileChooserDescriptor descriptor = new OpenProjectFileChooserDescriptor(false, false);
         dialogGUI.featureCatalog.addBrowseFolderListener(new TextBrowseFolderListener(descriptor) {
@@ -84,5 +82,25 @@ public class PluginOptionsDialog extends DialogWrapper {
 
     public String getFeatureCatalog() {
         return dialogGUI.featureCatalog.getText();
+    }
+
+    public void setFeatureCatalog(String featureCatalog) {
+        dialogGUI.featureCatalog.setText(featureCatalog);
+    }
+
+    public String getCommonTags() {
+        return dialogGUI.commonTags.getText();
+    }
+
+    public void setCommonTags(String tags) {
+        dialogGUI.commonTags.setText(tags);
+    }
+
+    public boolean isPluginActive() {
+        return dialogGUI.isPluginActive.isSelected();
+    }
+
+    public void setPluginActive(boolean active) {
+        dialogGUI.isPluginActive.setSelected(active);
     }
 }

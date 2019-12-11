@@ -8,28 +8,27 @@ import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.ListPopup;
 import org.jetbrains.annotations.NotNull;
-import ru.lanit.ideaplugin.simplegit.ScenarioList;
+import ru.lanit.ideaplugin.simplegit.FeatureList;
 import ru.lanit.ideaplugin.simplegit.SimpleGitPlugin;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class ScenarioSelectorAction extends ComboBoxAction {
+public class FeatureSelectorAction extends ComboBoxAction {
 
     @Override
     public void update(@NotNull AnActionEvent event) {
-        System.out.println("1");
-        SimpleGitPlugin.registerScenarioComboBox(event);
+        SimpleGitPlugin.registerFeatureComboBox(event);
+        event.getPresentation().setEnabled(SimpleGitPlugin.getPluginFor(event).isPluginActive());
     }
 
     @NotNull
     @Override
     public JComponent createCustomComponent(Presentation presentation) {
 //    public JComponent createCustomComponent(@NotNull Presentation presentation, @NotNull String place) {
-        System.out.println("2");
         JPanel panel = new JPanel(new GridBagLayout());
         ComboBoxButton button = createComboBoxButton(presentation);
-        ScenarioList.registerJComponent(presentation, button);
+        FeatureList.registerJComponent(presentation, button);
         panel.add(
                 button,
                 new GridBagConstraints(0, 0, 1, 1, 1, 1, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(2, 1, 2, 1), 0, 0));
@@ -39,8 +38,8 @@ public class ScenarioSelectorAction extends ComboBoxAction {
     @Override
     protected ComboBoxButton createComboBoxButton(Presentation presentation) {
         System.out.println("Create combobox button");
-        ScenarioList scenarioList = ScenarioList.getScenarioListFor(presentation);
-        if (scenarioList.isShowDisabledActions()) {
+        FeatureList featureList = FeatureList.getScenarioListFor(presentation);
+        if (featureList.isShowDisabledActions()) {
             return new ComboBoxButton(presentation) {
                 @Override
                 protected JBPopup createPopup(Runnable onDispose) {
@@ -55,7 +54,7 @@ public class ScenarioSelectorAction extends ComboBoxAction {
 
     @NotNull
     protected DefaultActionGroup createPopupActionGroup(JComponent button) {
-        return ScenarioList.createPopupActionGroup(button);
+        return FeatureList.createPopupActionGroup(button);
     }
 
 }

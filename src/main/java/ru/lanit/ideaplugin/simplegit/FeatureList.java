@@ -6,13 +6,11 @@ import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.openapi.vfs.newvfs.BulkFileListener;
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent;
 import com.intellij.util.PlatformIcons;
-import com.intellij.util.containers.ConcurrentList;
 import cucumber.runtime.io.FileResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
 import cucumber.runtime.model.CucumberTagStatement;
@@ -25,9 +23,9 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-public class ScenarioList implements BulkFileListener {
-    private static ConcurrentHashMap<Presentation, ScenarioList> scenarioListByPresentation = new ConcurrentHashMap<>();
-    private static ConcurrentHashMap<JComponent, ScenarioList> scenarioListByJComponent = new ConcurrentHashMap<>();
+public class FeatureList implements BulkFileListener {
+    private static ConcurrentHashMap<Presentation, FeatureList> scenarioListByPresentation = new ConcurrentHashMap<>();
+    private static ConcurrentHashMap<JComponent, FeatureList> scenarioListByJComponent = new ConcurrentHashMap<>();
 
     private static final Icon CHECKED = PlatformIcons.CHECK_ICON;
     private static final Icon EDIT = PlatformIcons.EDIT;
@@ -38,21 +36,21 @@ public class ScenarioList implements BulkFileListener {
     private Presentation presentation;
     private boolean showDisabledActions;
 
-    public ScenarioList(Presentation presentation) {
-        System.out.println("Create new ScenarioList");
+    public FeatureList(Presentation presentation) {
+        System.out.println("Create new FeatureList");
         this.presentation = presentation;
     }
 
-    public static ScenarioList getScenarioListFor(Presentation presentation) {
+    public static FeatureList getScenarioListFor(Presentation presentation) {
         System.out.println("Try get scenario list by presentation");
-        return scenarioListByPresentation.computeIfAbsent(presentation, ScenarioList::new);
+        return scenarioListByPresentation.computeIfAbsent(presentation, FeatureList::new);
     }
 
     public static void registerJComponent(Presentation presentation, JComponent button) {
         System.out.println("Register JComponent");
-        ScenarioList scenarioList = scenarioListByPresentation.get(presentation);
-        scenarioList.update();
-        scenarioListByJComponent.put(button, scenarioList);
+        FeatureList featureList = scenarioListByPresentation.get(presentation);
+        featureList.update();
+        scenarioListByJComponent.put(button, featureList);
     }
 
     void registerPlugin(SimpleGitPlugin plugin) {
@@ -64,8 +62,8 @@ public class ScenarioList implements BulkFileListener {
 
     @NotNull
     public static DefaultActionGroup createPopupActionGroup(JComponent button) {
-        ScenarioList scenarioList = scenarioListByJComponent.get(button);
-        return scenarioList.createPopupActionGroup();
+        FeatureList featureList = scenarioListByJComponent.get(button);
+        return featureList.createPopupActionGroup();
     }
 
     private void setItems(List<CucumberFeature> items, @Nullable CucumberFeature selection) {
@@ -106,7 +104,7 @@ public class ScenarioList implements BulkFileListener {
                 public void actionPerformed(@NotNull AnActionEvent e) {
                     if (selection != item && selectionChanged(item)) {
                         selection = item;
-                        ScenarioList.this.update(item, presentation, false);
+                        FeatureList.this.update(item, presentation, false);
                     }
                 }
             };

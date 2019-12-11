@@ -9,25 +9,30 @@ import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.newvfs.RefreshSession;
 import cucumber.runtime.model.CucumberFeature;
 import ru.lanit.ideaplugin.simplegit.dialogs.newfeature.NewScenarioDialog;
-import ru.lanit.ideaplugin.simplegit.dialogs.pluginoptions.PluginOptionsDialog;
+import ru.lanit.ideaplugin.simplegit.dialogs.pluginsettings.PluginSettingsDialog;
+import ru.lanit.ideaplugin.simplegit.settings.SettingsChangeListener;
+import ru.lanit.ideaplugin.simplegit.settings.PluginSettings;
+import ru.lanit.ideaplugin.simplegit.settings.PluginSettingsManager;
 
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class SimpleGitPlugin {
+public class SimpleGitPlugin implements SettingsChangeListener {
     private static ConcurrentHashMap<Project, SimpleGitPlugin> plugins = new ConcurrentHashMap<>();
 
     private Project project;
     private PropertiesComponent properties;
+    private PluginSettingsManager options;
     private List<CucumberFeature> features;
-    private ScenarioList scenarioList;
+    private FeatureList featureList;
 
     private RefreshSession refreshSession;
 
     private SimpleGitPlugin(Project project) {
         this.project = project;
 //        this.refreshSession = RefreshQueue.getInstance().createSession(true, true, null);
-        PropertiesComponent properties = PropertiesComponent.getInstance(project);
+        options = new PluginSettingsManager(project, this);
+        options.restoreAllSettings();
         System.out.println("Created new plugin for opened project " + project.getBasePath());
     }
 
@@ -40,30 +45,22 @@ public class SimpleGitPlugin {
         return getPluginFor(event.getProject());
     }
 
-    public static void registerScenarioComboBox(AnActionEvent event) {
+    public static void registerFeatureComboBox(AnActionEvent event) {
         Presentation presentation = event.getPresentation();
         Project project = event.getProject();
         if (project == null) {
             presentation.setEnabled(false);
         } else {
             SimpleGitPlugin plugin = getPluginFor(project);
-            if (plugin.scenarioList == null) {
-                plugin.scenarioList = ScenarioList.getScenarioListFor(presentation);
-                plugin.scenarioList.registerPlugin(plugin);
+            if (plugin.featureList == null) {
+                plugin.featureList = FeatureList.getScenarioListFor(presentation);
+                plugin.featureList.registerPlugin(plugin);
             }
         }
     }
 
     public Project getProject() {
         return project;
-    }
-
-    public String getTaskName() {
-        return properties.getValue("taskName");
-    }
-
-    public void setTaskName(String taskName) {
-        properties.setValue("taskName", taskName);
     }
 
     public void createNewScenario() {
@@ -79,16 +76,29 @@ public class SimpleGitPlugin {
                 "Input your name", Messages.getQuestionIcon());*/
         Messages.showMessageDialog(project, "Push is not implemented",
                 "Information", Messages.getInformationIcon());
-        scenarioList.updateFeatures();
+        featureList.updateFeatures();
     }
 
     public void openOptionsWindow() {
-        System.out.println("Create new scenario in project " + project.getBasePath());
-        PluginOptionsDialog newScenarioDialog = new PluginOptionsDialog(project);
-        newScenarioDialog.show();
-        if (newScenarioDialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
-            Messages.showMessageDialog(project, "Selected feature catalog: " + newScenarioDialog.getFeatureCatalog(),
+        System.out.println("Open settings dialog for project " + project.getBasePath());
+        PluginSettingsDialog pluginSettingsDialog = new PluginSettingsDialog(project);
+        options.setSettingsToDialog(pluginSettingsDialog);
+        pluginSettingsDialog.show();
+        if (pluginSettingsDialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
+            options.setSettingsFromDialog(pluginSettingsDialog);
+            Messages.showMessageDialog(project, "Selected feature catalog: " + pluginSettingsDialog.getFeatureCatalog(),
                     "Information", Messages.getInformationIcon());
         }
+    }
+
+    @Override
+    public void onSettingsChange(PluginSettings newOptions, PluginSettings oldOptions) {
+        if (newOptions.isPluginActive()) {
+
+        }
+    }
+
+    public boolean isPluginActive() {
+        return options.isPluginActive();
     }
 }

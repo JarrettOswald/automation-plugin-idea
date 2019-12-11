@@ -11,4 +11,8 @@ public class GitSynchronizeAction extends AnAction {
     public void actionPerformed(@NotNull AnActionEvent event) {
         SimpleGitPlugin.getPluginFor(event).gitSynchronize();
     }
+
+    public void update(AnActionEvent event) {
+        event.getPresentation().setEnabled(SimpleGitPlugin.getPluginFor(event).isPluginActive());
+    }
 }

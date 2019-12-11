@@ -1,16 +1,16 @@
-package ru.lanit.ideaplugin.simplegit.dialogs.pluginoptions;
+package ru.lanit.ideaplugin.simplegit.dialogs.pluginsettings;
 
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import javax.swing.*;
 import java.awt.*;
 
-public class PluginOptionsDialogGUI extends JDialog {
+public class PluginSettingsDialogGUI extends JDialog {
     JPanel contentPane;
     JCheckBox isPluginActive;
     JTextField commonTags;
     TextFieldWithBrowseButton featureCatalog;
 
-    public PluginOptionsDialogGUI() {
+    public PluginSettingsDialogGUI() {
         GridBagConstraints constraints = new GridBagConstraints();
         constraints.gridx = 1;
         constraints.gridy = 1;
