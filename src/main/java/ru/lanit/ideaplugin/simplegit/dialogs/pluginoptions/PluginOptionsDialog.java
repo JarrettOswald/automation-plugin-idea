@@ -1,4 +1,4 @@
-package ru.lanit.ideaplugin.simplegit.dialogs;
+package ru.lanit.ideaplugin.simplegit.dialogs.pluginoptions;
 
 import com.intellij.ide.actions.OpenProjectFileChooserDescriptor;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
@@ -41,14 +41,6 @@ public class PluginOptionsDialog extends DialogWrapper {
     @Override
     protected JComponent createCenterPanel() {
         dialogGUI = new PluginOptionsDialogGUI();
-        GridBagConstraints constraints = new GridBagConstraints();
-        constraints.gridx = 1;
-        constraints.gridy = 1;
-        constraints.weightx = 1;
-        constraints.fill = 1;
-        dialogGUI.featureCatalog = new TextFieldWithBrowseButton();
-        dialogGUI.featureCatalog.setEnabled(false);
-        dialogGUI.featureCatalog.setEditable(false);
 
         FileChooserDescriptor descriptor = new OpenProjectFileChooserDescriptor(false, false);
         dialogGUI.featureCatalog.addBrowseFolderListener(new TextBrowseFolderListener(descriptor) {
@@ -78,8 +70,6 @@ public class PluginOptionsDialog extends DialogWrapper {
                 dialogGUI.commonTags.setEnabled(enabled);
             }
         });
-
-        dialogGUI.contentPane.add(dialogGUI.featureCatalog, constraints);
 
         return dialogGUI.getRootPane();
     }

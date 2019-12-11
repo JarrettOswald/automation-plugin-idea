@@ -1,28 +1,18 @@
 package ru.lanit.ideaplugin.simplegit;
 
-import com.google.common.collect.Lists;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.vfs.newvfs.RefreshQueue;
 import com.intellij.openapi.vfs.newvfs.RefreshSession;
-import cucumber.runtime.io.FileResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
-import cucumber.runtime.model.CucumberTagStatement;
-import gherkin.formatter.model.Feature;
-import ru.lanit.ideaplugin.simplegit.dialogs.NewScenarioDialog;
-import ru.lanit.ideaplugin.simplegit.dialogs.PluginOptionsDialog;
+import ru.lanit.ideaplugin.simplegit.dialogs.newfeature.NewScenarioDialog;
+import ru.lanit.ideaplugin.simplegit.dialogs.pluginoptions.PluginOptionsDialog;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
-
-import static com.intellij.icons.AllIcons.Json.Array;
 
 public class SimpleGitPlugin {
     private static ConcurrentHashMap<Project, SimpleGitPlugin> plugins = new ConcurrentHashMap<>();

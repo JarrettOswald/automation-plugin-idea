@@ -1,4 +1,4 @@
-package ru.lanit.ideaplugin.simplegit.dialogs;
+package ru.lanit.ideaplugin.simplegit.dialogs.newfeature;
 
 import javax.swing.*;
 
