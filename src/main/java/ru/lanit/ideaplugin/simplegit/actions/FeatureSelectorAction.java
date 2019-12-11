@@ -18,8 +18,9 @@ public class FeatureSelectorAction extends ComboBoxAction {
 
     @Override
     public void update(@NotNull AnActionEvent event) {
-        SimpleGitPlugin.registerFeatureComboBox(event);
-        event.getPresentation().setEnabled(SimpleGitPlugin.getPluginFor(event).isPluginActive());
+        SimpleGitPlugin.getPluginFor(event).ifPresent(
+                plugin -> plugin.registerFeatureComboBox(event.getPresentation())
+        );
     }
 
     @NotNull
@@ -37,8 +38,8 @@ public class FeatureSelectorAction extends ComboBoxAction {
 
     @Override
     protected ComboBoxButton createComboBoxButton(Presentation presentation) {
-        System.out.println("Create combobox button");
-        FeatureList featureList = FeatureList.getScenarioListFor(presentation);
+//        System.out.println("Create combobox button");
+        FeatureList featureList = FeatureList.getFeatureListFor(presentation);
         if (featureList.isShowDisabledActions()) {
             return new ComboBoxButton(presentation) {
                 @Override

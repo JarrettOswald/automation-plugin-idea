@@ -8,6 +8,6 @@ import ru.lanit.ideaplugin.simplegit.SimpleGitPlugin;
 public class PluginSettingsAction extends AnAction {
 
     public void actionPerformed(@NotNull AnActionEvent event) {
-        SimpleGitPlugin.getPluginFor(event).openOptionsWindow();
+        SimpleGitPlugin.getPluginFor(event).ifPresent(SimpleGitPlugin::openOptionsWindow);
     }
 }

@@ -6,9 +6,17 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-public class NewScenarioDialog extends DialogWrapper {
-    public NewScenarioDialog(@Nullable Project project) {
+public class NewFeatureDialog extends DialogWrapper {
+    private JPanel contentPane;
+    private JTextField scenarioName;
+    private JTextField featureName;
+    private JTextField tags;
+
+    public NewFeatureDialog(@Nullable Project project) {
         super(project);
+        setModal(true);
+        pack();
+        validate();
         init();
         setTitle("Create new scenario");
         setResizable(false);
@@ -39,7 +47,7 @@ public class NewScenarioDialog extends DialogWrapper {
     @Nullable
     @Override
     protected JComponent createCenterPanel() {
-        return new NewScenarioDialogGUI().getRootPane();
+        return contentPane;
     }
 /*
     @NotNull

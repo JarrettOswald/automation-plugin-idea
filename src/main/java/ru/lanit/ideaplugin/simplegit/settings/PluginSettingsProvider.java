@@ -4,12 +4,15 @@ import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.project.Project;
 import ru.lanit.ideaplugin.simplegit.dialogs.pluginsettings.PluginSettingsDialog;
 
-public class PluginSettingsManager {
+import java.util.Arrays;
+import java.util.List;
+
+public class PluginSettingsProvider {
     private final PropertiesComponent properties;
     private final SettingsChangeListener changeListener;
     private PluginSettings settings;
 
-    public PluginSettingsManager(Project project, SettingsChangeListener changeListener) {
+    public PluginSettingsProvider(Project project, SettingsChangeListener changeListener) {
         properties = PropertiesComponent.getInstance(project);
         this.changeListener = changeListener;
     }
@@ -18,6 +21,7 @@ public class PluginSettingsManager {
         PluginSettings oldSettings = settings;
         settings = new PluginSettings();
         if (properties.loadFields(settings)) {
+            cleanupSettings(settings);
             changeListener.onSettingsChange(settings, oldSettings);
             return true;
         }
@@ -25,42 +29,52 @@ public class PluginSettingsManager {
         return false;
     }
 
-    public boolean saveAllSettings() {
+    private boolean saveAllSettings() {
         return properties.saveFields(settings);
+    }
+
+    private void cleanupSettings(PluginSettings settings) {
+        if (isNull(settings.featurePath)) {
+            settings.featurePath = "";
+        }
+    }
+
+    private boolean isNull(String value) {
+        return (value == null || value.equals("null"));
     }
 
     public void setSettingsFromDialog(PluginSettingsDialog pluginSettingsDialog) {
         PluginSettings oldSettings = settings;
         settings = new PluginSettings();
-        settings.isPluginActive = pluginSettingsDialog.isPluginActive();
-        if (settings.isPluginActive) {
+        settings.pluginActive = pluginSettingsDialog.isPluginActive();
+        if (settings.pluginActive) {
             settings.commonTags = pluginSettingsDialog.getCommonTags().isEmpty()
                     ? null
-                    : pluginSettingsDialog.getCommonTags().split(";");
-            settings.featureCatalog = pluginSettingsDialog.getFeatureCatalog();
+                    : Arrays.asList(pluginSettingsDialog.getCommonTags().split(";"));
+            settings.featurePath = pluginSettingsDialog.getFeaturePath();
         }
         saveAllSettings();
         changeListener.onSettingsChange(settings, oldSettings);
     }
 
     public void setSettingsToDialog(PluginSettingsDialog pluginSettingsDialog) {
-        pluginSettingsDialog.setPluginActive(settings.isPluginActive);
+        pluginSettingsDialog.setPluginActive(settings.pluginActive);
         pluginSettingsDialog.setCommonTags(settings.commonTags == null
                 ? ""
                 : String.join(";", settings.commonTags)
         );
-        pluginSettingsDialog.setFeatureCatalog(settings.featureCatalog);
+        pluginSettingsDialog.setFeaturePath(settings.featurePath);
     }
 
     public boolean isPluginActive() {
-        return settings.isPluginActive;
+        return settings.pluginActive;
     }
 
-    public String[] getCommonTags() {
+    public List<String> getCommonTags() {
         return settings.commonTags;
     }
 
-    public String getFeatureCatalog() {
-        return settings.featureCatalog;
+    public String getFeaturePath() {
+        return settings.featurePath;
     }
 }

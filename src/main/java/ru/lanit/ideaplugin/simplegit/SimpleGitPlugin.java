@@ -1,29 +1,27 @@
 package ru.lanit.ideaplugin.simplegit;
 
-import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.newvfs.RefreshSession;
-import cucumber.runtime.model.CucumberFeature;
-import ru.lanit.ideaplugin.simplegit.dialogs.newfeature.NewScenarioDialog;
+import ru.lanit.ideaplugin.simplegit.dialogs.newfeature.NewFeatureDialog;
 import ru.lanit.ideaplugin.simplegit.dialogs.pluginsettings.PluginSettingsDialog;
 import ru.lanit.ideaplugin.simplegit.settings.SettingsChangeListener;
 import ru.lanit.ideaplugin.simplegit.settings.PluginSettings;
-import ru.lanit.ideaplugin.simplegit.settings.PluginSettingsManager;
+import ru.lanit.ideaplugin.simplegit.settings.PluginSettingsProvider;
 
-import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class SimpleGitPlugin implements SettingsChangeListener {
     private static ConcurrentHashMap<Project, SimpleGitPlugin> plugins = new ConcurrentHashMap<>();
 
     private Project project;
-    private PropertiesComponent properties;
-    private PluginSettingsManager options;
-    private List<CucumberFeature> features;
+    private PluginSettingsProvider settings;
     private FeatureList featureList;
 
     private RefreshSession refreshSession;
@@ -31,32 +29,18 @@ public class SimpleGitPlugin implements SettingsChangeListener {
     private SimpleGitPlugin(Project project) {
         this.project = project;
 //        this.refreshSession = RefreshQueue.getInstance().createSession(true, true, null);
-        options = new PluginSettingsManager(project, this);
-        options.restoreAllSettings();
-        System.out.println("Created new plugin for opened project " + project.getBasePath());
+        settings = new PluginSettingsProvider(project, this);
+        settings.restoreAllSettings();
+//        System.out.println("Created new plugin for opened project " + project.getBasePath());
     }
 
     public static SimpleGitPlugin getPluginFor(Project project) {
-        System.out.println("Try get plugin for opened project " + project.getBasePath());
+//        System.out.println("Try get plugin for opened project " + project.getBasePath());
         return plugins.computeIfAbsent(project, SimpleGitPlugin::new);
     }
 
-    public static SimpleGitPlugin getPluginFor(AnActionEvent event) {
-        return getPluginFor(event.getProject());
-    }
-
-    public static void registerFeatureComboBox(AnActionEvent event) {
-        Presentation presentation = event.getPresentation();
-        Project project = event.getProject();
-        if (project == null) {
-            presentation.setEnabled(false);
-        } else {
-            SimpleGitPlugin plugin = getPluginFor(project);
-            if (plugin.featureList == null) {
-                plugin.featureList = FeatureList.getScenarioListFor(presentation);
-                plugin.featureList.registerPlugin(plugin);
-            }
-        }
+    public static Optional<SimpleGitPlugin> getPluginFor(AnActionEvent event) {
+        return Optional.ofNullable(event.getProject()).map(SimpleGitPlugin::getPluginFor);
     }
 
     public Project getProject() {
@@ -65,8 +49,8 @@ public class SimpleGitPlugin implements SettingsChangeListener {
 
     public void createNewScenario() {
         System.out.println("Create new scenario in project " + project.getBasePath());
-        NewScenarioDialog newScenarioDialog = new NewScenarioDialog(project);
-        newScenarioDialog.show();
+        NewFeatureDialog newFeatureDialog = new NewFeatureDialog(project);
+        newFeatureDialog.show();
 
     }
 
@@ -82,23 +66,39 @@ public class SimpleGitPlugin implements SettingsChangeListener {
     public void openOptionsWindow() {
         System.out.println("Open settings dialog for project " + project.getBasePath());
         PluginSettingsDialog pluginSettingsDialog = new PluginSettingsDialog(project);
-        options.setSettingsToDialog(pluginSettingsDialog);
+        settings.setSettingsToDialog(pluginSettingsDialog);
         pluginSettingsDialog.show();
         if (pluginSettingsDialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
-            options.setSettingsFromDialog(pluginSettingsDialog);
-            Messages.showMessageDialog(project, "Selected feature catalog: " + pluginSettingsDialog.getFeatureCatalog(),
+            settings.setSettingsFromDialog(pluginSettingsDialog);
+            Messages.showMessageDialog(project, "Selected feature path: " + pluginSettingsDialog.getFeaturePath(),
                     "Information", Messages.getInformationIcon());
         }
     }
 
     @Override
     public void onSettingsChange(PluginSettings newOptions, PluginSettings oldOptions) {
-        if (newOptions.isPluginActive()) {
-
+        if (oldOptions != null && newOptions.isPluginActive() && !newOptions.getFeaturePath().equals(oldOptions.getFeaturePath())) {
+            featureList.updateFeatures();
         }
     }
 
     public boolean isPluginActive() {
-        return options.isPluginActive();
+        return settings.isPluginActive();
+    }
+
+    public void registerFeatureComboBox(Presentation presentation) {
+        if (featureList == null) {
+            featureList = FeatureList.getFeatureListFor(presentation);
+            featureList.registerPlugin(this);
+        }
+        presentation.setEnabled(isPluginActive());
+    }
+
+    public String getFeaturePath() {
+        return project.getBaseDir().findFileByRelativePath(settings.getFeaturePath()).getPath();
+    }
+
+    public VirtualFile getFeatureDir() {
+        return LocalFileSystem.getInstance().findFileByPath(getFeaturePath());
     }
 }

@@ -8,11 +8,13 @@ import ru.lanit.ideaplugin.simplegit.SimpleGitPlugin;
 public class CreateNewFeatureAction extends AnAction {
 
     public void actionPerformed(@NotNull AnActionEvent event) {
-        SimpleGitPlugin.getPluginFor(event).createNewScenario();
+        SimpleGitPlugin.getPluginFor(event).ifPresent(SimpleGitPlugin::createNewScenario);
     }
 
     public void update(AnActionEvent event) {
-        event.getPresentation().setEnabled(SimpleGitPlugin.getPluginFor(event).isPluginActive());
+        SimpleGitPlugin.getPluginFor(event).ifPresent(
+                plugin -> event.getPresentation().setEnabled(plugin.isPluginActive())
+        );
     }
 }
 

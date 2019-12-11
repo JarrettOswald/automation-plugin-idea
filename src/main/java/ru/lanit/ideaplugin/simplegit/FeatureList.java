@@ -41,13 +41,13 @@ public class FeatureList implements BulkFileListener {
         this.presentation = presentation;
     }
 
-    public static FeatureList getScenarioListFor(Presentation presentation) {
+    public static FeatureList getFeatureListFor(Presentation presentation) {
         System.out.println("Try get scenario list by presentation");
         return scenarioListByPresentation.computeIfAbsent(presentation, FeatureList::new);
     }
 
     public static void registerJComponent(Presentation presentation, JComponent button) {
-        System.out.println("Register JComponent");
+//        System.out.println("Register JComponent");
         FeatureList featureList = scenarioListByPresentation.get(presentation);
         featureList.update();
         scenarioListByJComponent.put(button, featureList);
@@ -55,7 +55,6 @@ public class FeatureList implements BulkFileListener {
 
     void registerPlugin(SimpleGitPlugin plugin) {
         this.plugin = plugin;
-        presentation.setEnabled(true);
         updateFeatures();
         plugin.getProject().getMessageBus().connect().subscribe(VirtualFileManager.VFS_CHANGES, this);
     }
@@ -69,7 +68,7 @@ public class FeatureList implements BulkFileListener {
     private void setItems(List<CucumberFeature> items, @Nullable CucumberFeature selection) {
         this.items.clear();
         this.items.addAll(items);
-        System.out.println("Set items " + items.size());
+//        System.out.println("Set items " + items.size());
         setSelection(selection);
     }
 
@@ -93,7 +92,7 @@ public class FeatureList implements BulkFileListener {
 
     private DefaultActionGroup createPopupActionGroup() {
         DefaultActionGroup actionGroup = new DefaultActionGroup();
-        System.out.println("Creating popup " + items.size());
+//        System.out.println("Creating popup " + items.size());
         for (final CucumberFeature item : items) {
             if (addSeparator(actionGroup, item)) {
                 continue;
@@ -128,9 +127,9 @@ public class FeatureList implements BulkFileListener {
     }
 
     protected void update(CucumberFeature item, Presentation presentation, boolean popup) {
-        presentation.setEnabled(true);
+//        presentation.setEnabled(true);
         if (item != null) {
-            System.out.println("Updated item " + item.getGherkinFeature().getName());
+//            System.out.println("Updated item " + item.getGherkinFeature().getName());
             if (popup) {
                 // For list element
                 presentation.setText(item.getGherkinFeature().getName());
@@ -158,7 +157,7 @@ public class FeatureList implements BulkFileListener {
 
     public void updateFeatures() {
         List<CucumberFeature> features = CucumberFeature.load(
-                new FileResourceLoader(), Collections.singletonList(plugin.getProject().getBasePath()), Collections.emptyList());
+                new FileResourceLoader(), Collections.singletonList(plugin.getFeaturePath()), Collections.emptyList());
         for (CucumberFeature feature : features) {
             System.out.println("New feature found at " + feature.getPath());
             System.out.println("  Language: " + feature.getI18n().getIsoCode());
@@ -182,7 +181,7 @@ public class FeatureList implements BulkFileListener {
     private boolean selectionChanged(CucumberFeature item) {
         System.out.println("New scenario selected: " + item.getPath());
         Project project = plugin.getProject();
-        VirtualFile file = project.getBaseDir().findFileByRelativePath(item.getPath());
+        VirtualFile file = plugin.getFeatureDir().findFileByRelativePath(item.getPath());
         FileEditorManager.getInstance(project).openFile(file, true);
         return true;
     }

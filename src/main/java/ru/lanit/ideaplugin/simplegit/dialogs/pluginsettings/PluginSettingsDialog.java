@@ -7,6 +7,7 @@ import com.intellij.openapi.fileChooser.FileChooserFactory;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.TextBrowseFolderListener;
+import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.ui.ValidationInfo;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -14,17 +15,35 @@ import org.jetbrains.annotations.Nullable;
 import ru.lanit.ideaplugin.simplegit.SimpleGitPlugin;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 
 public class PluginSettingsDialog extends DialogWrapper {
     private SimpleGitPlugin plugin;
-    private PluginSettingsDialogGUI dialogGUI;
+
+    private JPanel contentPane;
+    private JCheckBox isPluginActive;
+    private JTextField commonTags;
+    private TextFieldWithBrowseButton featurePath;
 
     public PluginSettingsDialog(@Nullable Project project) {
         super(project);
         this.plugin = SimpleGitPlugin.getPluginFor(project);
+        GridBagConstraints constraints = new GridBagConstraints();
+        constraints.gridx = 1;
+        constraints.gridy = 1;
+        constraints.weightx = 1;
+        constraints.fill = 1;
+
+        featurePath = new TextFieldWithBrowseButton();
+        featurePath.setEnabled(false);
+        featurePath.setEditable(false);
+        contentPane.add(featurePath, constraints);
+
+        setModal(true);
+        pack();
+        validate();
+
         init();
         setTitle("SimpleGit project settings");
         setResizable(false);
@@ -38,14 +57,12 @@ public class PluginSettingsDialog extends DialogWrapper {
     @Nullable
     @Override
     protected JComponent createCenterPanel() {
-        dialogGUI = new PluginSettingsDialogGUI();
-
         FileChooserDescriptor descriptor = new OpenProjectFileChooserDescriptor(false, false);
-        dialogGUI.featureCatalog.addBrowseFolderListener(new TextBrowseFolderListener(descriptor) {
+        featurePath.addBrowseFolderListener(new TextBrowseFolderListener(descriptor) {
             @Override
             public void actionPerformed(ActionEvent e) {
                 descriptor.setRoots(plugin.getProject().getBaseDir());
-                String current = dialogGUI.featureCatalog.getText();
+                String current = featurePath.getText();
                 FileChooserDialog fc = FileChooserFactory.getInstance().createFileChooser(descriptor, plugin.getProject(), null);
 
                 VirtualFile[] selection;
@@ -54,53 +71,51 @@ public class PluginSettingsDialog extends DialogWrapper {
                 } else {
                     selection = fc.choose(plugin.getProject());
                 }
-
-                dialogGUI.featureCatalog.setText(VfsUtil.getRelativePath(selection[0], plugin.getProject().getBaseDir()));
+                if (selection.length > 0) {
+                    featurePath.setText(VfsUtil.getRelativePath(selection[0], plugin.getProject().getBaseDir()));
+                }
             }
 
         });
 
-        dialogGUI.isPluginActive.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                boolean enabled = dialogGUI.isPluginActive.isSelected();
-                dialogGUI.featureCatalog.setEnabled(enabled);
-                dialogGUI.commonTags.setEnabled(enabled);
-            }
+        isPluginActive.addChangeListener(e -> {
+            boolean enabled = isPluginActive.isSelected();
+            featurePath.setEnabled(enabled);
+            commonTags.setEnabled(enabled);
         });
 
-        return dialogGUI.getRootPane();
+        return contentPane;
     }
 
     @Override
     public ValidationInfo doValidate() {
-        if (dialogGUI.isPluginActive.isSelected() && dialogGUI.featureCatalog.getText().isEmpty()) {
-            return new ValidationInfo("Need to select features catalog", dialogGUI.featureCatalog);
+        if (isPluginActive.isSelected() && featurePath.getText().isEmpty()) {
+            return new ValidationInfo("Need to select features path", featurePath);
         }
         return null;
     }
 
-    public String getFeatureCatalog() {
-        return dialogGUI.featureCatalog.getText();
+    public String getFeaturePath() {
+        return featurePath.getText();
     }
 
-    public void setFeatureCatalog(String featureCatalog) {
-        dialogGUI.featureCatalog.setText(featureCatalog);
+    public void setFeaturePath(String path) {
+        featurePath.setText(path);
     }
 
     public String getCommonTags() {
-        return dialogGUI.commonTags.getText();
+        return commonTags.getText();
     }
 
     public void setCommonTags(String tags) {
-        dialogGUI.commonTags.setText(tags);
+        commonTags.setText(tags);
     }
 
     public boolean isPluginActive() {
-        return dialogGUI.isPluginActive.isSelected();
+        return isPluginActive.isSelected();
     }
 
     public void setPluginActive(boolean active) {
-        dialogGUI.isPluginActive.setSelected(active);
+        isPluginActive.setSelected(active);
     }
 }
