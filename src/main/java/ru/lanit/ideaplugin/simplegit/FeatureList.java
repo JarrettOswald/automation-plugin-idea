@@ -22,10 +22,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class FeatureList implements BulkFileListener {
     private static ConcurrentHashMap<Presentation, FeatureList> scenarioListByPresentation = new ConcurrentHashMap<>();
     private static ConcurrentHashMap<JComponent, FeatureList> scenarioListByJComponent = new ConcurrentHashMap<>();
+    private static AtomicInteger currentPresentationID = new AtomicInteger(0);
+    private static AtomicInteger currentComponentID = new AtomicInteger(0);
 
     private static final Icon CHECKED = PlatformIcons.CHECK_ICON;
     private static final Icon EDIT = PlatformIcons.EDIT;
@@ -35,25 +38,34 @@ public class FeatureList implements BulkFileListener {
     private CucumberFeature selection;
     private Presentation presentation;
     private boolean showDisabledActions;
+    private Integer presentationID;
+    private Integer componentID;
 
     public FeatureList(Presentation presentation) {
-        System.out.println("Create new FeatureList");
         this.presentation = presentation;
+        presentationID = currentPresentationID.getAndIncrement();
+        System.out.println("Create new FeatureList (presentation ID " + presentationID + ")");
     }
 
     public static FeatureList getFeatureListFor(Presentation presentation) {
-        System.out.println("Try get scenario list by presentation");
-        return scenarioListByPresentation.computeIfAbsent(presentation, FeatureList::new);
+        FeatureList list = scenarioListByPresentation.computeIfAbsent(presentation, FeatureList::new);
+        System.out.println("1 Try get scenario list by presentation (presentation ID " + list.presentationID + ")");
+        return list;
     }
 
     public static void registerJComponent(Presentation presentation, JComponent button) {
-//        System.out.println("Register JComponent");
         FeatureList featureList = scenarioListByPresentation.get(presentation);
         featureList.update();
         scenarioListByJComponent.put(button, featureList);
+        if (featureList.componentID != null) {
+            System.out.println("ERROR!!! Try to reset component ID " + featureList.componentID + " (presentation ID " + featureList.presentationID + ")");
+        }
+        featureList.componentID = currentComponentID.getAndIncrement();
+        System.out.println("2 Register JComponent ID " + featureList.componentID + " (presentation ID " + featureList.presentationID + ")");
     }
 
     void registerPlugin(SimpleGitPlugin plugin) {
+        System.out.println("3 Register plugin (component ID " + componentID + " presentation ID " + presentationID + ")");
         this.plugin = plugin;
         updateFeatures();
         plugin.getProject().getMessageBus().connect().subscribe(VirtualFileManager.VFS_CHANGES, this);
@@ -62,6 +74,7 @@ public class FeatureList implements BulkFileListener {
     @NotNull
     public static DefaultActionGroup createPopupActionGroup(JComponent button) {
         FeatureList featureList = scenarioListByJComponent.get(button);
+        System.out.println("4 createPopupActionGroup (component ID " + featureList.componentID + " presentation ID " + featureList.presentationID + ")");
         return featureList.createPopupActionGroup();
     }
 

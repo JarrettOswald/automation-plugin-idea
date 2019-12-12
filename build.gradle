@@ -19,6 +19,7 @@ dependencies {
 
 intellij {
     version 'IC-2017.2'
+//    version 'IC-2019.1'
     updateSinceUntilBuild false
 }
 

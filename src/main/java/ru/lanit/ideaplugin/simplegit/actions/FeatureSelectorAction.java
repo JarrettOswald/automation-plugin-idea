@@ -36,6 +36,11 @@ public class FeatureSelectorAction extends ComboBoxAction {
         return panel;
     }
 
+    @NotNull
+    public JComponent createCustomComponent(Presentation presentation, String place) {
+        return createCustomComponent(presentation);
+    }
+
     @Override
     protected ComboBoxButton createComboBoxButton(Presentation presentation) {
 //        System.out.println("Create combobox button");

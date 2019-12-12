@@ -38,6 +38,12 @@
       <postStartupActivity implementation="ru.lanit.ideaplugin.simplegit.activity.PluginStartupActivity"/>
   </extensions>
 
+  <application-components>
+      <component>
+          <implementation-class>ru.lanit.ideaplugin.simplegit.SimpleGitApplicationComponent</implementation-class>
+      </component>
+  </application-components>
+
   <actions>
       <action id="ru.lanit.ideaplugin.simplegit.actions.PluginSettingsAction"
               class="ru.lanit.ideaplugin.simplegit.actions.PluginSettingsAction" text="SimpleGit settings"
