@@ -1,73 +1,72 @@
 <idea-plugin>
-  <id>ru.lanit.ideaplugin</id>
-  <name>Simple Git</name>
-  <version>1.2</version>
-  <idea-version since-build="172" until-build="999.*"/>
-<!--  <idea-version since-build="173.0"/>-->
-  <vendor email="lanit@lanit.ru" url="https://lanit.ru">Ланит</vendor>
+    <id>ru.lanit.ideaplugin</id>
+    <name>Simple Git</name>
+    <version>1.2</version>
+    <idea-version since-build="172" until-build="999.*"/>
+    <vendor email="lanit@lanit.ru" url="https://lanit.ru">Ланит</vendor>
 
-  <description>This plugin helps in community development of Cucumber scenarios by simplifying process of Git interaction.</description>
-  <change-notes>
-      <![CDATA[
-          Версия 1.2<br><ul>
-          <li>[/] Поиск feature файлов производится в указанной в настройках папке</li>
-          <li>[+] Добавлен диалог выбора папки с feature файлами</li>
-          <li>[+] Добавлены валидация и сохранение настроек</li>
-          <li>[+] Добавлена кнопка и диалог настроек плагина</li>
-          </ul><br>
-          Версия 1.1<br><ul>
-          <li>[/] Фикс: селектор сценариев работает правильно в нескольких открытых проектах</li>
-          <li>[+] Выбранный сценарий открывается в редакторе</li>
-          </ul><br>
-          Версия 1.0<br><ul>
-          <li>[+] Добавлен парсер feature файлов Cucumber
-          <li>[+] Добавлен шаблон диалогового окна</li>
-          <li>[+] Добавлен селектор сценария</li>
-          <li>[+] Добавлена работа с настройками плагина</li>
-          <li>[+] Добавлен обработчик postStartupActivity</li>
-          <li>[+] Добавлен класс состояния плагина</li>
-          </ul>
-      ]]>
-  </change-notes>
+    <description>This plugin helps in community development of Cucumber scenarios by simplifying process of Git interaction.</description>
+    <change-notes>
+        <![CDATA[
+            Версия 1.2<br><ul>
+            <li>[/] Поиск feature файлов производится в указанной в настройках папке</li>
+            <li>[+] Добавлен диалог выбора папки с feature файлами</li>
+            <li>[+] Добавлены валидация и сохранение настроек</li>
+            <li>[+] Добавлена кнопка и диалог настроек плагина</li>
+            </ul><br>
+            Версия 1.1<br><ul>
+            <li>[/] Фикс: селектор сценариев работает правильно в нескольких открытых проектах</li>
+            <li>[+] Выбранный сценарий открывается в редакторе</li>
+            </ul><br>
+            Версия 1.0<br><ul>
+            <li>[+] Добавлен парсер feature файлов Cucumber
+            <li>[+] Добавлен шаблон диалогового окна</li>
+            <li>[+] Добавлен селектор сценария</li>
+            <li>[+] Добавлена работа с настройками плагина</li>
+            <li>[+] Добавлен обработчик postStartupActivity</li>
+            <li>[+] Добавлен класс состояния плагина</li>
+            </ul>
+        ]]>
+    </change-notes>
 
-  <depends>com.intellij.modules.lang</depends>
-<!--  <depends optional="true" config-file="idea.xml">com.intellij.modules.java</depends>-->
-  <depends>Git4Idea</depends>
+    <depends>com.intellij.modules.lang</depends>
+        <!--<depends optional="true" config-file="idea.xml">com.intellij.modules.java</depends>-->
+    <depends>Git4Idea</depends>
 
-  <extensions defaultExtensionNs="com.intellij">
-      <postStartupActivity implementation="ru.lanit.ideaplugin.simplegit.activity.PluginStartupActivity"/>
-  </extensions>
+    <extensions defaultExtensionNs="com.intellij">
+        <postStartupActivity implementation="ru.lanit.ideaplugin.simplegit.activity.PluginStartupActivity"/>
+        <projectService serviceInterface="ru.lanit.ideaplugin.simplegit.features.FeatureListManager"
+                        serviceImplementation="ru.lanit.ideaplugin.simplegit.features.FeatureListManager" />
+    </extensions>
 
-  <application-components>
-      <component>
-          <implementation-class>ru.lanit.ideaplugin.simplegit.SimpleGitApplicationComponent</implementation-class>
-      </component>
-  </application-components>
+    <project-components>
+        <component>
+            <implementation-class>ru.lanit.ideaplugin.simplegit.SimpleGitProjectComponent</implementation-class>
+        </component>
+    </project-components>
 
-  <actions>
-      <action id="ru.lanit.ideaplugin.simplegit.actions.PluginSettingsAction"
-              class="ru.lanit.ideaplugin.simplegit.actions.PluginSettingsAction" text="SimpleGit settings"
-              description="SimpleGit plugin settings" icon="/plugin-settings-icon.png">
-          <!--          <keyboard-shortcut keymap="$default" first-keystroke="ctrl P"/>-->
-          <add-to-group group-id="ToolbarRunGroup" anchor="first"/>
-      </action>
-      <action id="ru.lanit.ideaplugin.simplegit.actions.GitSynchronizeAction"
-              class="ru.lanit.ideaplugin.simplegit.actions.GitSynchronizeAction" text="Git synchronize"
-              description="Synchronize local changes with git" icon="/synchronize-icon.png">
-<!--          <keyboard-shortcut keymap="$default" first-keystroke="ctrl P"/>-->
-          <add-to-group group-id="ToolbarRunGroup" anchor="first"/>
-      </action>
-      <action id="ru.lanit.ideaplugin.simplegit.actions.CreateNewFeatureAction"
-              class="ru.lanit.ideaplugin.simplegit.actions.CreateNewFeatureAction" text="New feature"
-              description="Create new feature file" icon="/create-icon.png">
+    <actions>
+        <action id="ru.lanit.ideaplugin.simplegit.actions.PluginSettingsAction"
+                class="ru.lanit.ideaplugin.simplegit.actions.PluginSettingsAction" text="SimpleGit settings"
+                description="SimpleGit plugin settings" icon="/plugin-settings-icon.png">
+            <!--<keyboard-shortcut keymap="$default" first-keystroke="ctrl P"/>-->
+            <add-to-group group-id="ToolbarRunGroup" anchor="first"/>
+        </action>
+        <action id="ru.lanit.ideaplugin.simplegit.actions.GitSynchronizeAction"
+                class="ru.lanit.ideaplugin.simplegit.actions.GitSynchronizeAction" text="Git synchronize"
+                description="Synchronize local changes with git" icon="/synchronize-icon.png">
+                <!--<keyboard-shortcut keymap="$default" first-keystroke="ctrl P"/>-->
+            <add-to-group group-id="ToolbarRunGroup" anchor="first"/>
+        </action>
+        <action id="ru.lanit.ideaplugin.simplegit.actions.CreateNewFeatureAction"
+                class="ru.lanit.ideaplugin.simplegit.actions.CreateNewFeatureAction" text="New feature"
+                description="Create new feature file" icon="/create-icon.png">
         <add-to-group group-id="ToolbarRunGroup" anchor="first"/>
-      </action>
-      <action id="ru.lanit.ideaplugin.simplegit.actions.FeatureSelectorAction"
-              class="ru.lanit.ideaplugin.simplegit.actions.FeatureSelectorAction" text="Select feature"
-              description="Select current feature">
-          <add-to-group group-id="ToolbarRunGroup" anchor="first"/>
-      </action>
-  </actions>
-
-<!--  <project-components>-->
+        </action>
+        <action id="ru.lanit.ideaplugin.simplegit.actions.FeatureComboBoxAction"
+                class="ru.lanit.ideaplugin.simplegit.actions.FeatureComboBoxAction" text="Select feature"
+                description="Select current feature">
+            <add-to-group group-id="ToolbarRunGroup" anchor="first"/>
+        </action>
+    </actions>
 </idea-plugin>
