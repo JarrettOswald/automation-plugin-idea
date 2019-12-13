@@ -1,6 +1,7 @@
 package ru.lanit.ideaplugin.simplegit.actions;
 
-import com.intellij.execution.*;
+import com.intellij.execution.ExecutionBundle;
+import com.intellij.icons.AllIcons;
 import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.actionSystem.ex.ComboBoxAction;
@@ -9,22 +10,30 @@ import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.IndexNotReadyException;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.IdeBorderFactory;
+import com.intellij.ui.SizedIcon;
 import com.intellij.ui.components.panels.NonOpaquePanel;
+import com.intellij.util.ui.EmptyIcon;
+import com.intellij.util.ui.JBUI;
 import cucumber.runtime.model.CucumberFeature;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ru.lanit.ideaplugin.simplegit.features.FeatureListManager;
+import ru.lanit.ideaplugin.simplegit.features.FeatureList;
+import ru.lanit.ideaplugin.simplegit.features.FeatureState;
 
 import javax.swing.*;
 import java.awt.*;
 
 public class FeatureComboBoxAction extends ComboBoxAction implements DumbAware {
+    private static final Icon CHECKED_ICON = JBUI.scale(new SizedIcon(AllIcons.Actions.Checked, 16, 16));
+    private static final Icon EDITED_ICON = JBUI.scale(new SizedIcon(AllIcons.Actions.Edit, 16, 16));
+    private static final Icon EMPTY_ICON = EmptyIcon.ICON_16;
 
     @Override
     public void update(@NotNull AnActionEvent e) {
         Presentation presentation = e.getPresentation();
         Project project = e.getData(CommonDataKeys.PROJECT);
         if (ActionPlaces.isMainMenuOrActionSearch(e.getPlace())) {
+//            presentation.setText("Select feature...");
             presentation.setDescription(ExecutionBundle.message("choose.run.configuration.action.description"));
         }
 
@@ -33,7 +42,7 @@ public class FeatureComboBoxAction extends ComboBoxAction implements DumbAware {
                 updatePresentation(null, null, presentation);
                 presentation.setEnabled(false);
             } else {
-                updatePresentation(FeatureListManager.getInstance(project).getSelectedFeature(), project, presentation);
+                updatePresentation(FeatureList.getInstance(project).getSelectedFeature(), project, presentation);
                 presentation.setEnabled(true);
             }
         } catch (IndexNotReadyException e1) {
@@ -47,21 +56,38 @@ public class FeatureComboBoxAction extends ComboBoxAction implements DumbAware {
         if (project != null && feature != null) {
             String name = feature.getGherkinFeature().getName();
             presentation.setText(name, false);
-            setConfigurationIcon(presentation, feature, project);
+            setConfigurationIcon(presentation, feature, project, false);
         }
         else {
-            presentation.setText("");
+            presentation.setText("Select feature...");
             presentation.setIcon(null);
         }
     }
 
     private static void setConfigurationIcon(final Presentation presentation,
                                              final CucumberFeature feature,
-                                             final Project project) {
-        try {
-            presentation.setIcon(FeatureListManager.getInstance(project).getFeatureIcon(feature));
-        } catch (IndexNotReadyException ignored) {
+                                             final Project project,
+                                             boolean isPopup) {
+        Icon icon;
+        FeatureList featureList = FeatureList.getInstance(project);
+        FeatureState state = featureList.getFeatureState(feature);
+
+        if (isPopup) {
+            switch(state) {
+                case SELECTED:
+                    icon = CHECKED_ICON;
+                    break;
+                case EDITED:
+                    icon = EDITED_ICON;
+                    break;
+                default:
+                    icon = EMPTY_ICON;
+                    break;
+            }
+        } else {
+            icon = state == FeatureState.EDITED ? EDITED_ICON : null;
         }
+        presentation.setIcon(icon);
     }
 
     @Override
@@ -89,7 +115,7 @@ public class FeatureComboBoxAction extends ComboBoxAction implements DumbAware {
             //allActionsGroup.add(ActionManager.getInstance().getAction("editRunConfigurations"));
             /*allActionsGroup.add(new SaveTemporaryAction());
             allActionsGroup.addSeparator();*/
-            /*CucumberFeature selected = FeatureListManager.getInstance(project).getSelectedFeature();
+            /*CucumberFeature selected = FeatureList.getInstance(project).getSelectedFeature();
             if (selected != null) {
                 ExecutionTarget activeTarget = ExecutionTargetManager.getActiveTarget(project);
                 Iterator var6 = ExecutionTargetManager.getTargetsToChooseFor(project, selected).iterator();
@@ -102,7 +128,7 @@ public class FeatureComboBoxAction extends ComboBoxAction implements DumbAware {
                 allActionsGroup.addSeparator();
             }*/
 
-            for (CucumberFeature feature : FeatureListManager.getInstance(project).getFeatureList()) {
+            for (CucumberFeature feature : FeatureList.getInstance(project).getFeatureList()) {
                 /*
                 ConfigurationType type = var18[var8];
                 DefaultActionGroup actionGroup = new DefaultActionGroup();
@@ -148,12 +174,12 @@ public class FeatureComboBoxAction extends ComboBoxAction implements DumbAware {
         }
 
         private void updateIcon(final Presentation presentation) {
-            setConfigurationIcon(presentation, myFeature, myProject);
+            setConfigurationIcon(presentation, myFeature, myProject, true);
         }
 
         @Override
         public void actionPerformed(@NotNull final AnActionEvent e) {
-            FeatureListManager.getInstance(myProject).setSelectedFeature(myFeature);
+            FeatureList.getInstance(myProject).setSelectedFeature(myFeature);
             updatePresentation(myFeature, myProject, e.getPresentation());
         }
 
@@ -166,7 +192,7 @@ public class FeatureComboBoxAction extends ComboBoxAction implements DumbAware {
         }
 
         private void updateDisabled(Presentation presentation) {
-            presentation.setEnabled(FeatureListManager.getInstance(myProject).isEnabled(myFeature));
+            presentation.setEnabled(FeatureList.getInstance(myProject).isEnabledFeature(myFeature));
         }
     }
 /*

@@ -1,4 +1,4 @@
-package ru.lanit.ideaplugin.simplegit.actions;
+/*package ru.lanit.ideaplugin.simplegit.actions;
 
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
@@ -64,3 +64,4 @@ public class FeatureSelectorAction extends ComboBoxAction {
     }
 
 }
+*/

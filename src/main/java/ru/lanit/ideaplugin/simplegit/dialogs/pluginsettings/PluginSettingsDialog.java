@@ -12,14 +12,14 @@ import com.intellij.openapi.ui.ValidationInfo;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.Nullable;
-import ru.lanit.ideaplugin.simplegit.SimpleGitPlugin;
+import ru.lanit.ideaplugin.simplegit.SimpleGitProjectComponent;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 
 public class PluginSettingsDialog extends DialogWrapper {
-    private SimpleGitPlugin plugin;
+    private SimpleGitProjectComponent plugin;
 
     private JPanel contentPane;
     private JCheckBox isPluginActive;
@@ -28,7 +28,7 @@ public class PluginSettingsDialog extends DialogWrapper {
 
     public PluginSettingsDialog(@Nullable Project project) {
         super(project);
-        this.plugin = SimpleGitPlugin.getPluginFor(project);
+        this.plugin = project.getComponent(SimpleGitProjectComponent.class);
         GridBagConstraints constraints = new GridBagConstraints();
         constraints.gridx = 1;
         constraints.gridy = 1;

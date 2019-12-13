@@ -35,8 +35,8 @@
 
     <extensions defaultExtensionNs="com.intellij">
         <postStartupActivity implementation="ru.lanit.ideaplugin.simplegit.activity.PluginStartupActivity"/>
-        <projectService serviceInterface="ru.lanit.ideaplugin.simplegit.features.FeatureListManager"
-                        serviceImplementation="ru.lanit.ideaplugin.simplegit.features.FeatureListManager" />
+        <projectService serviceInterface="ru.lanit.ideaplugin.simplegit.features.FeatureList"
+                        serviceImplementation="ru.lanit.ideaplugin.simplegit.features.FeatureListImpl" />
     </extensions>
 
     <project-components>
@@ -48,19 +48,19 @@
     <actions>
         <action id="ru.lanit.ideaplugin.simplegit.actions.PluginSettingsAction"
                 class="ru.lanit.ideaplugin.simplegit.actions.PluginSettingsAction" text="SimpleGit settings"
-                description="SimpleGit plugin settings" icon="/plugin-settings-icon.png">
+                description="SimpleGit plugin settings">
             <!--<keyboard-shortcut keymap="$default" first-keystroke="ctrl P"/>-->
             <add-to-group group-id="ToolbarRunGroup" anchor="first"/>
         </action>
         <action id="ru.lanit.ideaplugin.simplegit.actions.GitSynchronizeAction"
                 class="ru.lanit.ideaplugin.simplegit.actions.GitSynchronizeAction" text="Git synchronize"
-                description="Synchronize local changes with git" icon="/synchronize-icon.png">
+                description="Synchronize local changes with git">
                 <!--<keyboard-shortcut keymap="$default" first-keystroke="ctrl P"/>-->
             <add-to-group group-id="ToolbarRunGroup" anchor="first"/>
         </action>
         <action id="ru.lanit.ideaplugin.simplegit.actions.CreateNewFeatureAction"
                 class="ru.lanit.ideaplugin.simplegit.actions.CreateNewFeatureAction" text="New feature"
-                description="Create new feature file" icon="/create-icon.png">
+                description="Create new feature file">
         <add-to-group group-id="ToolbarRunGroup" anchor="first"/>
         </action>
         <action id="ru.lanit.ideaplugin.simplegit.actions.FeatureComboBoxAction"
