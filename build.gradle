@@ -5,7 +5,7 @@ plugins {
 
 description = "This plugin helps in community development of Cucumber scenarios by simplifying process of Git interaction."
 group 'ru.lanit.ideaplugin'
-version '1.2-SNAPSHOT'
+version '1.3-SNAPSHOT'
 
 repositories {
     mavenCentral()
@@ -25,6 +25,11 @@ intellij {
 
 patchPluginXml {
     changeNotes """
+          Версия 1.3<br><ul>
+          <li>[/] Исправлен баг с несовместимостью с новыми версиями IDEA</li>
+          <li>[+] Добавлен сервис поиска</li>
+          <li>[+] Добавлен компонент проекта</li>
+          </ul><br>
           Версия 1.2<br><ul>
           <li>[/] Поиск feature файлов производится в указанной в настройках папке</li>
           <li>[+] Добавлен диалог выбора папки с feature файлами</li>
