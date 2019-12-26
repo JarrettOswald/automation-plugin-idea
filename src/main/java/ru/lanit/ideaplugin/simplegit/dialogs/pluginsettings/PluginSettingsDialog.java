@@ -5,12 +5,10 @@ import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.fileChooser.FileChooserDialog;
 import com.intellij.openapi.fileChooser.FileChooserFactory;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.DialogWrapper;
-import com.intellij.openapi.ui.TextBrowseFolderListener;
-import com.intellij.openapi.ui.TextFieldWithBrowseButton;
-import com.intellij.openapi.ui.ValidationInfo;
+import com.intellij.openapi.ui.*;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import git4idea.repo.GitRemote;
 import git4idea.repo.GitRepository;
 import org.jetbrains.annotations.Nullable;
 import ru.lanit.ideaplugin.simplegit.SimpleGitProjectComponent;
@@ -18,7 +16,9 @@ import ru.lanit.ideaplugin.simplegit.SimpleGitProjectComponent;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 public class PluginSettingsDialog extends DialogWrapper {
     private SimpleGitProjectComponent plugin;
@@ -35,7 +35,7 @@ public class PluginSettingsDialog extends DialogWrapper {
         this.plugin = project.getComponent(SimpleGitProjectComponent.class);
         GridBagConstraints constraints = new GridBagConstraints();
         constraints.gridx = 1;
-        constraints.gridy = 1;
+        constraints.gridy = 3;
         constraints.weightx = 1;
         constraints.fill = 1;
 
@@ -151,25 +151,32 @@ public class PluginSettingsDialog extends DialogWrapper {
     }
 
     public void setRemoteGitRepositoryURL(String remoteGitRepositoryURL) {
-        List<GitRepository> repositories = plugin.getGitRepositories();
-        for (GitRepository repositoriy : repositories) {
-            String url = repositoriy.getRoot().getPath();
-            this.remoteGitRepositoryURL.addItem(url);
-            if (remoteGitRepositoryURL.equals(url)) {
-                this.remoteGitRepositoryURL.setSelectedItem(url);
+        Optional<GitRepository> repository = plugin.getGitRepositories().stream()
+                .filter(repo -> repo.getRoot().getPath().equals(getGitRepositoryRootPath()))
+                .findFirst();
+        if (repository.isPresent()) {
+            Collection<GitRemote> repositories = plugin.getRemoteGitRepositories(repository.get());
+            for (GitRemote repositoriy : repositories) {
+                String url = repositoriy.getFirstUrl();
+                this.remoteGitRepositoryURL.addItem(url);
+                if (remoteGitRepositoryURL.equals(url)) {
+                    this.remoteGitRepositoryURL.setSelectedItem(url);
+                }
             }
-        }
-        if (this.remoteGitRepositoryURL.getItemCount() < 2) {
+            if (this.remoteGitRepositoryURL.getItemCount() >= 2) {
+                this.remoteGitRepositoryURL.setEnabled(true);
+                return;
+            }
             if (this.remoteGitRepositoryURL.getItemCount() == 1) {
                 this.remoteGitRepositoryURL.setSelectedIndex(0);
             }
-            this.remoteGitRepositoryURL.setEnabled(false);
-        } else {
-            this.remoteGitRepositoryURL.setEnabled(true);
         }
+        this.remoteGitRepositoryURL.setEnabled(false);
     }
 
     private void createUIComponents() {
         // TODO: place custom component creation code here
+        gitRepositoryRootPath = new JComboBox<>();
+        remoteGitRepositoryURL = new JComboBox<>();
     }
 }

@@ -114,6 +114,10 @@ public class SimpleGitProjectComponent implements ProjectComponent, SettingsChan
         return repositoryManager.getRepositories();
     }
 
+    public Collection<GitRemote> getRemoteGitRepositories(GitRepository repository){
+        return repository.getRemotes();
+    }
+
     private GitRepository getGitRepository() {
         VirtualFile gitRoot = project.getBaseDir();
         repositoryManager.getRepositories();

@@ -57,6 +57,8 @@ public class PluginSettingsProvider {
                 ? null
                 : Arrays.asList(pluginSettingsDialog.getCommonTags().split(";"));
         settings.featurePath = pluginSettingsDialog.getFeaturePath();
+        settings.gitRepositoryRootPath = pluginSettingsDialog.getGitRepositoryRootPath();
+        settings.remoteGitRepositoryURL = pluginSettingsDialog.getRemoteGitRepositoryURL();
         saveAllSettings();
         changeListener.onSettingsChange(settings, oldSettings);
     }
@@ -68,6 +70,8 @@ public class PluginSettingsProvider {
                 : String.join(";", settings.commonTags)
         );
         pluginSettingsDialog.setFeaturePath(settings.featurePath);
+        pluginSettingsDialog.setGitRepositoryRootPath(settings.gitRepositoryRootPath);
+        pluginSettingsDialog.setRemoteGitRepositoryURL(settings.remoteGitRepositoryURL);
     }
 
     public boolean isPluginActive() {
