@@ -85,4 +85,16 @@ public class PluginSettingsProvider {
     public String getFeaturePath() {
         return settings.featurePath;
     }
+
+    public String getGitRepositoryRootPath() {
+        return settings.gitRepositoryRootPath;
+    }
+
+    public String getRemoteGitRepositoryURL() {
+        return settings.remoteGitRepositoryURL;
+    }
+
+    public void setRemoteGitRepositoryURL(String remoteGitRepositoryURL) {
+        settings.remoteGitRepositoryURL = remoteGitRepositoryURL;
+    }
 }

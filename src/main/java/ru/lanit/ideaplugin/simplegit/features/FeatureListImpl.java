@@ -2,9 +2,12 @@ package ru.lanit.ideaplugin.simplegit.features;
 
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vcs.changes.ChangeListManagerImpl;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.openapi.vfs.newvfs.BulkFileListener;
+import com.intellij.openapi.vfs.newvfs.RefreshQueue;
+import com.intellij.openapi.vfs.newvfs.RefreshSession;
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent;
 import cucumber.runtime.io.FileResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
@@ -56,6 +59,17 @@ public class FeatureListImpl extends FeatureList implements BulkFileListener {
         this.selectedFeature = select;
     }
 
+    public void addNewFiles() {
+        final RefreshSession session = RefreshQueue.getInstance().createSession(true, true, () -> {
+            // here in callback files are already known to VFS and now we can add them
+            final ChangeListManagerImpl changeListManager = ChangeListManagerImpl.getInstanceImpl(project);
+//            changeListManager.addUnversionedFiles(changeListManager.getDefaultChangeList(), unversionedFiles);
+            // files will be visible in change list manager after its inner update. not synchronously after this call
+        });
+
+        session.addAllFiles(plugin.getFeatureDir());
+        session.launch();     // starts refresh
+    }
 
     @Override
     public CucumberFeature getSelectedFeature() {
