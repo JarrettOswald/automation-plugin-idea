@@ -32,8 +32,8 @@ public class FeatureComboBoxAction extends ComboBoxAction implements DumbAware {
     public void update(@NotNull AnActionEvent e) {
         Presentation presentation = e.getPresentation();
         Project project = e.getData(CommonDataKeys.PROJECT);
+        presentation.setText("Select feature...");
         if (ActionPlaces.isMainMenuOrActionSearch(e.getPlace())) {
-//            presentation.setText("Select feature...");
             presentation.setDescription(ExecutionBundle.message("choose.run.configuration.action.description"));
         }
 

@@ -37,6 +37,12 @@ public class PluginSettingsProvider {
         if (isNull(settings.featurePath)) {
             settings.featurePath = "";
         }
+        if (isNull(settings.gitRepositoryRootPath)) {
+            settings.gitRepositoryRootPath = "";
+        }
+        if (isNull(settings.remoteGitRepositoryURL)) {
+            settings.remoteGitRepositoryURL = "";
+        }
     }
 
     private boolean isNull(String value) {
@@ -47,12 +53,10 @@ public class PluginSettingsProvider {
         PluginSettings oldSettings = settings;
         settings = new PluginSettings();
         settings.pluginActive = pluginSettingsDialog.isPluginActive();
-        if (settings.pluginActive) {
-            settings.commonTags = pluginSettingsDialog.getCommonTags().isEmpty()
-                    ? null
-                    : Arrays.asList(pluginSettingsDialog.getCommonTags().split(";"));
-            settings.featurePath = pluginSettingsDialog.getFeaturePath();
-        }
+        settings.commonTags = pluginSettingsDialog.getCommonTags().isEmpty()
+                ? null
+                : Arrays.asList(pluginSettingsDialog.getCommonTags().split(";"));
+        settings.featurePath = pluginSettingsDialog.getFeaturePath();
         saveAllSettings();
         changeListener.onSettingsChange(settings, oldSettings);
     }

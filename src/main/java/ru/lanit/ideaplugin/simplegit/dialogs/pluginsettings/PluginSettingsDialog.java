@@ -11,12 +11,14 @@ import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.ui.ValidationInfo;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import git4idea.repo.GitRepository;
 import org.jetbrains.annotations.Nullable;
 import ru.lanit.ideaplugin.simplegit.SimpleGitProjectComponent;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.util.List;
 
 public class PluginSettingsDialog extends DialogWrapper {
     private SimpleGitProjectComponent plugin;
@@ -24,6 +26,8 @@ public class PluginSettingsDialog extends DialogWrapper {
     private JPanel contentPane;
     private JCheckBox isPluginActive;
     private JTextField commonTags;
+    private JComboBox<String> gitRepositoryRootPath;
+    private JComboBox<String> remoteGitRepositoryURL;
     private TextFieldWithBrowseButton featurePath;
 
     public PluginSettingsDialog(@Nullable Project project) {
@@ -117,5 +121,55 @@ public class PluginSettingsDialog extends DialogWrapper {
 
     public void setPluginActive(boolean active) {
         isPluginActive.setSelected(active);
+    }
+
+    public String getGitRepositoryRootPath() {
+        return (String) gitRepositoryRootPath.getSelectedItem();
+    }
+
+    public void setGitRepositoryRootPath(String gitRepositoryRootPath) {
+        List<GitRepository> repositories = plugin.getGitRepositories();
+        for (GitRepository repositoriy : repositories) {
+            String path = repositoriy.getRoot().getPath();
+            this.gitRepositoryRootPath.addItem(path);
+            if (gitRepositoryRootPath.equals(path)) {
+                this.gitRepositoryRootPath.setSelectedItem(path);
+            }
+        }
+        if (this.gitRepositoryRootPath.getItemCount() < 2) {
+            if (this.gitRepositoryRootPath.getItemCount() == 1) {
+                this.gitRepositoryRootPath.setSelectedIndex(0);
+            }
+            this.gitRepositoryRootPath.setEnabled(false);
+        } else {
+            this.gitRepositoryRootPath.setEnabled(true);
+        }
+    }
+
+    public String getRemoteGitRepositoryURL() {
+        return (String) remoteGitRepositoryURL.getSelectedItem();
+    }
+
+    public void setRemoteGitRepositoryURL(String remoteGitRepositoryURL) {
+        List<GitRepository> repositories = plugin.getGitRepositories();
+        for (GitRepository repositoriy : repositories) {
+            String url = repositoriy.getRoot().getPath();
+            this.remoteGitRepositoryURL.addItem(url);
+            if (remoteGitRepositoryURL.equals(url)) {
+                this.remoteGitRepositoryURL.setSelectedItem(url);
+            }
+        }
+        if (this.remoteGitRepositoryURL.getItemCount() < 2) {
+            if (this.remoteGitRepositoryURL.getItemCount() == 1) {
+                this.remoteGitRepositoryURL.setSelectedIndex(0);
+            }
+            this.remoteGitRepositoryURL.setEnabled(false);
+        } else {
+            this.remoteGitRepositoryURL.setEnabled(true);
+        }
+    }
+
+    private void createUIComponents() {
+        // TODO: place custom component creation code here
     }
 }
