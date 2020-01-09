@@ -2,15 +2,15 @@
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="ru.lanit.ideaplugin.simplegit.dialogs.pluginsettings.PluginSettingsDialog">
   <grid id="cbd77" binding="contentPane" layout-manager="GridBagLayout">
     <constraints>
-      <xy x="20" y="43" width="696" height="134"/>
+      <xy x="20" y="43" width="696" height="165"/>
     </constraints>
     <properties>
       <alignmentY value="0.0"/>
       <autoscrolls value="true"/>
-      <minimumSize width="500" height="134"/>
-      <preferredSize width="500" height="134"/>
+      <minimumSize width="500" height="150"/>
+      <preferredSize width="500" height="150"/>
     </properties>
-    <border type="none" title="">
+    <border type="empty" title="">
       <font/>
     </border>
     <children>
@@ -29,7 +29,7 @@
           <grid row="4" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
             <preferred-size width="150" height="-1"/>
           </grid>
-          <gridbag weightx="1.0" weighty="0.0"/>
+          <gridbag top="2" left="0" bottom="2" right="0" weightx="1.0" weighty="0.0"/>
         </constraints>
         <properties>
           <columns value="30"/>
@@ -90,14 +90,14 @@
       <component id="73c03" class="javax.swing.JComboBox" binding="gitRepositoryRootPath" custom-create="true">
         <constraints>
           <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
-          <gridbag weightx="1.0" weighty="0.0"/>
+          <gridbag top="2" left="0" bottom="2" right="0" weightx="1.0" weighty="0.0"/>
         </constraints>
         <properties/>
       </component>
       <component id="f7bc0" class="javax.swing.JComboBox" binding="remoteGitRepositoryURL" custom-create="true">
         <constraints>
           <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
-          <gridbag weightx="1.0" weighty="0.0"/>
+          <gridbag top="2" left="0" bottom="2" right="0" weightx="1.0" weighty="0.0"/>
         </constraints>
         <properties>
           <model/>

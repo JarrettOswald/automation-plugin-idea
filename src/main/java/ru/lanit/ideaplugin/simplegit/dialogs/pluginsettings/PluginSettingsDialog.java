@@ -1,21 +1,21 @@
 package ru.lanit.ideaplugin.simplegit.dialogs.pluginsettings;
 
 import com.intellij.ide.actions.OpenProjectFileChooserDescriptor;
-import com.intellij.openapi.Disposable;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.fileChooser.FileChooserDialog;
 import com.intellij.openapi.fileChooser.FileChooserFactory;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.*;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.ui.JBUI;
 import git4idea.repo.GitRemote;
 import git4idea.repo.GitRepository;
 import org.jetbrains.annotations.Nullable;
 import ru.lanit.ideaplugin.simplegit.SimpleGitProjectComponent;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeEvent;
@@ -41,6 +41,7 @@ public class PluginSettingsDialog extends DialogWrapper {
         constraints.gridy = 3;
         constraints.weightx = 1;
         constraints.fill = 1;
+        constraints.insets = JBUI.insets(2, 0);
 
         featurePath = new TextFieldWithBrowseButton();
         featurePath.setEnabled(false);
@@ -136,14 +137,17 @@ public class PluginSettingsDialog extends DialogWrapper {
 
         });
 
-        isPluginActive.addChangeListener(e -> {
-            boolean enabled = isPluginActive.isSelected();
-            featurePath.setEnabled(enabled);
-            commonTags.setEnabled(enabled);
-            gitRepositoryRootPath.setEnabled(enabled && isGitRepositoryRootPathSelectable());
-        });
+        isPluginActive.addChangeListener(this::updateEnabledStateOfElements);
+        updateEnabledStateOfElements(null);
         gitRepositoryRootPath.addPropertyChangeListener(this::fillRemoteGitRepositoryURL);
         return contentPane;
+    }
+
+    private void updateEnabledStateOfElements(ChangeEvent changeEvent) {
+        boolean enabled = isPluginActive.isSelected();
+        featurePath.setEnabled(enabled);
+        commonTags.setEnabled(enabled);
+        gitRepositoryRootPath.setEnabled(enabled && isGitRepositoryRootPathSelectable());
     }
 
     @Override

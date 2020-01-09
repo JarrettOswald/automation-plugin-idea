@@ -1,13 +1,20 @@
 <idea-plugin>
     <id>ru.lanit.ideaplugin</id>
     <name>Simple Git</name>
-    <version>1.3</version>
+    <version>1.4</version>
     <idea-version since-build="172" until-build="999.*"/>
     <vendor email="lanit@lanit.ru" url="https://lanit.ru">Ланит</vendor>
 
     <description>This plugin helps in community development of Cucumber scenarios by simplifying process of Git interaction.</description>
     <change-notes>
         <![CDATA[
+            Версия 1.4<br><ul>
+            <li>[/] Исправлена проблема с библиотекой стандартного плагина git4idea</li>
+            <li>[+] Добавлено определение локального и удаленного репозиториев git</li>
+            <li>[+] Добавлены поля репозиториев в настройки плагина</li>
+            <li>[+] Добавлен менеджер репозиториев git</li>
+            <li>[/] Фикс диалога настроек для работы с репозиторием</li>
+            </ul><br>
             Версия 1.3<br><ul>
             <li>[/] Исправлен баг с несовместимостью с новыми версиями IDEA</li>
             <li>[+] Добавлен сервис поиска</li>

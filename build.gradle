@@ -5,7 +5,7 @@ plugins {
 
 description = "This plugin helps in community development of Cucumber scenarios by simplifying process of Git interaction."
 group 'ru.lanit.ideaplugin'
-version '1.3-SNAPSHOT'
+version '1.4-SNAPSHOT'
 
 repositories {
     mavenCentral()
@@ -25,6 +25,13 @@ intellij {
 
 patchPluginXml {
     changeNotes """
+          Версия 1.4<br><ul>
+          <li>[/] Исправлена проблема с библиотекой стандартного плагина git4idea</li>
+          <li>[+] Добавлено определение локального и удаленного репозиториев git</li>
+          <li>[+] Добавлены поля репозиториев в настройки плагина</li>
+          <li>[+] Добавлен менеджер репозиториев git</li>
+          <li>[/] Фикс диалога настроек для работы с репозиторием</li>
+          </ul><br>
           Версия 1.3<br><ul>
           <li>[/] Исправлен баг с несовместимостью с новыми версиями IDEA</li>
           <li>[+] Добавлен сервис поиска</li>
