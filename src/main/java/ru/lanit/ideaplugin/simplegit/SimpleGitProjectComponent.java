@@ -1,5 +1,6 @@
 package ru.lanit.ideaplugin.simplegit;
 
+import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
@@ -60,18 +61,15 @@ public class SimpleGitProjectComponent implements ProjectComponent, SettingsChan
 
     }
 
-    public void gitSynchronize() {
+    public void gitSynchronize(AnActionEvent event) {
         System.out.println("Git synchronize project " + project.getBasePath());
-        /*String txt= Messages.showInputDialog(project, "What is your name?",
-                "Input your name", Messages.getQuestionIcon());*/
-//        Messages.showMessageDialog(project, "Push is not implemented",
-//                "Information", Messages.getInformationIcon());
-        featureList.updateFeatures();
+//        featureList.updateFeatures();
+        gitManager.synchronizeGit(event);
     }
     public void openOptionsWindow() {
         System.out.println("Open settings dialog for project " + project.getBasePath());
         PluginSettingsDialog pluginSettingsDialog = new PluginSettingsDialog(project);
-        if (settings.getRemoteGitRepositoryURL() == "") {
+        if (settings.getRemoteGitRepositoryURL().equals("")) {
             gitManager.suggestRepository(settings);
         }
         settings.setSettingsToDialog(pluginSettingsDialog);
@@ -112,5 +110,9 @@ public class SimpleGitProjectComponent implements ProjectComponent, SettingsChan
 
     public GitManager getGitManager() {
         return this.gitManager;
+    }
+
+    public String getRemoteGitRepositoryURL() {
+        return settings.getRemoteGitRepositoryURL();
     }
 }

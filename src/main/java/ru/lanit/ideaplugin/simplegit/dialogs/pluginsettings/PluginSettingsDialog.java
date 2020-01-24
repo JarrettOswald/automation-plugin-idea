@@ -76,7 +76,7 @@ public class PluginSettingsDialog extends DialogWrapper {
         return this.gitRepositoryRootPath.getItemCount() >= 2;
     }
 
-    private void fillRemoteGitRepositoryURL(PropertyChangeEvent propertyChangeEvent) {
+    private void fillRemoteGitRepositoryURL(ActionEvent actionEvent) {
         String repositoryPath = getGitRepositoryRootPath();
         remoteGitRepositoryURL.removeAllItems();
         if (repositoryPath != null) {
@@ -139,7 +139,7 @@ public class PluginSettingsDialog extends DialogWrapper {
 
         isPluginActive.addChangeListener(this::updateEnabledStateOfElements);
         updateEnabledStateOfElements(null);
-        gitRepositoryRootPath.addPropertyChangeListener(this::fillRemoteGitRepositoryURL);
+        gitRepositoryRootPath.addActionListener(this::fillRemoteGitRepositoryURL);
         return contentPane;
     }
 
@@ -222,6 +222,6 @@ public class PluginSettingsDialog extends DialogWrapper {
     }
 
     protected void doAction(ActionEvent e) {
-        gitRepositoryRootPath.removePropertyChangeListener(this::fillRemoteGitRepositoryURL);
+//        gitRepositoryRootPath.removePropertyChangeListener(this::fillRemoteGitRepositoryURL);
     }
 }

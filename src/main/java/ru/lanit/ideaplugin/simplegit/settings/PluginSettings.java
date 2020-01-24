@@ -17,7 +17,7 @@ public class PluginSettings {
     @PropertyName(value = "simplegit.settings.gitRepositoryRootPath")
     String gitRepositoryRootPath;
 
-    @PropertyName(value = "simplegit.settings.gitRepositoryRootPath")
+    @PropertyName(value = "simplegit.settings.remoteGitRepositoryURL")
     String remoteGitRepositoryURL;
 
     public boolean isPluginActive() {
