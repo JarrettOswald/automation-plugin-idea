@@ -19,7 +19,7 @@ public class GitSynchronizeAction extends AnAction {
         Project project = event.getData(CommonDataKeys.PROJECT);
         if (project != null) {
             SimpleGitProjectComponent plugin = project.getComponent(SimpleGitProjectComponent.class);
-            plugin.gitSynchronize();
+            plugin.gitSynchronize(event);
         }
     }
 
