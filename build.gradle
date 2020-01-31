@@ -5,7 +5,7 @@ plugins {
 
 description = "This plugin helps in community development of Cucumber scenarios by simplifying process of Git interaction."
 group 'ru.lanit.ideaplugin'
-version '1.4-SNAPSHOT'
+version '1.5-SNAPSHOT'
 
 repositories {
     mavenCentral()
@@ -25,6 +25,10 @@ intellij {
 
 patchPluginXml {
     changeNotes """
+          Версия 1.5<br><ul>
+          <li>[+] Добавлена функциональность обновления проекта. При нажатии на кнопку синхронизации обновляется проект и список feature файлов shchurin-aleksandr 31.01.2020 18:07</li>
+          <li>[/] Изменение в совместимости с IntelliJ IDEA: начиная с версии IC-2017.2.2 shchurin-aleksandr 31.01.2020 18:03</li>
+          </ul><br>
           Версия 1.4<br><ul>
           <li>[/] Исправлена проблема с библиотекой стандартного плагина git4idea</li>
           <li>[+] Добавлено определение локального и удаленного репозиториев git</li>
