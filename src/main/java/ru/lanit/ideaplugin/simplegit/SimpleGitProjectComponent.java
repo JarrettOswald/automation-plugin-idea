@@ -13,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import ru.lanit.ideaplugin.simplegit.dialogs.newfeature.NewFeatureDialog;
 import ru.lanit.ideaplugin.simplegit.dialogs.pluginsettings.PluginSettingsDialog;
 import ru.lanit.ideaplugin.simplegit.features.FeatureList;
+import ru.lanit.ideaplugin.simplegit.git.GitManager;
 import ru.lanit.ideaplugin.simplegit.settings.PluginSettings;
 import ru.lanit.ideaplugin.simplegit.settings.PluginSettingsProvider;
 import ru.lanit.ideaplugin.simplegit.settings.SettingsChangeListener;
@@ -102,6 +103,25 @@ public class SimpleGitProjectComponent implements ProjectComponent, SettingsChan
         if (oldOptions != null && newOptions.isPluginActive() && !newOptions.getFeaturePath().equals(oldOptions.getFeaturePath())) {
             featureList.updateFeatures();
         }
+    }
+    public void updateFeatures() {
+        featureList.updateFeatures();/*
+        final SvnVcs vcs = SvnVcs.getInstance(project);
+        VirtualFile file = getFeatureDir().findChild("a.feature");
+        if (file != null) {
+            final File ioFile = virtualToIoFile(file);
+            try {
+                new RepeatSvnActionThroughBusy() {
+                    @Override
+                    protected void executeImpl() throws VcsException {
+                        vcs.getFactory(ioFile).createAddClient().add(ioFile, null, false, false, true, null);
+                    }
+                }.execute();
+                VcsDirtyScopeManager.getInstance(project).fileDirty(file);
+            } catch (VcsException e) {
+                exceptions.add(e);
+            }
+        }*/
     }
 
     public void projectClosed() {
