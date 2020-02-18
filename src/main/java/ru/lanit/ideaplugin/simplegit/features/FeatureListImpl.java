@@ -9,12 +9,14 @@ import com.intellij.openapi.vfs.newvfs.BulkFileListener;
 import com.intellij.openapi.vfs.newvfs.RefreshQueue;
 import com.intellij.openapi.vfs.newvfs.RefreshSession;
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent;
+import cucumber.runtime.CucumberException;
 import cucumber.runtime.io.FileResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
 import cucumber.runtime.model.CucumberTagStatement;
 import org.jetbrains.annotations.NotNull;
 import ru.lanit.ideaplugin.simplegit.SimpleGitProjectComponent;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -35,10 +37,14 @@ public class FeatureListImpl extends FeatureList implements BulkFileListener {
         plugin.getProject().getMessageBus().connect().subscribe(VirtualFileManager.VFS_CHANGES, this);
     }
 
-    @Override
-    public void updateFeatures() {
-        List<CucumberFeature> features = CucumberFeature.load(
-                new FileResourceLoader(), Collections.singletonList(plugin.getFeaturePath()), Collections.emptyList());
+    private void updateFeaturesList() {
+        List<CucumberFeature> features;
+        try {
+            features = CucumberFeature.load(
+                    new FileResourceLoader(), Collections.singletonList(plugin.getFeaturePath()), Collections.emptyList());
+        } catch (CucumberException e) {
+            features = new ArrayList<>();
+        }
         for (CucumberFeature feature : features) {
             System.out.println("New feature found at " + feature.getPath());
             System.out.println("  Language: " + feature.getI18n().getIsoCode());
@@ -47,15 +53,35 @@ public class FeatureListImpl extends FeatureList implements BulkFileListener {
                 System.out.println("    " + segment.getGherkinModel().getKeyword() + ": " + segment.getGherkinModel().getName());
             }
         }
+        this.featureList = features;
+    }
 
+    @Override
+    public void updateFeatures() {
+        updateFeaturesList();
         CucumberFeature select = null;
         if (selectedFeature != null) {
             String path = selectedFeature.getPath();
-            select = features.stream()
+            select = featureList.stream()
                     .filter(feature -> feature.getPath().equals(path))
                     .findFirst().orElse(null);
         }
-        this.featureList = features;
+        this.selectedFeature = select;
+    }
+
+    @Override
+    public void updateFeaturesAndSelectByFilename(String filename) {
+        updateFeaturesList();
+        CucumberFeature select = featureList.stream()
+                .filter(feature -> feature.getPath().equals(filename))
+                .findFirst().orElse(null);
+
+        if (select == null && selectedFeature != null) {
+            String path = selectedFeature.getPath();
+            select = featureList.stream()
+                    .filter(feature -> feature.getPath().equals(path))
+                    .findFirst().orElse(null);
+        }
         this.selectedFeature = select;
     }
 

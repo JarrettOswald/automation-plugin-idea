@@ -16,6 +16,8 @@ public abstract class FeatureList {
 
     public abstract void updateFeatures();
 
+    public abstract void updateFeaturesAndSelectByFilename(String filename);
+
     public abstract CucumberFeature getSelectedFeature();
 
     public abstract FeatureState getFeatureState(@NotNull CucumberFeature feature);
