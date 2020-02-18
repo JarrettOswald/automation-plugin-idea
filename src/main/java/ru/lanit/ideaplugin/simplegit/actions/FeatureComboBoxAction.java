@@ -163,7 +163,10 @@ public class FeatureComboBoxAction extends ComboBoxAction implements DumbAware {
         public SelectFeatureAction(final CucumberFeature feature, final Project project) {
             myFeature = feature;
             myProject = project;
-            String name = feature.getGherkinFeature().getName();
+            String name = feature.getFeatureElements().stream()
+                    .map(segment -> segment.getGherkinModel().getKeyword() + ": " + segment.getGherkinModel().getName())
+                    .findFirst()
+                    .orElse(feature.getGherkinFeature().getName());
             if (name.isEmpty()) {
                 name = " ";
             }
