@@ -140,6 +140,7 @@ public class PluginSettingsDialog extends DialogWrapper {
         isPluginActive.addChangeListener(this::updateEnabledStateOfElements);
         updateEnabledStateOfElements(null);
         gitRepositoryRootPath.addActionListener(this::fillRemoteGitRepositoryURL);
+        fillRemoteGitRepositoryURL(null);
         return contentPane;
     }
 
