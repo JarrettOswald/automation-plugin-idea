@@ -54,7 +54,10 @@ public class FeatureComboBoxAction extends ComboBoxAction implements DumbAware {
                                            @Nullable Project project,
                                            @NotNull Presentation presentation) {
         if (project != null && feature != null) {
-            String name = feature.getGherkinFeature().getName();
+            String name = feature.getFeatureElements().stream()
+                    .map(segment -> segment.getGherkinModel().getName())
+                    .findFirst()
+                    .orElse(feature.getGherkinFeature().getName());
             presentation.setText(name, false);
             setConfigurationIcon(presentation, feature, project, false);
         }
