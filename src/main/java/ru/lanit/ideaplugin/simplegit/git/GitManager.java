@@ -1,41 +1,44 @@
-package ru.lanit.ideaplugin.simplegit;
+package ru.lanit.ideaplugin.simplegit.git;
 
 import com.intellij.mock.Mock;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.CommonDataKeys;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ServiceManager;
-import com.intellij.openapi.fileEditor.FileDocumentManager;
-import com.intellij.openapi.progress.ProgressIndicator;
-import com.intellij.openapi.progress.ProgressManager;
-import com.intellij.openapi.progress.Task;
+import com.intellij.openapi.progress.*;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.vcs.VcsException;
+import com.intellij.openapi.vcs.*;
+import com.intellij.openapi.vcs.actions.DescindingFilesFilter;
+import com.intellij.openapi.vcs.actions.VcsContext;
+import com.intellij.openapi.vcs.actions.VcsContextWrapper;
 import com.intellij.openapi.vcs.impl.ProjectLevelVcsManagerImpl;
+import com.intellij.openapi.vcs.update.*;
+import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.containers.MultiMap;
+import com.intellij.vcsUtil.VcsUtil;
 import git4idea.GitRemoteBranch;
 import git4idea.GitStandardRemoteBranch;
 import git4idea.GitUtil;
 import git4idea.GitVcs;
-import git4idea.actions.GitPull;
 import git4idea.branch.GitBranchUtil;
 import git4idea.i18n.GitBundle;
-import git4idea.merge.GitPullDialog;
 import git4idea.push.GitPushSupport;
 import git4idea.repo.GitRemote;
 import git4idea.repo.GitRepository;
 import git4idea.repo.GitRepositoryManager;
 import git4idea.update.GitFetchResult;
 import git4idea.update.GitFetcher;
+import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ru.lanit.ideaplugin.simplegit.SimpleGitProjectComponent;
 import ru.lanit.ideaplugin.simplegit.settings.PluginSettingsProvider;
 
 import javax.swing.*;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 import static com.intellij.openapi.vcs.VcsNotifier.NOTIFICATION_GROUP_ID;
 
@@ -43,9 +46,13 @@ public class GitManager {
     private final SimpleGitProjectComponent plugin;
     private boolean repositoryChanging = false;
     private GitRepositoryManager repositoryManager;
+    private ActionInfo myActionInfo;
+    private ScopeInfo myScopeInfo;
 
-    GitManager(SimpleGitProjectComponent plugin) {
+    public GitManager(SimpleGitProjectComponent plugin) {
         this.plugin = plugin;
+        myScopeInfo = ScopeInfo.PROJECT;
+        myActionInfo = ActionInfo.UPDATE;
 
         repositoryManager = ServiceManager.getService(plugin.getProject(), GitRepositoryManager.class);
         subscribeToRepoChangeEvents();
@@ -64,18 +71,19 @@ public class GitManager {
         return repositoryManager.getRepositories();
     }
 
-    public Collection<GitRemote> getRemoteGitRepositories(GitRepository repository){
+    public Collection<GitRemote> getRemoteGitRepositories(GitRepository repository) {
         return repository.getRemotes();
     }
 
     public void synchronizeGit(AnActionEvent event) {
-        ProgressManager.getInstance().run(new Task.Backgroundable(plugin.getProject(), "Synchronize with Git", true) {
-            @Override
-            public void run(@NotNull ProgressIndicator indicator) {
-                fetchGit(indicator);
-//                pushGit();
-            }
-        });
+        updateProject(event);
+//        ProgressManager.getInstance().run(new Task.Backgroundable(plugin.getProject(), "Synchronize with Git", true) {
+//            @Override
+//            public void run(@NotNull ProgressIndicator indicator) {
+//                fetchGit(indicator);
+////                pushGit();
+//            }
+//        });
 /*
         FileDocumentManager.getInstance().saveAllDocuments();
         final Project project = plugin.getProject();
@@ -89,7 +97,23 @@ public class GitManager {
         if (!dialog.showAndGet()) {
             Messages.showMessageDialog(project, "Pull canceled",
                     "Information", Messages.getInformationIcon());
-        }*/
+        }
+
+
+
+        GitRepositoryManager repositoryManager = GitUtil.getRepositoryManager(project);
+        GitRepository repository = repositoryManager.getRepositoryForRoot(dialog.gitRoot());
+        assert repository != null : "Repository can't be null for root " + dialog.gitRoot();
+        String remoteOrUrl = dialog.getRemote();
+        if (remoteOrUrl == null) {
+            return null;
+        }
+
+        GitRemote remote = GitUtil.findRemoteByName(repository, remoteOrUrl);
+        final List<String> urls = remote == null ? Collections.singletonList(remoteOrUrl) : remote.getUrls();
+        Computable<GitLineHandler> handlerProvider = () -> dialog.makeHandler(urls);
+        return new DialogState(dialog.gitRoot(), GitBundle.message("pulling.title", dialog.getRemote()), handlerProvider);
+*/
     }
 
     public List<VirtualFile> getGitRoots(Project project, GitVcs vcs) {
@@ -97,8 +121,7 @@ public class GitManager {
         try {
             GitRepositoryManager.getInstance(project).getRepositoryForFile(new Mock.MyVirtualFile());
             roots = GitUtil.getGitRoots(project, vcs);
-        }
-        catch (VcsException e) {
+        } catch (VcsException e) {
             Messages.showErrorDialog(project, e.getMessage(),
                     GitBundle.getString("repository.action.missing.roots.title"));
             return null;
@@ -250,4 +273,106 @@ public class GitManager {
             }
         });
     }
+
+    private void updateProject(AnActionEvent e) {
+        try {
+            VcsContext context = VcsContextWrapper.createCachedInstanceOn(e);
+            Project project = plugin.getProject();
+            final FilePath[] filePaths = myScopeInfo.getRoots(context, myActionInfo);
+            final FilePath[] roots = DescindingFilesFilter.filterDescindingFiles(filterRoots(filePaths, context), project);
+            if (roots.length == 0) {
+                System.out.println("No roots found.");
+                return;
+            }
+
+            final Map<AbstractVcs, Collection<FilePath>> vcsToVirtualFiles = createVcsToFilesMap(roots, project);
+
+            for (AbstractVcs vcs : vcsToVirtualFiles.keySet()) {
+                final UpdateEnvironment updateEnvironment = myActionInfo.getEnvironment(vcs);
+                if ((updateEnvironment != null) && (!updateEnvironment.validateOptions(vcsToVirtualFiles.get(vcs)))) {
+                    // messages already shown
+                    System.out.println("Options not valid for files: " + vcsToVirtualFiles);
+                    return;
+                }
+            }
+
+            if (ApplicationManager.getApplication().isDispatchThread()) {
+                ApplicationManager.getApplication().saveAll();
+            }
+            Task.Backgroundable task = new Updater(plugin, roots, vcsToVirtualFiles);
+            if (ApplicationManager.getApplication().isUnitTestMode()) {
+                task.run(new EmptyProgressIndicator());
+            } else {
+                ProgressManager.getInstance().run(task);
+            }
+        } catch (ProcessCanceledException ignored) {
+        }
+    }
+
+    private Map<AbstractVcs, Collection<FilePath>> createVcsToFilesMap(@NotNull FilePath[] roots, @NotNull Project project) {
+        MultiMap<AbstractVcs, FilePath> resultPrep = MultiMap.createSet();
+        for (FilePath file : roots) {
+            AbstractVcs vcs = VcsUtil.getVcsFor(project, file);
+            if (vcs != null) {
+                UpdateEnvironment updateEnvironment = myActionInfo.getEnvironment(vcs);
+                if (updateEnvironment != null) {
+                    resultPrep.putValue(vcs, file);
+                }
+            }
+        }
+
+        final Map<AbstractVcs, Collection<FilePath>> result = new THashMap<>();
+        for (Map.Entry<AbstractVcs, Collection<FilePath>> entry : resultPrep.entrySet()) {
+            AbstractVcs<?> vcs = entry.getKey();
+            result.put(vcs, vcs.filterUniqueRoots(new ArrayList<>(entry.getValue()), FilePath::getVirtualFile));
+        }
+        return result;
+    }
+
+    private FilePath[] filterRoots(FilePath[] roots, VcsContext vcsContext) {
+        final ArrayList<FilePath> result = new ArrayList<>();
+        final Project project = vcsContext.getProject();
+        assert project != null;
+        for (FilePath file : roots) {
+            AbstractVcs vcs = VcsUtil.getVcsFor(project, file);
+            if (vcs != null) {
+                if (!myScopeInfo.filterExistsInVcs() || AbstractVcs.fileInVcsByFileStatus(project, file)) {
+                    UpdateEnvironment updateEnvironment = myActionInfo.getEnvironment(vcs);
+                    if (updateEnvironment != null) {
+                        result.add(file);
+                    }
+                } else {
+                    final VirtualFile virtualFile = file.getVirtualFile();
+                    if (virtualFile != null && virtualFile.isDirectory()) {
+                        final VirtualFile[] vcsRoots = ProjectLevelVcsManager.getInstance(vcsContext.getProject()).getAllVersionedRoots();
+                        for (VirtualFile vcsRoot : vcsRoots) {
+                            if (VfsUtilCore.isAncestor(virtualFile, vcsRoot, false)) {
+                                result.add(file);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return result.toArray(new FilePath[result.size()]);
+    }
+
+    static boolean someSessionWasCanceled(List<UpdateSession> updateSessions) {
+        for (UpdateSession updateSession : updateSessions) {
+            if (updateSession.isCanceled()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static String getAllFilesAreUpToDateMessage(FilePath[] roots) {
+        if (roots.length == 1 && !roots[0].isDirectory()) {
+            return VcsBundle.message("message.text.file.is.up.to.date");
+        }
+        else {
+            return VcsBundle.message("message.text.all.files.are.up.to.date");
+        }
+    }
+
 }
