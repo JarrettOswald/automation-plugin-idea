@@ -2,6 +2,7 @@ package ru.lanit.ideaplugin.simplegit.settings;
 
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.project.Project;
+import ru.lanit.ideaplugin.simplegit.dialogs.newfeature.NewFeatureDialog;
 import ru.lanit.ideaplugin.simplegit.dialogs.pluginsettings.PluginSettingsDialog;
 
 import java.util.Arrays;
@@ -72,6 +73,10 @@ public class PluginSettingsProvider {
         pluginSettingsDialog.setFeaturePath(settings.featurePath);
         pluginSettingsDialog.setGitRepositoryRootPath(settings.gitRepositoryRootPath);
         pluginSettingsDialog.setRemoteGitRepositoryURL(settings.remoteGitRepositoryURL);
+    }
+
+    public void setSettingsToNewFeatureDialog(NewFeatureDialog newFeatureDialog) {
+        newFeatureDialog.setCommonTags(settings.commonTags);
     }
 
     public boolean isPluginActive() {
