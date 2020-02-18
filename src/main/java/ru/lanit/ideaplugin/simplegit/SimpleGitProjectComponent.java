@@ -68,25 +68,28 @@ public class SimpleGitProjectComponent implements ProjectComponent, SettingsChan
         settings.setSettingsToNewFeatureDialog(newFeatureDialog);
         newFeatureDialog.show();
         if (newFeatureDialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
-            File file = new File(getFeaturePath(), newFeatureDialog.getFeatureFilename() + ".feature");
+            File file = new File(getFeaturePath(), newFeatureDialog.getFeatureFilename());
             try {
-                file.createNewFile();
-                FileWriter fileWriter = new FileWriter(file);
-                PrintWriter printWriter = new PrintWriter(fileWriter);
-                printWriter.println("# language: ru");
-                printWriter.printf("Функция: %s\n", newFeatureDialog.getFeatureName());
-                for(Tag tag : newFeatureDialog.getFeatureTags()) {
-                    printWriter.printf("    @%s\n", tag.getName());
+                if (file.getParentFile().exists() || file.getParentFile().mkdirs()) {
+                    if (file.createNewFile()) {
+                        FileWriter fileWriter = new FileWriter(file);
+                        PrintWriter printWriter = new PrintWriter(fileWriter);
+                        printWriter.println("# language: ru");
+                        printWriter.printf("Функция: %s\n", newFeatureDialog.getFeatureName());
+                        for (Tag tag : newFeatureDialog.getFeatureTags()) {
+                            printWriter.printf("    @%s\n", tag.getName());
+                        }
+                        printWriter.printf("    Сценарий: %s\n", newFeatureDialog.getScenarioName());
+                        printWriter.close();
+                        VirtualFileSystem fileSystem = LocalFileSystem.getInstance();
+                        VirtualFile virtualFile = fileSystem.refreshAndFindFileByPath(file.getAbsolutePath());
+                        FileEditorManager.getInstance(project).openFile(virtualFile, true);
+                        FeatureList.getInstance(project).updateFeaturesAndSelectByFilename(file.getAbsolutePath());
+                    }
                 }
-                printWriter.printf("    Сценарий: %s\n", newFeatureDialog.getScenarioName());
-                printWriter.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            VirtualFileSystem fileSystem = LocalFileSystem.getInstance();
-            VirtualFile virtualFile = fileSystem.refreshAndFindFileByPath(file.getAbsolutePath());
-            FileEditorManager.getInstance(project).openFile(virtualFile, true);
-            FeatureList.getInstance(project).updateFeaturesAndSelectByFilename(file.getAbsolutePath());
         }
     }
 

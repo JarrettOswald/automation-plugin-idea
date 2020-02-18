@@ -12,7 +12,11 @@ import ru.lanit.ideaplugin.simplegit.SimpleGitProjectComponent;
 import ru.lanit.ideaplugin.simplegit.FeatureTag;
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.text.JTextComponent;
 import java.awt.event.ActionEvent;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -23,7 +27,7 @@ public class NewFeatureDialog extends DialogWrapper {
     private final SimpleGitProjectComponent plugin;
     private JPanel contentPane;
     private JTextField scenarioName;
-    private JTextField featureName;
+    private JComboBox<String> featureName;
     private JTextField featureFilename;
     private JButton addNewTag;
     private JButton removeTag;
@@ -33,6 +37,7 @@ public class NewFeatureDialog extends DialogWrapper {
     private JScrollPane featureTagsScrollPane;
     private JPanel toolPanel;
     private JScrollPane commonTagsScrollPane;
+    private JComboBox comboBox1;
     private DefaultListModel<FeatureTag> commonTagsModel = new DefaultListModel<>();
     private DefaultListModel<FeatureTag> featureTagsModel = new DefaultListModel<>();
 
@@ -45,6 +50,15 @@ public class NewFeatureDialog extends DialogWrapper {
         removeTag.addActionListener(this::removeTagListener);
         getCommonTag.setIcon(JBUI.scale(new SizedIcon(AllIcons.General.SplitLeft, 16, 16)));
         getCommonTag.addActionListener(this::getCommonTagListener);
+
+        DocumentListener featureNameDocumentListener = new DocumentListener() {
+            @Override public void insertUpdate(DocumentEvent e) {rebuildFeatureFilename(null);}
+            @Override public void removeUpdate(DocumentEvent e) {rebuildFeatureFilename(null);}
+            @Override public void changedUpdate(DocumentEvent e) {rebuildFeatureFilename(null);}
+        };
+        final JTextComponent tc = (JTextComponent) featureName.getEditor().getEditorComponent();
+        tc.getDocument().addDocumentListener(featureNameDocumentListener);
+        scenarioName.getDocument().addDocumentListener(featureNameDocumentListener);
         setModal(true);
         pack();
         validate();
@@ -65,6 +79,31 @@ public class NewFeatureDialog extends DialogWrapper {
         featureTags.setCellRenderer(FeatureTag.getCellRenderer());
         return contentPane;
     }
+
+    private String escapeFilename(String name) {
+        String result = name.replaceAll("[<>:\"\\\\/|?]", "_");
+        result = result.replaceAll("(^(\\.|\\s)+|(\\.|\\s)+$)", "");
+        if (result.matches("^(?i)(con|prn|aux|nul|com\\d|lpt\\d)$")) {
+            return "";
+        }
+        return result;
+    }
+
+    private void rebuildFeatureFilename(ActionEvent actionEvent) {
+        String filename;
+        String dir = escapeFilename(getFeatureName());
+        String fn = escapeFilename(getScenarioName());
+        if (dir.isEmpty()) {
+            filename = "";
+        } else {
+            filename = dir +  "\\";
+        }
+        if (!fn.isEmpty()) {
+            filename = filename + fn + ".feature";
+        }
+        featureFilename.setText(filename);
+    }
+
     private void addNewTagListener(ActionEvent e) {
 
     }
@@ -129,7 +168,7 @@ public class NewFeatureDialog extends DialogWrapper {
     }
 
     public String getFeatureName() {
-        return featureName.getText();
+        return (String) featureName.getEditor().getItem();
     }
 
     public String getFeatureFilename() {
@@ -142,14 +181,18 @@ public class NewFeatureDialog extends DialogWrapper {
 
     @Override
     public ValidationInfo doValidate() {
-        if (featureName.getText().isEmpty()) {
+        if (getFeatureName().isEmpty()) {
             return new ValidationInfo("Need to set Feature Name", featureName);
         }
-        if (scenarioName.getText().isEmpty()) {
+        if (getScenarioName().isEmpty()) {
             return new ValidationInfo("Need to set Scenario Name", scenarioName);
         }
-        if (featureFilename.getText().isEmpty()) {
-            return new ValidationInfo("Need to set Feature Filename", featureFilename);
+        if (getFeatureFilename().isEmpty() || getFeatureFilename().endsWith("\\")) {
+            return new ValidationInfo("Cannnot pick up suitable Feature Filename", featureFilename);
+        }
+        File file = new File(plugin.getFeaturePath(), getFeatureFilename());
+        if (file.exists()) {
+            return new ValidationInfo("Feature file with this Filename already exists", featureFilename);
         }
         return null;
     }
