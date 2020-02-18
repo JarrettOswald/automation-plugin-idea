@@ -1,13 +1,22 @@
 <idea-plugin>
     <id>ru.lanit.ideaplugin</id>
     <name>Simple Git</name>
-    <version>1.5</version>
+    <version>1.6</version>
     <idea-version since-build="172.3757.5" until-build="999.*"/>
     <vendor email="lanit@lanit.ru" url="https://lanit.ru">Ланит</vendor>
 
     <description>This plugin helps in community development of Cucumber scenarios by simplifying process of Git interaction.</description>
     <change-notes>
         <![CDATA[
+            Версия 1.6<br><ul>
+            <li>[/] Фикс отображения выбранного сценария</li>
+            <li>[/] Исправлен вывод списка сценариев. Теперь выводятся названия сценариев, а не функционала</li>
+            <li>[/] Фикс. Исправлен вывод списка внешних репозиториев при открытии формы настроек</li>
+            <li>[+] Добавлен метод создания нового сценария с параметрами из соответствующей формы</li>
+            <li>[+] В сервис отслеживания feature файлов добавлен метод обновления и открытия созданного сценария</li>
+            <li>[/] В форму создания нового сценария добавлена работа с тегами</li>
+            <li>[+] Добавлен класс тэга сценария</li>
+            </ul><br>
             Версия 1.5<br><ul>
             <li>[+] Добавлена функциональность обновления проекта. При нажатии на кнопку синхронизации обновляется проект и список feature файлов</li>
             <li>[/] Изменение в совместимости с IntelliJ IDEA: начиная с версии IC-2017.2.2</li>
