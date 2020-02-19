@@ -38,6 +38,8 @@ public class NewFeatureDialog extends DialogWrapper {
     private JPanel toolPanel;
     private JScrollPane commonTagsScrollPane;
     private JComboBox comboBox1;
+    private JTable featureTagsTable;
+    private JScrollPane featureTagsTableScrollPane;
     private DefaultListModel<FeatureTag> commonTagsModel = new DefaultListModel<>();
     private DefaultListModel<FeatureTag> featureTagsModel = new DefaultListModel<>();
 
@@ -45,11 +47,11 @@ public class NewFeatureDialog extends DialogWrapper {
         super(project);
         this.plugin = project.getComponent(SimpleGitProjectComponent.class);
         addNewTag.setIcon(JBUI.scale(new SizedIcon(AllIcons.General.Add, 16, 16)));
-        addNewTag.addActionListener(this::addNewTagListener);
+        addNewTag.addActionListener(this::addNewTagAction);
         removeTag.setIcon(JBUI.scale(new SizedIcon(AllIcons.General.Remove, 16, 16)));
-        removeTag.addActionListener(this::removeTagListener);
+        removeTag.addActionListener(this::removeTagAction);
         getCommonTag.setIcon(JBUI.scale(new SizedIcon(AllIcons.General.SplitLeft, 16, 16)));
-        getCommonTag.addActionListener(this::getCommonTagListener);
+        getCommonTag.addActionListener(this::getCommonTagAction);
 
         DocumentListener featureNameDocumentListener = new DocumentListener() {
             @Override public void insertUpdate(DocumentEvent e) {rebuildFeatureFilename(null);}
@@ -104,11 +106,11 @@ public class NewFeatureDialog extends DialogWrapper {
         featureFilename.setText(filename);
     }
 
-    private void addNewTagListener(ActionEvent e) {
+    private void addNewTagAction(ActionEvent e) {
 
     }
 
-    private void removeTagListener(ActionEvent e) {
+    private void removeTagAction(ActionEvent e) {
         Object[] tags = commonTagsModel.toArray();
         commonTagsModel.clear();
         Stream.concat(
@@ -122,7 +124,7 @@ public class NewFeatureDialog extends DialogWrapper {
         updateSelection();
     }
 
-    private void getCommonTagListener(ActionEvent e) {
+    private void getCommonTagAction(ActionEvent e) {
         Object[] tags = featureTagsModel.toArray();
         featureTagsModel.clear();
         Stream.concat(
