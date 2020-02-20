@@ -10,7 +10,7 @@ import java.awt.*;
 public class FeatureTag {
     private static TagCellRenderer tagCellRenderer = new TagCellRenderer();
 
-    private final String name;
+    private String name;
     private final boolean isCommon;
     private final Integer index;
     private final boolean isEnabled;
@@ -52,6 +52,14 @@ public class FeatureTag {
 
     public static TagCellRenderer getCellRenderer() {
         return tagCellRenderer;
+    }
+
+    public boolean isEditable() {
+        return true;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     private static class TagCellRenderer extends JLabel implements ListCellRenderer<Object> {

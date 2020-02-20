@@ -14,6 +14,7 @@ import ru.lanit.ideaplugin.simplegit.FeatureTag;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.table.AbstractTableModel;
 import javax.swing.text.JTextComponent;
 import java.awt.event.ActionEvent;
 import java.io.File;
@@ -34,12 +35,9 @@ public class NewFeatureDialog extends DialogWrapper {
     private JButton getCommonTag;
     private JList<FeatureTag> featureTags;
     private JList<FeatureTag> commonTags;
-    private JScrollPane featureTagsScrollPane;
-    private JPanel toolPanel;
-    private JScrollPane commonTagsScrollPane;
-    private JComboBox comboBox1;
+    private JComboBox scenarioType;
     private JTable featureTagsTable;
-    private JScrollPane featureTagsTableScrollPane;
+    private JTextField jiraTask;
     private DefaultListModel<FeatureTag> commonTagsModel = new DefaultListModel<>();
     private DefaultListModel<FeatureTag> featureTagsModel = new DefaultListModel<>();
 
@@ -197,5 +195,71 @@ public class NewFeatureDialog extends DialogWrapper {
             return new ValidationInfo("Feature file with this Filename already exists", featureFilename);
         }
         return null;
+    }
+
+    private class FeatureTagTableModel extends AbstractTableModel {
+
+        private List<FeatureTag> tags;
+
+        public FeatureTagTableModel() {
+            tags = new ArrayList<>();
+        }
+
+        public FeatureTagTableModel(List<FeatureTag> tags) {
+            this.tags = tags;
+        }
+
+        @Override
+        public int getColumnCount() {
+            return 1;
+        }
+
+        @Override
+        public String getColumnName(int column) {
+            return "";
+        }
+
+        @Override
+        public int getRowCount() {
+            return tags.size();
+        }
+
+        @Override
+        public Class getColumnClass(int column) {
+            return FeatureTag.class;
+        }
+
+        @Override
+        public boolean isCellEditable(int row, int column) {
+            return getTag(row).isEditable();
+        }
+
+        @Override
+        public Object getValueAt(int row, int column) {
+            return getTag(row).getName();
+        }
+
+        @Override
+        public void setValueAt(Object value, int row, int column) {
+            getTag(row).setName((String) value);
+            fireTableCellUpdated(row, column);
+        }
+
+        private FeatureTag getTag(int row) {
+            return tags.get(row);
+        }
+        public void addTag(FeatureTag tag) {
+            insertTag(getRowCount(), tag);
+        }
+
+        public void insertTag(int row, FeatureTag tag) {
+            tags.add(row, tag);
+            fireTableRowsInserted(row, row);
+        }
+
+        public void removeTag(int row) {
+            tags.remove(row);
+            fireTableRowsDeleted(row, row);
+        }
     }
 }

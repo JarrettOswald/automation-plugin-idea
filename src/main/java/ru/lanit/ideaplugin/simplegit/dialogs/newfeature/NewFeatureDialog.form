@@ -80,7 +80,7 @@
           <text value="Common tags:"/>
         </properties>
       </component>
-      <grid id="2ebef" binding="toolPanel" layout-manager="GridBagLayout">
+      <grid id="2ebef" layout-manager="GridBagLayout">
         <constraints>
           <grid row="5" column="3" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
           <gridbag top="3" left="3" bottom="3" right="3" weightx="0.0" weighty="0.0"/>
@@ -147,7 +147,7 @@
           </vspacer>
         </children>
       </grid>
-      <scrollpane id="a827d" binding="featureTagsScrollPane">
+      <scrollpane id="a827d">
         <constraints>
           <grid row="5" column="1" row-span="1" col-span="2" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
           <gridbag top="3" left="3" bottom="3" right="3" weightx="1.0" weighty="0.0"/>
@@ -163,7 +163,7 @@
           </component>
         </children>
       </scrollpane>
-      <scrollpane id="3bbd9" binding="commonTagsScrollPane">
+      <scrollpane id="3bbd9">
         <constraints>
           <grid row="5" column="4" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
           <gridbag top="3" left="3" bottom="3" right="3" weightx="2.0" weighty="0.0"/>
@@ -210,7 +210,7 @@
           <text value="Jira Task:"/>
         </properties>
       </component>
-      <component id="d0be4" class="javax.swing.JComboBox" binding="comboBox1" default-binding="true">
+      <component id="d0be4" class="javax.swing.JComboBox" binding="scenarioType">
         <constraints>
           <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
           <gridbag weightx="1.0" weighty="0.0"/>
@@ -233,7 +233,7 @@
           <text value="Feature tags:"/>
         </properties>
       </component>
-      <component id="82eba" class="javax.swing.JTextField">
+      <component id="82eba" class="javax.swing.JTextField" binding="jiraTask">
         <constraints>
           <grid row="2" column="3" row-span="1" col-span="2" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
             <preferred-size width="150" height="-1"/>
@@ -250,7 +250,7 @@
           <gridbag weightx="0.0" weighty="1.0"/>
         </constraints>
       </vspacer>
-      <scrollpane id="e57c9" binding="featureTagsTableScrollPane">
+      <scrollpane id="e57c9">
         <constraints>
           <grid row="6" column="1" row-span="1" col-span="2" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
           <gridbag top="3" left="3" bottom="3" right="3" weightx="1.0" weighty="0.0"/>
