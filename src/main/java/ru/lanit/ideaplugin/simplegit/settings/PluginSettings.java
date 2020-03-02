@@ -1,6 +1,7 @@
 package ru.lanit.ideaplugin.simplegit.settings;
 
 import com.intellij.ide.util.PropertyName;
+import ru.lanit.ideaplugin.simplegit.tags.tag.CommonTag;
 
 import java.util.List;
 
@@ -8,8 +9,8 @@ public class PluginSettings {
     @PropertyName(value = "simplegit.settings.pluginActive", defaultValue = "false")
     boolean pluginActive;
 
-    @PropertyName(value = "simplegit.settings.commonTags")
-    List<String> commonTags;
+    @PropertyName(value = "simplegit.settings.commonTagsList")
+    List<CommonTag> commonTags;
 
     @PropertyName(value = "simplegit.settings.featurePath")
     String featurePath;
@@ -24,7 +25,7 @@ public class PluginSettings {
         return pluginActive;
     }
 
-    public List<String> getCommonTags() {
+    public List<CommonTag> getCommonTags() {
         return commonTags;
     }
 

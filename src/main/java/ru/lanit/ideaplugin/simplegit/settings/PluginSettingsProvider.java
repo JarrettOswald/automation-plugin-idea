@@ -4,9 +4,11 @@ import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.project.Project;
 import ru.lanit.ideaplugin.simplegit.dialogs.newfeature.NewFeatureDialog;
 import ru.lanit.ideaplugin.simplegit.dialogs.pluginsettings.PluginSettingsDialog;
+import ru.lanit.ideaplugin.simplegit.tags.tag.CommonTag;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class PluginSettingsProvider {
     private final PropertiesComponent properties;
@@ -56,7 +58,7 @@ public class PluginSettingsProvider {
         settings.pluginActive = pluginSettingsDialog.isPluginActive();
         settings.commonTags = pluginSettingsDialog.getCommonTags().isEmpty()
                 ? null
-                : Arrays.asList(pluginSettingsDialog.getCommonTags().split(";"));
+                : Arrays.stream(pluginSettingsDialog.getCommonTags().split(";")).map(CommonTag::new).collect(Collectors.toList());
         settings.featurePath = pluginSettingsDialog.getFeaturePath();
         settings.gitRepositoryRootPath = pluginSettingsDialog.getGitRepositoryRootPath();
         settings.remoteGitRepositoryURL = pluginSettingsDialog.getRemoteGitRepositoryURL();
@@ -68,7 +70,7 @@ public class PluginSettingsProvider {
         pluginSettingsDialog.setPluginActive(settings.pluginActive);
         pluginSettingsDialog.setCommonTags(settings.commonTags == null
                 ? ""
-                : String.join(";", settings.commonTags)
+                : settings.commonTags.stream().map(CommonTag::toString).collect(Collectors.joining(";"))
         );
         pluginSettingsDialog.setFeaturePath(settings.featurePath);
         pluginSettingsDialog.setGitRepositoryRootPath(settings.gitRepositoryRootPath);
@@ -83,7 +85,7 @@ public class PluginSettingsProvider {
         return settings.pluginActive;
     }
 
-    public List<String> getCommonTags() {
+    public List<CommonTag> getCommonTags() {
         return settings.commonTags;
     }
 
