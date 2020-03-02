@@ -9,7 +9,9 @@ import com.intellij.util.ui.JBUI;
 import gherkin.formatter.model.Tag;
 import org.jetbrains.annotations.Nullable;
 import ru.lanit.ideaplugin.simplegit.SimpleGitProjectComponent;
-import ru.lanit.ideaplugin.simplegit.FeatureTag;
+import ru.lanit.ideaplugin.simplegit.tags.tag.AbstractTag;
+import ru.lanit.ideaplugin.simplegit.tags.tag.CommonTag;
+import ru.lanit.ideaplugin.simplegit.tags.model.FeatureTagTableModel;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -33,13 +35,14 @@ public class NewFeatureDialog extends DialogWrapper {
     private JButton addNewTag;
     private JButton removeTag;
     private JButton getCommonTag;
-    private JList<FeatureTag> featureTags;
-    private JList<FeatureTag> commonTags;
+    private JList<AbstractTag> featureTags;
+    private JList<AbstractTag> commonTags;
     private JComboBox scenarioType;
     private JTable featureTagsTable;
     private JTextField jiraTask;
-    private DefaultListModel<FeatureTag> commonTagsModel = new DefaultListModel<>();
-    private DefaultListModel<FeatureTag> featureTagsModel = new DefaultListModel<>();
+    private DefaultListModel<AbstractTag> commonTagsModel = new DefaultListModel<>();
+    private DefaultListModel<AbstractTag> featureTagsModel = new DefaultListModel<>();
+    private FeatureTagTableModel featureTagsTableModel = new FeatureTagTableModel();
 
     public NewFeatureDialog(@Nullable Project project) {
         super(project);
@@ -76,7 +79,7 @@ public class NewFeatureDialog extends DialogWrapper {
     protected JComponent createCenterPanel() {
         commonTags.setModel(commonTagsModel);
         featureTags.setModel(featureTagsModel);
-        featureTags.setCellRenderer(FeatureTag.getCellRenderer());
+        featureTagsTableModel.attachToTable(featureTagsTable);
         return contentPane;
     }
 
@@ -112,9 +115,9 @@ public class NewFeatureDialog extends DialogWrapper {
         Object[] tags = commonTagsModel.toArray();
         commonTagsModel.clear();
         Stream.concat(
-                Arrays.stream(tags).map(obj -> (FeatureTag) obj),
-                featureTags.getSelectedValuesList().stream().filter(FeatureTag::isCommon)
-        ).sorted(Comparator.comparingInt(FeatureTag::getIndex)).forEachOrdered(commonTagsModel::addElement);
+                Arrays.stream(tags).map(obj -> (AbstractTag) obj),
+                featureTags.getSelectedValuesList().stream().filter(AbstractTag::isCommon)
+        ).sorted(Comparator.comparingInt(AbstractTag::getIndex)).forEachOrdered(commonTagsModel::addElement);
         int[] selectedIndices = featureTags.getSelectedIndices();
         for (int i = selectedIndices.length - 1; i >= 0; i--) {
             featureTagsModel.remove(selectedIndices[i]);
@@ -125,12 +128,19 @@ public class NewFeatureDialog extends DialogWrapper {
     private void getCommonTagAction(ActionEvent e) {
         Object[] tags = featureTagsModel.toArray();
         featureTagsModel.clear();
+        featureTagsTableModel.clear();
         Stream.concat(
-                Arrays.stream(tags).map(obj -> (FeatureTag) obj).filter(FeatureTag::isCommon),
+                Arrays.stream(tags).map(obj -> (AbstractTag) obj).filter(AbstractTag::isCommon),
                 commonTags.getSelectedValuesList().stream()
-        ).sorted(Comparator.comparingInt(FeatureTag::getIndex)).forEachOrdered(featureTagsModel::addElement);
-        Arrays.stream(tags).map(obj -> (FeatureTag) obj)
-                .filter(tag -> !tag.isCommon()).forEachOrdered(featureTagsModel::addElement);
+        ).sorted(Comparator.comparingInt(AbstractTag::getIndex)).forEachOrdered(tag -> {
+            featureTagsModel.addElement(tag);
+            featureTagsTableModel.addTag(tag);
+        });
+        Arrays.stream(tags).map(obj -> (AbstractTag) obj)
+                .filter(tag -> !tag.isCommon()).forEachOrdered(tag -> {
+            featureTagsModel.addElement(tag);
+            featureTagsTableModel.addTag(tag);
+        });
         int[] selectedIndices = commonTags.getSelectedIndices();
         for (int i = selectedIndices.length - 1; i >= 0; i--) {
             commonTagsModel.remove(selectedIndices[i]);
@@ -147,13 +157,10 @@ public class NewFeatureDialog extends DialogWrapper {
         }
     }
 
-    public void setCommonTags(List<String> commonTagsList) {
+    public void setCommonTags(List<CommonTag> commonTagsList) {
         commonTagsModel.clear();
         if (commonTagsList != null) {
-            for (int i = 0; i < commonTagsList.size(); i++) {
-                FeatureTag tag = new FeatureTag(commonTagsList.get(i), i);
-                commonTagsModel.addElement(tag);
-            }
+            commonTagsList.forEach(commonTagsModel::addElement);
             commonTags.setSelectedIndex(0);
         }
     }
@@ -162,7 +169,7 @@ public class NewFeatureDialog extends DialogWrapper {
         Object[] tags = featureTagsModel.toArray();
         List<Tag> result = new ArrayList<>();
         for(int i = 0; i < tags.length; i++) {
-            result.add(new Tag(((FeatureTag) tags[i]).getName(), i));
+            result.add(new Tag(((AbstractTag) tags[i]).getName(), i));
         }
         return result;
     }
