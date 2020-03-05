@@ -1,23 +1,20 @@
 package ru.lanit.ideaplugin.simplegit.tags.tag;
 
 import com.intellij.icons.AllIcons;
+import org.jetbrains.annotations.NotNull;
+import ru.lanit.ideaplugin.simplegit.tags.model.AbstractTagList;
 
 import javax.swing.*;
 
 public class CommonTag extends AbstractTag {
     private static Icon ICON = initializeIcon(AllIcons.Toolwindows.ToolWindowFavorites);
 
-    public CommonTag(String name) {
-        super(name, null);
+    public CommonTag(AbstractTagList<CommonTag> tagList) {
+        super(tagList);
     }
 
-    public CommonTag(String name, Integer index) {
-        super(name, index);
-    }
-
-    @Override
-    public boolean isCommon() {
-        return true;
+    public CommonTag(AbstractTagList<CommonTag> tagList, String name) {
+        super(tagList, name);
     }
 
     @Override

@@ -4,11 +4,8 @@ import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.project.Project;
 import ru.lanit.ideaplugin.simplegit.dialogs.newfeature.NewFeatureDialog;
 import ru.lanit.ideaplugin.simplegit.dialogs.pluginsettings.PluginSettingsDialog;
-import ru.lanit.ideaplugin.simplegit.tags.tag.CommonTag;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
+import ru.lanit.ideaplugin.simplegit.tags.model.EditableCommonTagList;
+import ru.lanit.ideaplugin.simplegit.tags.model.FixedCommonTagList;
 
 public class PluginSettingsProvider {
     private final PropertiesComponent properties;
@@ -24,7 +21,7 @@ public class PluginSettingsProvider {
         PluginSettings oldSettings = settings;
         settings = new PluginSettings();
         if (properties.loadFields(settings)) {
-            cleanupSettings(settings);
+            settings.cleanup();
             changeListener.onSettingsChange(settings, oldSettings);
             return true;
         }
@@ -36,18 +33,6 @@ public class PluginSettingsProvider {
         return properties.saveFields(settings);
     }
 
-    private void cleanupSettings(PluginSettings settings) {
-        if (isNull(settings.featurePath)) {
-            settings.featurePath = "";
-        }
-        if (isNull(settings.gitRepositoryRootPath)) {
-            settings.gitRepositoryRootPath = "";
-        }
-        if (isNull(settings.remoteGitRepositoryURL)) {
-            settings.remoteGitRepositoryURL = "";
-        }
-    }
-
     private boolean isNull(String value) {
         return (value == null || value.equals("null"));
     }
@@ -55,53 +40,48 @@ public class PluginSettingsProvider {
     public void setSettingsFromDialog(PluginSettingsDialog pluginSettingsDialog) {
         PluginSettings oldSettings = settings;
         settings = new PluginSettings();
-        settings.pluginActive = pluginSettingsDialog.isPluginActive();
-        settings.commonTags = pluginSettingsDialog.getCommonTags().isEmpty()
-                ? null
-                : Arrays.stream(pluginSettingsDialog.getCommonTags().split(";")).map(CommonTag::new).collect(Collectors.toList());
-        settings.featurePath = pluginSettingsDialog.getFeaturePath();
-        settings.gitRepositoryRootPath = pluginSettingsDialog.getGitRepositoryRootPath();
-        settings.remoteGitRepositoryURL = pluginSettingsDialog.getRemoteGitRepositoryURL();
+        settings.setPluginActive(pluginSettingsDialog.isPluginActive());
+        settings.setCommonTags(pluginSettingsDialog.getCommonTags());
+        settings.setFeaturePath(pluginSettingsDialog.getFeaturePath());
+        settings.setGitRepositoryRootPath(pluginSettingsDialog.getGitRepositoryRootPath());
+        settings.setRemoteGitRepositoryURL(pluginSettingsDialog.getRemoteGitRepositoryURL());
         saveAllSettings();
         changeListener.onSettingsChange(settings, oldSettings);
     }
 
     public void setSettingsToDialog(PluginSettingsDialog pluginSettingsDialog) {
-        pluginSettingsDialog.setPluginActive(settings.pluginActive);
-        pluginSettingsDialog.setCommonTags(settings.commonTags == null
-                ? ""
-                : settings.commonTags.stream().map(CommonTag::toString).collect(Collectors.joining(";"))
-        );
-        pluginSettingsDialog.setFeaturePath(settings.featurePath);
-        pluginSettingsDialog.setGitRepositoryRootPath(settings.gitRepositoryRootPath);
-        pluginSettingsDialog.setRemoteGitRepositoryURL(settings.remoteGitRepositoryURL);
+        pluginSettingsDialog.setPluginActive(settings.isPluginActive());
+        pluginSettingsDialog.setCommonTags(settings.getCommonTags());
+        pluginSettingsDialog.setFeaturePath(settings.getFeaturePath());
+        pluginSettingsDialog.setGitRepositoryRootPath(settings.getGitRepositoryRootPath());
+        pluginSettingsDialog.setRemoteGitRepositoryURL(settings.getRemoteGitRepositoryURL());
     }
 
     public void setSettingsToNewFeatureDialog(NewFeatureDialog newFeatureDialog) {
-        newFeatureDialog.setCommonTags(settings.commonTags);
+        newFeatureDialog.setCommonTags(getCommonTags());
     }
 
     public boolean isPluginActive() {
-        return settings.pluginActive;
+        return settings.isPluginActive();
     }
 
-    public List<CommonTag> getCommonTags() {
-        return settings.commonTags;
+    public EditableCommonTagList getCommonTags() {
+        return settings.getCommonTags();
     }
 
     public String getFeaturePath() {
-        return settings.featurePath;
+        return settings.getFeaturePath();
     }
 
     public String getGitRepositoryRootPath() {
-        return settings.gitRepositoryRootPath;
+        return settings.getGitRepositoryRootPath();
     }
 
     public String getRemoteGitRepositoryURL() {
-        return settings.remoteGitRepositoryURL;
+        return settings.getRemoteGitRepositoryURL();
     }
 
     public void setRemoteGitRepositoryURL(String remoteGitRepositoryURL) {
-        settings.remoteGitRepositoryURL = remoteGitRepositoryURL;
+        settings.setRemoteGitRepositoryURL(remoteGitRepositoryURL);
     }
 }

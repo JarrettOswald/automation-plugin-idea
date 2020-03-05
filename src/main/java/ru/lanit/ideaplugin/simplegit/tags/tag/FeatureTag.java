@@ -1,19 +1,17 @@
 package ru.lanit.ideaplugin.simplegit.tags.tag;
 
+import ru.lanit.ideaplugin.simplegit.tags.model.AbstractTagList;
+import ru.lanit.ideaplugin.simplegit.tags.model.FeatureTagList;
+
 import javax.swing.*;
 
 public class FeatureTag extends AbstractTag {
-    public FeatureTag(String name) {
-        super(name, null);
+    public FeatureTag(AbstractTagList<AbstractTag> tagList) {
+        super(tagList);
     }
 
-    public FeatureTag(String name, Integer index) {
-        super(name, index);
-    }
-
-    @Override
-    public boolean isCommon() {
-        return false;
+    public FeatureTag(AbstractTagList<AbstractTag> tagList, String name) {
+        super(tagList, name);
     }
 
     @Override

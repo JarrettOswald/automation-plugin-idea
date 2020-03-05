@@ -2,18 +2,22 @@ package ru.lanit.ideaplugin.simplegit.tags.tag;
 
 import com.intellij.ui.SizedIcon;
 import com.intellij.util.ui.JBUI;
+import org.jetbrains.annotations.NotNull;
+import ru.lanit.ideaplugin.simplegit.tags.model.AbstractTagList;
 
 import javax.swing.*;
 
-public abstract class AbstractTag {
+public abstract class AbstractTag<T extends AbstractTagList<AbstractTag<T>>> implements Comparable<AbstractTag<T>> {
+    private final T tagList;
     private String name;
-    private Integer index;
 
-    public AbstractTag() {}
+    public AbstractTag(T tagList) {
+        this.tagList = tagList;
+    }
 
-    public AbstractTag(String name, Integer index) {
+    public AbstractTag(T tagList, String name) {
+        this(tagList);
         this.name = name;
-        this.index = index;
     }
 
     public String getName() {
@@ -25,14 +29,12 @@ public abstract class AbstractTag {
     }
 
     public Integer getIndex() {
-        return index;
+        return tagList.getTagIndex(this);
     }
 
-    public void setIndex(Integer index) {
-        this.index = index;
+    public boolean isUnnamed() {
+        return this.name == null;
     }
-
-    abstract public boolean isCommon();
 
     abstract public boolean isEnabled();
 
@@ -40,6 +42,17 @@ public abstract class AbstractTag {
 
     protected static Icon initializeIcon(Icon icon) {
         return JBUI.scale(new SizedIcon(icon, 16, 16));
+    }
+
+    @Override
+    public int compareTo(@NotNull AbstractTag tag) {
+        Integer typeOrdinal1 = TagType.getTagTypeByTag(this).ordinal();
+        Integer typeOrdinal2 = TagType.getTagTypeByTag(tag).ordinal();
+        int result = typeOrdinal1.compareTo(typeOrdinal2);
+        if (result == 0) {
+            return getIndex().compareTo(tag.getIndex());
+        }
+        return result;
     }
 
     @Override

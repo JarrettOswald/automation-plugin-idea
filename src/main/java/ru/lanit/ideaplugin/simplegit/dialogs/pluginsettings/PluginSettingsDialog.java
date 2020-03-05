@@ -13,6 +13,8 @@ import git4idea.repo.GitRemote;
 import git4idea.repo.GitRepository;
 import org.jetbrains.annotations.Nullable;
 import ru.lanit.ideaplugin.simplegit.SimpleGitProjectComponent;
+import ru.lanit.ideaplugin.simplegit.tags.model.EditableCommonTagList;
+import ru.lanit.ideaplugin.simplegit.tags.model.FixedCommonTagList;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -174,12 +176,16 @@ public class PluginSettingsDialog extends DialogWrapper {
         featurePath.setText(path);
     }
 
-    public String getCommonTags() {
-        return commonTags.getText();
+    public EditableCommonTagList getCommonTags() {
+        String tags = commonTags.getText();
+        if (tags.isEmpty()) {
+            return new EditableCommonTagList();
+        }
+        return new EditableCommonTagList(tags.split(";"));
     }
 
-    public void setCommonTags(String tags) {
-        commonTags.setText(tags);
+    public void setCommonTags(EditableCommonTagList tags) {
+        commonTags.setText(tags.toString());
     }
 
     public boolean isPluginActive() {

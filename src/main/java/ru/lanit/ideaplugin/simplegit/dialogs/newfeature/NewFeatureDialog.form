@@ -2,7 +2,7 @@
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="ru.lanit.ideaplugin.simplegit.dialogs.newfeature.NewFeatureDialog">
   <grid id="cbd77" binding="contentPane" layout-manager="GridBagLayout">
     <constraints>
-      <xy x="20" y="43" width="800" height="514"/>
+      <xy x="20" y="43" width="800" height="300"/>
     </constraints>
     <properties>
       <minimumSize width="800" height="300"/>
@@ -150,15 +150,25 @@
       <scrollpane id="a827d">
         <constraints>
           <grid row="5" column="1" row-span="1" col-span="2" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-          <gridbag top="3" left="3" bottom="3" right="3" weightx="1.0" weighty="0.0"/>
+          <gridbag top="3" left="3" bottom="3" right="3" weightx="1.0" weighty="1.0"/>
         </constraints>
-        <properties/>
+        <properties>
+          <horizontalScrollBarPolicy value="31"/>
+        </properties>
         <border type="bevel-lowered"/>
         <children>
-          <component id="a18ae" class="javax.swing.JList" binding="featureTags">
+          <component id="2c85e" class="javax.swing.JTable" binding="featureTagsTable">
             <constraints/>
             <properties>
-              <model/>
+              <autoCreateColumnsFromModel value="false"/>
+              <autoResizeMode value="4"/>
+              <autoscrolls value="true"/>
+              <cellSelectionEnabled value="true"/>
+              <fillsViewportHeight value="true"/>
+              <preferredScrollableViewportSize width="150" height="100"/>
+              <preferredSize width="150" height="100"/>
+              <showHorizontalLines value="false"/>
+              <showVerticalLines value="false"/>
             </properties>
           </component>
         </children>
@@ -166,7 +176,7 @@
       <scrollpane id="3bbd9">
         <constraints>
           <grid row="5" column="4" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-          <gridbag top="3" left="3" bottom="3" right="3" weightx="2.0" weighty="0.0"/>
+          <gridbag top="3" left="3" bottom="3" right="3" weightx="1.0" weighty="1.0"/>
         </constraints>
         <properties/>
         <border type="bevel-lowered"/>
@@ -247,29 +257,9 @@
       <vspacer id="d8a47">
         <constraints>
           <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="1" fill="0" indent="0" use-parent-layout="false"/>
-          <gridbag weightx="0.0" weighty="1.0"/>
+          <gridbag weightx="0.0" weighty="0.0"/>
         </constraints>
       </vspacer>
-      <scrollpane id="e57c9">
-        <constraints>
-          <grid row="6" column="1" row-span="1" col-span="2" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-          <gridbag top="3" left="3" bottom="3" right="3" weightx="1.0" weighty="0.0"/>
-        </constraints>
-        <properties/>
-        <border type="bevel-lowered"/>
-        <children>
-          <component id="afc23" class="javax.swing.JTable" binding="featureTagsTable">
-            <constraints/>
-            <properties>
-              <autoCreateColumnsFromModel value="false"/>
-              <autoscrolls value="false"/>
-              <cellSelectionEnabled value="true"/>
-              <fillsViewportHeight value="true"/>
-              <preferredSize width="150" height="100"/>
-            </properties>
-          </component>
-        </children>
-      </scrollpane>
     </children>
   </grid>
 </form>

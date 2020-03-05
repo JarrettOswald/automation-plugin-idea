@@ -135,6 +135,7 @@ public class SimpleGitProjectComponent implements ProjectComponent, SettingsChan
             featureList.updateFeatures();
         }
     }
+
     public void updateFeatures() {
         featureList.updateFeatures();/*
         final SvnVcs vcs = SvnVcs.getInstance(project);
