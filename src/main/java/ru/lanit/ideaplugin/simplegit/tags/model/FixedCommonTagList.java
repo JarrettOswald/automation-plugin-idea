@@ -9,12 +9,8 @@ public class FixedCommonTagList extends AbstractTagList<CommonTag> {
         super();
     }
 
-    public FixedCommonTagList(String[] tagNames) {
-        super();
-        allTags = Arrays.stream(tagNames)
-                .map(name -> new CommonTag(this, name))
-                .collect(Collectors.toCollection(ArrayList::new));
-        this.tags.addAll(allTags);
+    public FixedCommonTagList(EditableCommonTagList commonTagsList) {
+        this.tags = commonTagsList.getTags();
     }
 
     @Override

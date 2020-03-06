@@ -200,13 +200,17 @@ abstract public class AbstractTagList<T extends AbstractTag> extends AbstractTab
         }
     }
 
-    static class TagCellEditor extends DefaultCellEditor {
+    private static class TagCellEditor extends DefaultCellEditor {
 
         Object value;
 
         public TagCellEditor() {
             super(new JTextField());
-            getComponent().setName("Table.editor");
+            JTextField component = (JTextField) getComponent();
+            component.setName("Table.editor");
+            NoSpacesDocument nsd = new NoSpacesDocument();
+            nsd.setNoSpaces(true);
+            component.setDocument(nsd);
         }
 
         public boolean stopCellEditing() {
@@ -232,5 +236,21 @@ abstract public class AbstractTagList<T extends AbstractTag> extends AbstractTab
         public Object getCellEditorValue() {
             return value;
         }
+    }
+
+    private static class NoSpacesDocument extends PlainDocument {
+        private boolean noSpaces = true;
+
+        public void setNoSpaces(boolean flag) {
+            noSpaces = flag;
+        }
+
+        public void insertString(int offset, String str, AttributeSet attSet)
+                throws BadLocationException {
+            if (noSpaces)
+                str = str.replaceAll("\\s", "");
+            super.insertString(offset, str, attSet);
+        }
+
     }
 }
