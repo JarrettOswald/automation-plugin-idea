@@ -24,6 +24,11 @@ public abstract class AbstractTag<T extends AbstractTagList<AbstractTag<T>>> imp
         return name;
     }
 
+    public String getTagAsString() {
+        if (name == null) return "";
+        return "@" + name;
+    }
+
     public void setName(String name) {
         this.name = name;
     }

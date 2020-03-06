@@ -13,9 +13,16 @@ import cucumber.runtime.CucumberException;
 import cucumber.runtime.io.FileResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
 import cucumber.runtime.model.CucumberTagStatement;
+import gherkin.formatter.JSONFormatter;
+import gherkin.parser.Parser;
+import gherkin.util.FixJava;
 import org.jetbrains.annotations.NotNull;
 import ru.lanit.ideaplugin.simplegit.SimpleGitProjectComponent;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -35,6 +42,27 @@ public class FeatureListImpl extends FeatureList implements BulkFileListener {
         this.editFeature = false;
         updateFeatures();
         plugin.getProject().getMessageBus().connect().subscribe(VirtualFileManager.VFS_CHANGES, this);
+    }
+
+    private String readFeatureFile(String path) throws FileNotFoundException, UnsupportedEncodingException {
+        String gherkin = FixJava.readReader(new InputStreamReader(
+                new FileInputStream(path), "UTF-8"));
+        System.out.println("gherkin...\n" + gherkin);
+
+        StringBuilder json = new StringBuilder();
+
+        System.out.println("json: '" + json + "'");
+
+        JSONFormatter formatter = new JSONFormatter(json);
+
+        System.out.println("formatter: "+formatter.toString());
+
+        Parser parser = new Parser(formatter);
+
+        System.out.println("parser: " + parser.toString());
+        parser.parse(gherkin, path, 0);
+        System.out.println("json: '" + json + "'"); // Gherkin source as JSON
+        return json.toString();
     }
 
     private void updateFeaturesList() {
