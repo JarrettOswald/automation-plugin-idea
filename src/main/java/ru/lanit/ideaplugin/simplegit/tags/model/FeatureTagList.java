@@ -3,8 +3,6 @@ package ru.lanit.ideaplugin.simplegit.tags.model;
 import ru.lanit.ideaplugin.simplegit.tags.tag.AbstractTag;
 import ru.lanit.ideaplugin.simplegit.tags.tag.FeatureTag;
 
-import java.awt.*;
-
 public class FeatureTagList extends AbstractTagList<AbstractTag> {
     private static FeatureTagCellRenderer tagCellRenderer = new FeatureTagCellRenderer();
 

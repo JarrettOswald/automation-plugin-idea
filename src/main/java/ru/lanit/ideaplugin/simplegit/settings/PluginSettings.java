@@ -2,10 +2,6 @@ package ru.lanit.ideaplugin.simplegit.settings;
 
 import com.intellij.ide.util.PropertyName;
 import ru.lanit.ideaplugin.simplegit.tags.model.EditableCommonTagList;
-import ru.lanit.ideaplugin.simplegit.tags.model.FixedCommonTagList;
-import ru.lanit.ideaplugin.simplegit.tags.tag.CommonTag;
-
-import java.util.List;
 
 public class PluginSettings {
     @PropertyName(value = "simplegit.settings.pluginActive", defaultValue = "false")

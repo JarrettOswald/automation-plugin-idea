@@ -2,20 +2,21 @@ package ru.lanit.ideaplugin.simplegit.tags.model;
 
 import org.jetbrains.annotations.NotNull;
 import ru.lanit.ideaplugin.simplegit.tags.tag.AbstractTag;
-import ru.lanit.ideaplugin.simplegit.tags.tag.CommonTag;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableRowSorter;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.PlainDocument;
 import java.awt.*;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.*;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Collectors;
 
 abstract public class AbstractTagList<T extends AbstractTag> extends AbstractTableModel {
     protected ArrayList<T> tags;
@@ -62,7 +63,6 @@ abstract public class AbstractTagList<T extends AbstractTag> extends AbstractTab
     public void setValueAt(Object value, int row, int column) {
         T tag = getTag(row);
         String name = (String) value;
-        System.out.println("Try to set name " + name);
         if (tag.getName() == null && (name == null || name.isEmpty())) {
             removeTag(row);
         } else {
@@ -91,13 +91,19 @@ abstract public class AbstractTagList<T extends AbstractTag> extends AbstractTab
         fireTableRowsInserted(row, row);
     }
 
-    public void insertCommonTags(List<CommonTag> commonTags) {
-
+    public List<T> removeTags(int[] rows) {
+        return Arrays.stream(rows)
+                .map(table::convertRowIndexToModel)
+                .boxed()
+                .sorted(Comparator.reverseOrder())
+                .map(this::removeTag)
+                .collect(Collectors.toList());
     }
 
-    public void removeTag(int row) {
-        tags.remove(row);
+    public T removeTag(int row) {
+        T tag = tags.remove(row);
         fireTableRowsDeleted(row, row);
+        return tag;
     }
 
     abstract public AbstractTagCellRenderer<T> getCellRenderer();

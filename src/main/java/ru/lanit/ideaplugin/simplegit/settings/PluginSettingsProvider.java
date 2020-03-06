@@ -5,7 +5,6 @@ import com.intellij.openapi.project.Project;
 import ru.lanit.ideaplugin.simplegit.dialogs.newfeature.NewFeatureDialog;
 import ru.lanit.ideaplugin.simplegit.dialogs.pluginsettings.PluginSettingsDialog;
 import ru.lanit.ideaplugin.simplegit.tags.model.EditableCommonTagList;
-import ru.lanit.ideaplugin.simplegit.tags.model.FixedCommonTagList;
 
 public class PluginSettingsProvider {
     private final PropertiesComponent properties;

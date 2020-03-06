@@ -25,8 +25,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
-import java.util.function.Predicate;
-import java.util.stream.Stream;
+import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class NewFeatureDialog extends DialogWrapper {
     private final SimpleGitProjectComponent plugin;
@@ -113,17 +115,11 @@ public class NewFeatureDialog extends DialogWrapper {
     }
 
     private void removeTagAction(ActionEvent e) {
-//        CommonTag[] tags = (CommonTag[]) commonTagsModel.toArray();
-//        commonTagsModel.clear();
-//        Stream.concat(
-//                Arrays.stream(tags),
-//                featureTags.getSelectedValuesList().stream().filter(CommonTag.class::isInstance).map(CommonTag.class::cast)
-//        ).sorted(Comparator.comparingInt(AbstractTag::getIndex)).forEachOrdered(commonTagsModel::addElement);
-//        int[] selectedIndices = featureTags.getSelectedIndices();
-//        for (int i = selectedIndices.length - 1; i >= 0; i--) {
-//            featureTagsModel.remove(selectedIndices[i]);
-//        }
-//        updateSelection();
+        List<AbstractTag> removedTags = featureTagsList.removeTags(featureTagsTable.getSelectedRows());
+        List<CommonTag> commonTags = removedTags.stream()
+                .filter(CommonTag.class::isInstance).map(CommonTag.class::cast)
+                .collect(Collectors.toList());
+        commonTagsList.addTags(commonTags);
     }
 
     private void getCommonTagAction(ActionEvent e) {

@@ -1,7 +1,6 @@
 package ru.lanit.ideaplugin.simplegit.tags.tag;
 
 import com.intellij.icons.AllIcons;
-import org.jetbrains.annotations.NotNull;
 import ru.lanit.ideaplugin.simplegit.tags.model.AbstractTagList;
 
 import javax.swing.*;

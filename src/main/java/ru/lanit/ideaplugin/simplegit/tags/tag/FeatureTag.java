@@ -1,7 +1,6 @@
 package ru.lanit.ideaplugin.simplegit.tags.tag;
 
 import ru.lanit.ideaplugin.simplegit.tags.model.AbstractTagList;
-import ru.lanit.ideaplugin.simplegit.tags.model.FeatureTagList;
 
 import javax.swing.*;
 
