@@ -1,5 +1,6 @@
 package ru.lanit.ideaplugin.simplegit.dialogs.pluginsettings;
 
+import com.intellij.icons.AllIcons;
 import com.intellij.ide.actions.OpenProjectFileChooserDescriptor;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.fileChooser.FileChooserDialog;
@@ -8,19 +9,20 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.*;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.ui.SizedIcon;
 import com.intellij.util.ui.JBUI;
 import git4idea.repo.GitRemote;
 import git4idea.repo.GitRepository;
 import org.jetbrains.annotations.Nullable;
 import ru.lanit.ideaplugin.simplegit.SimpleGitProjectComponent;
+import ru.lanit.ideaplugin.simplegit.tags.model.AbstractTagList;
 import ru.lanit.ideaplugin.simplegit.tags.model.EditableCommonTagList;
-import ru.lanit.ideaplugin.simplegit.tags.model.FixedCommonTagList;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.beans.PropertyChangeEvent;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -30,15 +32,25 @@ public class PluginSettingsDialog extends DialogWrapper {
 
     private JPanel contentPane;
     private JCheckBox isPluginActive;
-    private JTextField commonTags;
     private JComboBox<String> gitRepositoryRootPath;
     private JComboBox<String> remoteGitRepositoryURL;
+    private JTable commonTagsTable;
+    private JButton addNewTag;
+    private JButton removeTag;
+    private JPanel commonTagsToolbar;
     private TextFieldWithBrowseButton featurePath;
+    private EditableCommonTagList commonTagsList;
 
     public PluginSettingsDialog(@Nullable Project project) {
         super(project);
         this.plugin = project.getComponent(SimpleGitProjectComponent.class);
+        addNewTag.setIcon(JBUI.scale(new SizedIcon(AllIcons.General.Add, 16, 16)));
+        addNewTag.addActionListener(this::addNewTagAction);
+        removeTag.setIcon(JBUI.scale(new SizedIcon(AllIcons.General.Remove, 16, 16)));
+        removeTag.addActionListener(this::removeTagAction);
+
         GridBagConstraints constraints = new GridBagConstraints();
+        constraints.gridwidth = 2;
         constraints.gridx = 1;
         constraints.gridy = 3;
         constraints.weightx = 1;
@@ -61,6 +73,14 @@ public class PluginSettingsDialog extends DialogWrapper {
         setResizable(false);
 
         initValidation();
+    }
+
+    private void addNewTagAction(ActionEvent e) {
+        commonTagsList.addNewTag();
+    }
+
+    private void removeTagAction(ActionEvent e) {
+        commonTagsList.removeTags(commonTagsTable.getSelectedRows());
     }
 
     private void fillGitRepositoryRootPath() {
@@ -143,13 +163,17 @@ public class PluginSettingsDialog extends DialogWrapper {
         updateEnabledStateOfElements(null);
         gitRepositoryRootPath.addActionListener(this::fillRemoteGitRepositoryURL);
         fillRemoteGitRepositoryURL(null);
+        AbstractTagList.prepareTable(commonTagsTable);
         return contentPane;
     }
 
     private void updateEnabledStateOfElements(ChangeEvent changeEvent) {
         boolean enabled = isPluginActive.isSelected();
         featurePath.setEnabled(enabled);
-        commonTags.setEnabled(enabled);
+        commonTagsTable.setEnabled(enabled);
+        Arrays.stream(commonTagsToolbar.getComponents())
+                .filter(JButton.class::isInstance)
+                .forEach(component -> component.setEnabled(enabled));
         gitRepositoryRootPath.setEnabled(enabled && isGitRepositoryRootPathSelectable());
     }
 
@@ -177,15 +201,12 @@ public class PluginSettingsDialog extends DialogWrapper {
     }
 
     public EditableCommonTagList getCommonTags() {
-        String tags = commonTags.getText();
-        if (tags.isEmpty()) {
-            return new EditableCommonTagList();
-        }
-        return new EditableCommonTagList(tags.split(";"));
+        return commonTagsList;
     }
 
-    public void setCommonTags(EditableCommonTagList tags) {
-        commonTags.setText(tags.toString());
+    public void setCommonTags(EditableCommonTagList commonTagList) {
+        this.commonTagsList = commonTagList;
+        commonTagList.attachToTable(commonTagsTable);
     }
 
     public boolean isPluginActive() {
