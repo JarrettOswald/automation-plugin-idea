@@ -102,9 +102,9 @@
               <alignmentY value="0.0"/>
               <contentAreaFilled value="true"/>
               <defaultCapable value="true"/>
-              <maximumSize width="24" height="24"/>
-              <minimumSize width="24" height="24"/>
-              <preferredSize width="24" height="24"/>
+              <maximumSize width="28" height="28"/>
+              <minimumSize width="28" height="28"/>
+              <preferredSize width="28" height="28"/>
               <text value=""/>
             </properties>
           </component>
@@ -118,9 +118,9 @@
               <borderPainted value="true"/>
               <contentAreaFilled value="true"/>
               <defaultCapable value="true"/>
-              <maximumSize width="24" height="24"/>
-              <minimumSize width="24" height="24"/>
-              <preferredSize width="24" height="24"/>
+              <maximumSize width="28" height="28"/>
+              <minimumSize width="28" height="28"/>
+              <preferredSize width="28" height="28"/>
               <text value=""/>
             </properties>
           </component>
@@ -133,9 +133,9 @@
               <alignmentY value="0.0"/>
               <borderPainted value="true"/>
               <contentAreaFilled value="true"/>
-              <maximumSize width="24" height="24"/>
-              <minimumSize width="24" height="24"/>
-              <preferredSize width="24" height="24"/>
+              <maximumSize width="28" height="28"/>
+              <minimumSize width="28" height="28"/>
+              <preferredSize width="28" height="28"/>
               <text value=""/>
             </properties>
           </component>
@@ -150,7 +150,7 @@
       <scrollpane id="a827d">
         <constraints>
           <grid row="5" column="1" row-span="1" col-span="2" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-          <gridbag top="3" left="3" bottom="3" right="3" weightx="1.0" weighty="1.0"/>
+          <gridbag top="3" left="3" bottom="3" right="3" weightx="2.0" weighty="1.0"/>
         </constraints>
         <properties>
           <horizontalScrollBarPolicy value="31"/>
@@ -181,10 +181,18 @@
         <properties/>
         <border type="bevel-lowered"/>
         <children>
-          <component id="9d2d3" class="javax.swing.JList" binding="commonTags">
+          <component id="2043d" class="javax.swing.JTable" binding="commonTagsTable">
             <constraints/>
             <properties>
-              <model/>
+              <autoCreateColumnsFromModel value="false"/>
+              <autoResizeMode value="4"/>
+              <autoscrolls value="true"/>
+              <cellSelectionEnabled value="true"/>
+              <fillsViewportHeight value="true"/>
+              <preferredScrollableViewportSize width="150" height="100"/>
+              <preferredSize width="150" height="100"/>
+              <showHorizontalLines value="false"/>
+              <showVerticalLines value="false"/>
             </properties>
           </component>
         </children>
@@ -217,7 +225,7 @@
         <properties>
           <focusable value="false"/>
           <labelFor value="81788"/>
-          <text value="Jira Task:"/>
+          <text value="Jira Issue Key:"/>
         </properties>
       </component>
       <component id="d0be4" class="javax.swing.JComboBox" binding="scenarioType">
@@ -226,10 +234,7 @@
           <gridbag weightx="1.0" weighty="0.0"/>
         </constraints>
         <properties>
-          <model>
-            <item value="Scenario"/>
-            <item value="Scenario Outline"/>
-          </model>
+          <model/>
         </properties>
       </component>
       <component id="8b4f7" class="javax.swing.JLabel">
@@ -243,7 +248,7 @@
           <text value="Feature tags:"/>
         </properties>
       </component>
-      <component id="82eba" class="javax.swing.JTextField" binding="jiraTask">
+      <component id="82eba" class="javax.swing.JTextField" binding="jiraIssueKey">
         <constraints>
           <grid row="2" column="3" row-span="1" col-span="2" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
             <preferred-size width="150" height="-1"/>

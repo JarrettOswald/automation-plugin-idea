@@ -108,11 +108,14 @@ abstract public class AbstractTagList<T extends AbstractTag> extends AbstractTab
 
     abstract public AbstractTagCellRenderer<T> getCellRenderer();
 
-    public void attachToTable(JTable table) {
-        this.table = table;
+    public static void prepareTable(JTable table) {
         table.setAutoCreateColumnsFromModel(true);
         table.setTableHeader(null);
         table.setShowGrid(false);
+    }
+
+    public void attachToTable(JTable table) {
+        this.table = table;
         table.setModel(this);
         table.setDefaultRenderer(AbstractTag.class, getCellRenderer());
         table.setDefaultEditor(Object.class, new TagCellEditor());

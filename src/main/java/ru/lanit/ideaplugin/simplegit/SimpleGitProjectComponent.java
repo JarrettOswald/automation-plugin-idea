@@ -10,20 +10,22 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileSystem;
 import com.intellij.openapi.vfs.newvfs.RefreshSession;
-import gherkin.formatter.model.Tag;
 import org.jetbrains.annotations.NotNull;
 import ru.lanit.ideaplugin.simplegit.dialogs.newfeature.NewFeatureDialog;
 import ru.lanit.ideaplugin.simplegit.dialogs.pluginsettings.PluginSettingsDialog;
 import ru.lanit.ideaplugin.simplegit.features.FeatureList;
+import ru.lanit.ideaplugin.simplegit.features.ScenarioType;
 import ru.lanit.ideaplugin.simplegit.git.GitManager;
 import ru.lanit.ideaplugin.simplegit.settings.PluginSettings;
 import ru.lanit.ideaplugin.simplegit.settings.PluginSettingsProvider;
 import ru.lanit.ideaplugin.simplegit.settings.SettingsChangeListener;
+import ru.lanit.ideaplugin.simplegit.tags.tag.AbstractTag;
+import ru.lanit.ideaplugin.simplegit.tags.tag.TagType;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class SimpleGitProjectComponent implements ProjectComponent, SettingsChangeListener {
     private final Project project;
@@ -72,14 +74,24 @@ public class SimpleGitProjectComponent implements ProjectComponent, SettingsChan
             try {
                 if (file.getParentFile().exists() || file.getParentFile().mkdirs()) {
                     if (file.createNewFile()) {
-                        FileWriter fileWriter = new FileWriter(file);
-                        PrintWriter printWriter = new PrintWriter(fileWriter);
-                        printWriter.println("# language: ru");
-                        printWriter.printf("Функция: %s\n", newFeatureDialog.getFeatureName());
-                        for (Tag tag : newFeatureDialog.getFeatureTags()) {
-                            printWriter.printf("    @%s\n", tag.getName());
+                        FileOutputStream outputStream = new FileOutputStream(file);
+                        OutputStreamWriter outputStreamWriter = new OutputStreamWriter(outputStream, StandardCharsets.UTF_8);
+                        PrintWriter printWriter = new PrintWriter(outputStreamWriter, true);
+                        printWriter.println("# language: ru\n");
+                        printWriter.printf("Функционал: %s\n\n", newFeatureDialog.getFeatureName());
+                        Map<TagType, List<String>> tags = newFeatureDialog.getFeatureTags().stream().sorted()
+                                .collect(Collectors.groupingBy(TagType::getTagTypeByTag, Collectors.mapping(AbstractTag::getTagAsString, Collectors.toList())));
+                        Arrays.stream(TagType.values())
+                                .map(tags::get).filter(Objects::nonNull)
+                                .map(tagList -> "    " + String.join(" ", tagList))
+                                .forEachOrdered(printWriter::println);
+                        printWriter.printf("    %s: %s\n",
+                                newFeatureDialog.getScenarioType().getName(),
+                                newFeatureDialog.getScenarioName());
+                        printWriter.println("      #Сценарий");
+                        if (newFeatureDialog.getScenarioType() == ScenarioType.SCENARIO_OUTLINE) {
+                            printWriter.println("\n    Примеры:\n      | Имя1 | Имя2 |\n      |      |      |");
                         }
-                        printWriter.printf("    Сценарий: %s\n", newFeatureDialog.getScenarioName());
                         printWriter.close();
                         VirtualFileSystem fileSystem = LocalFileSystem.getInstance();
                         VirtualFile virtualFile = fileSystem.refreshAndFindFileByPath(file.getAbsolutePath());
