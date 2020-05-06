@@ -14,7 +14,7 @@
       <font/>
     </border>
     <children>
-      <component id="cb909" class="javax.swing.JLabel">
+      <component id="cb909" class="javax.swing.JLabel" binding="featuresPathLabel">
         <constraints>
           <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
           <gridbag top="5" left="5" bottom="5" right="5" weightx="0.0" weighty="0.0"/>
@@ -24,19 +24,19 @@
           <text value="Features Path:"/>
         </properties>
       </component>
-      <component id="9ad6d" class="javax.swing.JLabel">
+      <component id="9ad6d" class="javax.swing.JLabel" binding="favoriteTagsLabel">
         <constraints>
           <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="5" fill="0" indent="0" use-parent-layout="false"/>
           <gridbag top="5" left="5" bottom="5" right="5" weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties>
           <focusable value="false"/>
-          <text value="Common Tags:"/>
+          <text value="Favorite Tags:"/>
         </properties>
       </component>
       <component id="1df66" class="javax.swing.JCheckBox" binding="isPluginActive">
         <constraints>
-          <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+          <grid row="0" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
           <gridbag top="5" left="5" bottom="5" right="5" weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties>
@@ -52,7 +52,7 @@
           <gridbag weightx="0.0" weighty="0.0"/>
         </constraints>
       </vspacer>
-      <component id="7c97d" class="javax.swing.JLabel">
+      <component id="7c97d" class="javax.swing.JLabel" binding="remoteGitRepositoryLabel">
         <constraints>
           <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
           <gridbag top="5" left="5" bottom="5" right="5" weightx="0.0" weighty="0.0"/>
@@ -63,7 +63,7 @@
           <text value="Remote Git Repository:"/>
         </properties>
       </component>
-      <component id="41a1e" class="javax.swing.JLabel">
+      <component id="41a1e" class="javax.swing.JLabel" binding="localGitRepositoryLabel">
         <constraints>
           <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
           <gridbag top="5" left="5" bottom="5" right="5" weightx="0.0" weighty="0.0"/>
@@ -100,7 +100,7 @@
         </properties>
         <border type="bevel-lowered"/>
         <children>
-          <component id="a734c" class="javax.swing.JTable" binding="commonTagsTable">
+          <component id="a734c" class="javax.swing.JTable" binding="favoriteTagsTable">
             <constraints/>
             <properties>
               <autoCreateColumnsFromModel value="false"/>
@@ -116,7 +116,7 @@
           </component>
         </children>
       </scrollpane>
-      <grid id="40448" binding="commonTagsToolbar" layout-manager="GridBagLayout">
+      <grid id="40448" binding="favoriteTagsToolbar" layout-manager="GridBagLayout">
         <constraints>
           <grid row="4" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
           <gridbag top="3" left="3" bottom="3" right="3" weightx="0.0" weighty="0.0"/>

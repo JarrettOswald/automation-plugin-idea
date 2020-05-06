@@ -92,25 +92,21 @@
 
     <actions>
         <action id="ru.lanit.ideaplugin.simplegit.actions.PluginSettingsAction"
-                class="ru.lanit.ideaplugin.simplegit.actions.PluginSettingsAction" text="SimpleGit settings"
-                description="SimpleGit plugin settings">
+                class="ru.lanit.ideaplugin.simplegit.actions.PluginSettingsAction">
             <!--<keyboard-shortcut keymap="$default" first-keystroke="ctrl P"/>-->
             <add-to-group group-id="ToolbarRunGroup" anchor="first"/>
         </action>
         <action id="ru.lanit.ideaplugin.simplegit.actions.GitSynchronizeAction"
-                class="ru.lanit.ideaplugin.simplegit.actions.GitSynchronizeAction" text="Git synchronize"
-                description="Synchronize local changes with git">
+                class="ru.lanit.ideaplugin.simplegit.actions.GitSynchronizeAction">
                 <!--<keyboard-shortcut keymap="$default" first-keystroke="ctrl P"/>-->
             <add-to-group group-id="ToolbarRunGroup" anchor="first"/>
         </action>
-        <action id="ru.lanit.ideaplugin.simplegit.actions.CreateNewFeatureAction"
-                class="ru.lanit.ideaplugin.simplegit.actions.CreateNewFeatureAction" text="New feature"
-                description="Create new feature file">
+        <action id="ru.lanit.ideaplugin.simplegit.actions.CreateNewScenarioAction"
+                class="ru.lanit.ideaplugin.simplegit.actions.CreateNewScenarioAction">
         <add-to-group group-id="ToolbarRunGroup" anchor="first"/>
         </action>
         <action id="ru.lanit.ideaplugin.simplegit.actions.FeatureComboBoxAction"
-                class="ru.lanit.ideaplugin.simplegit.actions.FeatureComboBoxAction" text="Select feature"
-                description="Select current feature">
+                class="ru.lanit.ideaplugin.simplegit.actions.FeatureComboBoxAction">
             <add-to-group group-id="ToolbarRunGroup" anchor="first"/>
         </action>
     </actions>

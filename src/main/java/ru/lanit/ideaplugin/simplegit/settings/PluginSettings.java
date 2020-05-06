@@ -1,20 +1,14 @@
 package ru.lanit.ideaplugin.simplegit.settings;
 
 import com.intellij.ide.util.PropertyName;
-import ru.lanit.ideaplugin.simplegit.tags.model.EditableCommonTagList;
+import com.intellij.openapi.diagnostic.Logger;
+import org.jetbrains.annotations.NonNls;
+
+import java.util.Locale;
 
 public class PluginSettings {
-    @PropertyName(value = "simplegit.settings.pluginActive", defaultValue = "false")
-    private boolean pluginActive;
-
-    @PropertyName(value = "simplegit.settings.commonTagsList")
-    private String commonTags;
-
-    @PropertyName(value = "simplegit.settings.featurePath")
-    private String featurePath;
-
-    @PropertyName(value = "simplegit.settings.gitRepositoryRootPath")
-    private String gitRepositoryRootPath;
+    private static final Logger log = Logger.getInstance(PluginSettings.class);
+    @NonNls public static final String SIMPLEGIT_SETTINGS_LOCALE = "simplegit.settings.locale";
 
     @PropertyName(value = "simplegit.settings.remoteGitRepositoryURL")
     private String remoteGitRepositoryURL;

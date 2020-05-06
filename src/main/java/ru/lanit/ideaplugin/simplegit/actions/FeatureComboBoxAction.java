@@ -5,6 +5,7 @@ import com.intellij.icons.AllIcons;
 import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.actionSystem.ex.ComboBoxAction;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.IndexNotReadyException;
@@ -22,8 +23,13 @@ import ru.lanit.ideaplugin.simplegit.features.FeatureState;
 
 import javax.swing.*;
 import java.awt.*;
+import java.text.MessageFormat;
+
+import static ru.lanit.ideaplugin.simplegit.localization.Language.simpleGitPluginBundle;
 
 public class FeatureComboBoxAction extends ComboBoxAction implements DumbAware {
+    private static final Logger log = Logger.getInstance(FeatureComboBoxAction.class);
+
     private static final Icon CHECKED_ICON = JBUI.scale(new SizedIcon(AllIcons.Actions.Checked, 16, 16));
     private static final Icon EDITED_ICON = JBUI.scale(new SizedIcon(AllIcons.Actions.Edit, 16, 16));
     private static final Icon EMPTY_ICON = EmptyIcon.ICON_16;
@@ -32,7 +38,8 @@ public class FeatureComboBoxAction extends ComboBoxAction implements DumbAware {
     public void update(@NotNull AnActionEvent e) {
         Presentation presentation = e.getPresentation();
         Project project = e.getData(CommonDataKeys.PROJECT);
-        presentation.setText("Select feature...");
+        presentation.setText(simpleGitPluginBundle.getString("scenario.combobox.action.text"));
+        presentation.setDescription(simpleGitPluginBundle.getString("scenario.combobox.action.description"));
         if (ActionPlaces.isMainMenuOrActionSearch(e.getPlace())) {
             presentation.setDescription(ExecutionBundle.message("choose.run.configuration.action.description"));
         }
@@ -62,7 +69,8 @@ public class FeatureComboBoxAction extends ComboBoxAction implements DumbAware {
             setConfigurationIcon(presentation, feature, project, false);
         }
         else {
-            presentation.setText("Select feature...");
+            presentation.setText(simpleGitPluginBundle.getString("scenario.combobox.action.text"));
+            presentation.setDescription(simpleGitPluginBundle.getString("scenario.combobox.action.description"));
             presentation.setIcon(null);
         }
     }
@@ -175,7 +183,7 @@ public class FeatureComboBoxAction extends ComboBoxAction implements DumbAware {
             }
             final Presentation presentation = getTemplatePresentation();
             presentation.setText(name, false);
-            presentation.setDescription("Select '" + name + "'");
+            presentation.setDescription(MessageFormat.format(simpleGitPluginBundle.getString("scenario.combobox.action.select"), name));
             updateIcon(presentation);
         }
 

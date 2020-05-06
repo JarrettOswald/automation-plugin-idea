@@ -1,19 +1,21 @@
 package ru.lanit.ideaplugin.simplegit.dialogs.newfeature;
 
 import com.intellij.icons.AllIcons;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.ValidationInfo;
 import com.intellij.ui.SizedIcon;
 import com.intellij.util.ui.JBUI;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.Nullable;
 import ru.lanit.ideaplugin.simplegit.SimpleGitProjectComponent;
 import ru.lanit.ideaplugin.simplegit.features.ScenarioType;
 import ru.lanit.ideaplugin.simplegit.tags.model.AbstractTagList;
-import ru.lanit.ideaplugin.simplegit.tags.model.EditableCommonTagList;
-import ru.lanit.ideaplugin.simplegit.tags.model.FixedCommonTagList;
+import ru.lanit.ideaplugin.simplegit.tags.model.EditableFavoriteTagList;
+import ru.lanit.ideaplugin.simplegit.tags.model.FixedFavoriteTagList;
 import ru.lanit.ideaplugin.simplegit.tags.tag.AbstractTag;
-import ru.lanit.ideaplugin.simplegit.tags.tag.CommonTag;
+import ru.lanit.ideaplugin.simplegit.tags.tag.FavoriteTag;
 import ru.lanit.ideaplugin.simplegit.tags.model.FeatureTagList;
 import ru.lanit.ideaplugin.simplegit.tags.tag.JiraTag;
 
@@ -32,7 +34,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static ru.lanit.ideaplugin.simplegit.localization.Language.simpleGitPluginBundle;
+
 public class NewFeatureDialog extends DialogWrapper {
+    private static final Logger log = Logger.getInstance(NewFeatureDialog.class);
+
     private static Pattern jiraIssueKeyPattern = Pattern.compile("^([a-zA-Z][_0-9a-zA-Z]*)-([0-9]+)$");
     private final SimpleGitProjectComponent plugin;
     private JPanel contentPane;
@@ -41,23 +47,38 @@ public class NewFeatureDialog extends DialogWrapper {
     private JTextField featureFilename;
     private JButton addNewTag;
     private JButton removeTag;
-    private JButton getCommonTag;
+    private JButton getFavoriteTag;
     private JComboBox<ScenarioType> scenarioType;
     private JTable featureTagsTable;
     private JTextField jiraIssueKey;
-    private JTable commonTagsTable;
+    private JTable favoriteTagsTable;
+    private JLabel featureNameLabel;
+    private JLabel scenarioNameLabel;
+    private JLabel scenarioTypeLabel;
+    private JLabel jiraIssueKeyLabel;
+    private JLabel featureFilenameLabel;
+    private JLabel scenarioTagsLabel;
+    private JLabel favoriteTagsLabel;
     private FeatureTagList featureTagsList = new FeatureTagList();
-    private FixedCommonTagList commonTagsList;
+    private FixedFavoriteTagList favoriteTagsList;
 
     public NewFeatureDialog(@Nullable Project project) {
         super(project);
         this.plugin = project.getComponent(SimpleGitProjectComponent.class);
+        featureNameLabel.setText(simpleGitPluginBundle.getString("create-new-scenario.dialog.feature.name"));
+        scenarioNameLabel.setText(simpleGitPluginBundle.getString("create-new-scenario.dialog.scenario.name"));
+        scenarioTypeLabel.setText(simpleGitPluginBundle.getString("create-new-scenario.dialog.scenario.type"));
+        jiraIssueKeyLabel.setText(simpleGitPluginBundle.getString("create-new-scenario.dialog.jira-issue-key"));
+        featureFilenameLabel.setText(simpleGitPluginBundle.getString("create-new-scenario.dialog.feature.filename"));
+        scenarioTagsLabel.setText(simpleGitPluginBundle.getString("create-new-scenario.dialog.tags.scenario"));
+        favoriteTagsLabel.setText(simpleGitPluginBundle.getString("create-new-scenario.dialog.tags.favorite"));
+
         addNewTag.setIcon(JBUI.scale(new SizedIcon(AllIcons.General.Add, 16, 16)));
         addNewTag.addActionListener(this::addNewTagAction);
         removeTag.setIcon(JBUI.scale(new SizedIcon(AllIcons.General.Remove, 16, 16)));
         removeTag.addActionListener(this::removeTagAction);
-        getCommonTag.setIcon(JBUI.scale(new SizedIcon(AllIcons.General.SplitLeft, 16, 16)));
-        getCommonTag.addActionListener(this::getCommonTagAction);
+        getFavoriteTag.setIcon(JBUI.scale(new SizedIcon(AllIcons.General.SplitLeft, 16, 16)));
+        getFavoriteTag.addActionListener(this::getFavoriteTagAction);
         scenarioType.setModel(new DefaultComboBoxModel<>(ScenarioType.values()));
 
         DocumentListener featureNameDocumentListener = new DocumentListener() {
@@ -83,7 +104,7 @@ public class NewFeatureDialog extends DialogWrapper {
         pack();
         validate();
         init();
-        setTitle("Create new scenario");
+        setTitle(simpleGitPluginBundle.getString("create-new-scenario.dialog.title"));
     }
 
     boolean isOkEnabled() {
@@ -96,7 +117,7 @@ public class NewFeatureDialog extends DialogWrapper {
     protected JComponent createCenterPanel() {
         AbstractTagList.prepareTable(featureTagsTable);
         featureTagsList.attachToTable(featureTagsTable);
-        AbstractTagList.prepareTable(commonTagsTable);
+        AbstractTagList.prepareTable(favoriteTagsTable);
         return contentPane;
     }
 
@@ -129,7 +150,7 @@ public class NewFeatureDialog extends DialogWrapper {
     }
 
     private void rebuildFeatureFilename() {
-        String filename;
+        @NonNls String filename;
         String dir = escapeFilename(getFeatureName());
         String fn = escapeFilename(getScenarioName());
         if (dir.isEmpty()) {
@@ -149,14 +170,14 @@ public class NewFeatureDialog extends DialogWrapper {
 
     private void removeTagAction(ActionEvent e) {
         List<AbstractTag> removedTags = featureTagsList.removeTags(featureTagsTable.getSelectedRows());
-        List<CommonTag> commonTags = removedTags.stream()
-                .filter(CommonTag.class::isInstance).map(CommonTag.class::cast)
+        List<FavoriteTag> favoriteTags = removedTags.stream()
+                .filter(FavoriteTag.class::isInstance).map(FavoriteTag.class::cast)
                 .collect(Collectors.toList());
-        commonTagsList.addTags(commonTags);
+        favoriteTagsList.addTags(favoriteTags);
     }
 
-    private void getCommonTagAction(ActionEvent e) {
-        List<CommonTag> removedTags = commonTagsList.removeTags(commonTagsTable.getSelectedRows());
+    private void getFavoriteTagAction(ActionEvent e) {
+        List<FavoriteTag> removedTags = favoriteTagsList.removeTags(favoriteTagsTable.getSelectedRows());
         featureTagsList.addTags(removedTags);
         updateSelection();
     }
@@ -165,14 +186,14 @@ public class NewFeatureDialog extends DialogWrapper {
         if (featureTagsList.getRowCount() > 0 && featureTagsTable.getSelectedRows().length == 0) {
             featureTagsTable.addRowSelectionInterval(0, 0);
         }
-        if (commonTagsList.getRowCount() > 0 && commonTagsTable.getSelectedRows().length == 0) {
-            commonTagsTable.addRowSelectionInterval(0, 0);
+        if (favoriteTagsList.getRowCount() > 0 && favoriteTagsTable.getSelectedRows().length == 0) {
+            favoriteTagsTable.addRowSelectionInterval(0, 0);
         }
     }
 
-    public void setCommonTags(EditableCommonTagList commonTagsList) {
-        this.commonTagsList = new FixedCommonTagList(commonTagsList);
-        this.commonTagsList.attachToTable(commonTagsTable);
+    public void setFavoriteTags(EditableFavoriteTagList favoriteTagsList) {
+        this.favoriteTagsList = new FixedFavoriteTagList(favoriteTagsList);
+        this.favoriteTagsList.attachToTable(favoriteTagsTable);
     }
 
     public List<AbstractTag> getFeatureTags() {
@@ -198,21 +219,21 @@ public class NewFeatureDialog extends DialogWrapper {
     @Override
     public ValidationInfo doValidate() {
         if (getFeatureName().isEmpty()) {
-            return new ValidationInfo("Need to set Feature Name", featureName);
+            return new ValidationInfo(simpleGitPluginBundle.getString("create-new-scenario.dialog.validate-error.name.feature"), featureName);
         }
         if (getScenarioName().isEmpty()) {
-            return new ValidationInfo("Need to set Scenario Name", scenarioName);
+            return new ValidationInfo(simpleGitPluginBundle.getString("create-new-scenario.dialog.validate-error.name.scenario"), scenarioName);
         }
         if (getFeatureFilename().isEmpty() || getFeatureFilename().endsWith("\\")) {
-            return new ValidationInfo("Cannnot pick up suitable Feature Filename", featureFilename);
+            return new ValidationInfo(simpleGitPluginBundle.getString("create-new-scenario.dialog.validate-error.feature-filename.pickup"), featureFilename);
         }
         File file = new File(plugin.getFeaturePath(), getFeatureFilename());
         if (file.exists()) {
-            return new ValidationInfo("Feature file with this Filename already exists", featureFilename);
+            return new ValidationInfo(simpleGitPluginBundle.getString("create-new-scenario.dialog.validate-error.feature-filename.exists"), featureFilename);
         }
         Matcher result = jiraIssueKeyPattern.matcher(jiraIssueKey.getText());
         if (!result.find() || result.group(2) == null) {
-            return new ValidationInfo("Jira Issue Key must be of the format &lt;PROJECT_NAME&gt;-&lt;ISSUE_NUMBER&gt;", jiraIssueKey);
+            return new ValidationInfo(simpleGitPluginBundle.getString("create-new-scenario.dialog.validate-error.jira-issue-key.format"), jiraIssueKey);
         }
         return null;
     }

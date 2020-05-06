@@ -2,6 +2,7 @@ package ru.lanit.ideaplugin.simplegit.dialogs.pluginsettings;
 
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.actions.OpenProjectFileChooserDescriptor;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.fileChooser.FileChooserDialog;
 import com.intellij.openapi.fileChooser.FileChooserFactory;
@@ -16,7 +17,7 @@ import git4idea.repo.GitRepository;
 import org.jetbrains.annotations.Nullable;
 import ru.lanit.ideaplugin.simplegit.SimpleGitProjectComponent;
 import ru.lanit.ideaplugin.simplegit.tags.model.AbstractTagList;
-import ru.lanit.ideaplugin.simplegit.tags.model.EditableCommonTagList;
+import ru.lanit.ideaplugin.simplegit.tags.model.EditableFavoriteTagList;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -27,23 +28,37 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
+import static ru.lanit.ideaplugin.simplegit.localization.Language.simpleGitPluginBundle;
+
 public class PluginSettingsDialog extends DialogWrapper {
+    private static final Logger log = Logger.getInstance(PluginSettingsDialog.class);
+
     private SimpleGitProjectComponent plugin;
 
     private JPanel contentPane;
     private JCheckBox isPluginActive;
     private JComboBox<String> gitRepositoryRootPath;
     private JComboBox<String> remoteGitRepositoryURL;
-    private JTable commonTagsTable;
+    private JTable favoriteTagsTable;
     private JButton addNewTag;
     private JButton removeTag;
-    private JPanel commonTagsToolbar;
+    private JPanel favoriteTagsToolbar;
+    private JLabel localGitRepositoryLabel;
+    private JLabel remoteGitRepositoryLabel;
+    private JLabel featuresPathLabel;
+    private JLabel favoriteTagsLabel;
     private TextFieldWithBrowseButton featurePath;
-    private EditableCommonTagList commonTagsList;
+    private EditableFavoriteTagList favoriteTagsList;
 
     public PluginSettingsDialog(@Nullable Project project) {
         super(project);
         this.plugin = project.getComponent(SimpleGitProjectComponent.class);
+        isPluginActive.setText(simpleGitPluginBundle.getString("plugin-settings.dialog.enable.plugin"));
+        localGitRepositoryLabel.setText(simpleGitPluginBundle.getString("plugin-settings.dialog.git-repository.local"));
+        remoteGitRepositoryLabel.setText(simpleGitPluginBundle.getString("plugin-settings.dialog.git-repository.remote"));
+        featuresPathLabel.setText(simpleGitPluginBundle.getString("plugin-settings.dialog.features.path"));
+        favoriteTagsLabel.setText(simpleGitPluginBundle.getString("plugin-settings.dialog.tags.favorite"));
+
         addNewTag.setIcon(JBUI.scale(new SizedIcon(AllIcons.General.Add, 16, 16)));
         addNewTag.addActionListener(this::addNewTagAction);
         removeTag.setIcon(JBUI.scale(new SizedIcon(AllIcons.General.Remove, 16, 16)));
@@ -69,18 +84,18 @@ public class PluginSettingsDialog extends DialogWrapper {
         pack();
 
         init();
-        setTitle("SimpleGit project settings");
+        setTitle(simpleGitPluginBundle.getString("plugin-settings.dialog.title"));
         setResizable(false);
 
         initValidation();
     }
 
     private void addNewTagAction(ActionEvent e) {
-        commonTagsList.addNewTag();
+        favoriteTagsList.addNewTag();
     }
 
     private void removeTagAction(ActionEvent e) {
-        commonTagsList.removeTags(commonTagsTable.getSelectedRows());
+        favoriteTagsList.removeTags(favoriteTagsTable.getSelectedRows());
     }
 
     private void fillGitRepositoryRootPath() {
@@ -163,15 +178,15 @@ public class PluginSettingsDialog extends DialogWrapper {
         updateEnabledStateOfElements(null);
         gitRepositoryRootPath.addActionListener(this::fillRemoteGitRepositoryURL);
         fillRemoteGitRepositoryURL(null);
-        AbstractTagList.prepareTable(commonTagsTable);
+        AbstractTagList.prepareTable(favoriteTagsTable);
         return contentPane;
     }
 
     private void updateEnabledStateOfElements(ChangeEvent changeEvent) {
         boolean enabled = isPluginActive.isSelected();
         featurePath.setEnabled(enabled);
-        commonTagsTable.setEnabled(enabled);
-        Arrays.stream(commonTagsToolbar.getComponents())
+        favoriteTagsTable.setEnabled(enabled);
+        Arrays.stream(favoriteTagsToolbar.getComponents())
                 .filter(JButton.class::isInstance)
                 .forEach(component -> component.setEnabled(enabled));
         gitRepositoryRootPath.setEnabled(enabled && isGitRepositoryRootPathSelectable());
@@ -182,12 +197,12 @@ public class PluginSettingsDialog extends DialogWrapper {
         if (gitRepositoryRootPath.getItemCount() == 0 || remoteGitRepositoryURL.getItemCount() == 0) {
             isPluginActive.setEnabled(false);
             if (gitRepositoryRootPath.getItemCount() == 0)
-                return new ValidationInfo("Need to set Git Repository", isPluginActive);
-            return new ValidationInfo("Need to set Remote Git Repository", isPluginActive);
+                return new ValidationInfo(simpleGitPluginBundle.getString("plugin-settings.dialog.validate-error.git-repository.local"), isPluginActive);
+            return new ValidationInfo(simpleGitPluginBundle.getString("plugin-settings.dialog.validate-error.git-repository.remote"), isPluginActive);
         }
         isPluginActive.setEnabled(true);
         if (isPluginActive.isSelected() && featurePath.getText().isEmpty()) {
-            return new ValidationInfo("Need to select features path", featurePath);
+            return new ValidationInfo(simpleGitPluginBundle.getString("plugin-settings.dialog.validate-error.features.path"), featurePath);
         }
         return null;
     }
@@ -200,13 +215,13 @@ public class PluginSettingsDialog extends DialogWrapper {
         featurePath.setText(path);
     }
 
-    public EditableCommonTagList getCommonTags() {
-        return commonTagsList;
+    public EditableFavoriteTagList getFavoriteTags() {
+        return favoriteTagsList;
     }
 
-    public void setCommonTags(EditableCommonTagList commonTagList) {
-        this.commonTagsList = commonTagList;
-        commonTagList.attachToTable(commonTagsTable);
+    public void setFavoriteTags(EditableFavoriteTagList favoriteTagList) {
+        this.favoriteTagsList = favoriteTagList;
+        favoriteTagList.attachToTable(favoriteTagsTable);
     }
 
     public boolean isPluginActive() {

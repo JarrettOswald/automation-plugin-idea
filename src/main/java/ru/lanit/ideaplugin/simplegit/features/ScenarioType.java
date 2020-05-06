@@ -1,8 +1,10 @@
 package ru.lanit.ideaplugin.simplegit.features;
 
+import static ru.lanit.ideaplugin.simplegit.localization.Language.simpleGitPluginBundle;
+
 public enum ScenarioType {
-    SCENARIO("Сценарий"),
-    SCENARIO_OUTLINE("Структура сценария");
+    SCENARIO(simpleGitPluginBundle.getString("scenario.type.scenario")),
+    SCENARIO_OUTLINE(simpleGitPluginBundle.getString("scenario.type.scenario-outline"));
 
     private final String name;
 

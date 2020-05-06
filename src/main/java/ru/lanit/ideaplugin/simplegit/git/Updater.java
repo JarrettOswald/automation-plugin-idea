@@ -6,6 +6,7 @@ import com.intellij.history.LocalHistoryAction;
 import com.intellij.ide.errorTreeView.HotfixData;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
@@ -38,6 +39,8 @@ import static com.intellij.openapi.vcs.VcsNotifier.STANDARD_NOTIFICATION;
 import static com.intellij.util.ObjectUtils.notNull;
 
 public class Updater extends Task.Backgroundable {
+    private static final Logger log = Logger.getInstance(Updater.class);
+
     private final String LOCAL_HISTORY_ACTION = VcsBundle.message("local.history.update.from.vcs");
     private final static String SYNCHRONIZE_GIT_TITLE = "Synchronize with git";
 

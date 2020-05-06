@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 abstract public class AbstractTagList<T extends AbstractTag> extends AbstractTableModel {
+    public static final String COLUMN_NAME = "Tag";
     protected ArrayList<T> tags;
     protected JTable table;
     protected FocusListener focusListener;
@@ -38,7 +39,7 @@ abstract public class AbstractTagList<T extends AbstractTag> extends AbstractTab
 
     @Override
     public String getColumnName(int column) {
-        return "Tag";
+        return COLUMN_NAME;
     }
 
     @Override

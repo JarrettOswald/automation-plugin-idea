@@ -1,5 +1,6 @@
 package ru.lanit.ideaplugin.simplegit.features;
 
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vcs.changes.ChangeListManagerImpl;
@@ -28,6 +29,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class FeatureListImpl extends FeatureList implements BulkFileListener {
+    private static final Logger log = Logger.getInstance(FeatureListImpl.class);
 
     private final Project project;
     private final SimpleGitProjectComponent plugin;

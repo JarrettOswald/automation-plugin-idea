@@ -43,6 +43,8 @@ import java.util.*;
 import static com.intellij.openapi.vcs.VcsNotifier.NOTIFICATION_GROUP_ID;
 
 public class GitManager {
+    private static final Logger log = Logger.getInstance(GitManager.class);
+
     private final SimpleGitProjectComponent plugin;
     private boolean repositoryChanging = false;
     private GitRepositoryManager repositoryManager;
@@ -77,69 +79,6 @@ public class GitManager {
 
     public void synchronizeGit(AnActionEvent event) {
         updateProject(event);
-//        ProgressManager.getInstance().run(new Task.Backgroundable(plugin.getProject(), "Synchronize with Git", true) {
-//            @Override
-//            public void run(@NotNull ProgressIndicator indicator) {
-//                fetchGit(indicator);
-////                pushGit();
-//            }
-//        });
-/*
-        FileDocumentManager.getInstance().saveAllDocuments();
-        final Project project = plugin.getProject();
-        GitVcs vcs = GitVcs.getInstance(project);
-        final List<VirtualFile> roots = getGitRoots(project, vcs);
-        if (roots == null) return;
-
-        final VirtualFile defaultRoot = getDefaultRoot(project, roots, event.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY));
-
-        final GitPullDialog dialog = new GitPullDialog(project, roots, defaultRoot);
-        if (!dialog.showAndGet()) {
-            Messages.showMessageDialog(project, "Pull canceled",
-                    "Information", Messages.getInformationIcon());
-        }
-
-
-
-        GitRepositoryManager repositoryManager = GitUtil.getRepositoryManager(project);
-        GitRepository repository = repositoryManager.getRepositoryForRoot(dialog.gitRoot());
-        assert repository != null : "Repository can't be null for root " + dialog.gitRoot();
-        String remoteOrUrl = dialog.getRemote();
-        if (remoteOrUrl == null) {
-            return null;
-        }
-
-        GitRemote remote = GitUtil.findRemoteByName(repository, remoteOrUrl);
-        final List<String> urls = remote == null ? Collections.singletonList(remoteOrUrl) : remote.getUrls();
-        Computable<GitLineHandler> handlerProvider = () -> dialog.makeHandler(urls);
-        return new DialogState(dialog.gitRoot(), GitBundle.message("pulling.title", dialog.getRemote()), handlerProvider);
-*/
-    }
-
-    public List<VirtualFile> getGitRoots(Project project, GitVcs vcs) {
-        List<VirtualFile> roots;
-        try {
-            GitRepositoryManager.getInstance(project).getRepositoryForFile(new Mock.MyVirtualFile());
-            roots = GitUtil.getGitRoots(project, vcs);
-        } catch (VcsException e) {
-            Messages.showErrorDialog(project, e.getMessage(),
-                    GitBundle.getString("repository.action.missing.roots.title"));
-            return null;
-        }
-        return roots;
-    }
-
-    private static VirtualFile getDefaultRoot(@NotNull Project project, @NotNull List<VirtualFile> roots, @Nullable VirtualFile[] vFiles) {
-        if (vFiles != null) {
-            for (VirtualFile file : vFiles) {
-                VirtualFile root = GitUtil.gitRootOrNull(file);
-                if (root != null) {
-                    return root;
-                }
-            }
-        }
-        GitRepository currentRepository = GitBranchUtil.getCurrentRepository(project);
-        return currentRepository != null ? currentRepository.getRoot() : roots.get(0);
     }
 
     private GitRepository getGitRepository() {
@@ -180,61 +119,7 @@ public class GitManager {
         repository.update();
     }
 
-    private void pullGit() {/*
-        Project project = plugin.getProject();
-        GitRepository repository = getGitRepository();
-        ProgressManager.getInstance().run(new Task.Backgroundable(project, "Fetch from Git", true) {
-            @Override
-            public void run(@NotNull ProgressIndicator indicator) {
-                GitPull fetcher = new GitFetcher(project, indicator, true);
-                GitFetchResult result = fetcher.fetch(repository);
-
-                if (!result.isSuccess()) {
-                    SwingUtilities.invokeLater(
-                            () -> {
-                                Notification notification =
-                                        new Notification(
-                                                NOTIFICATION_GROUP_ID.getDisplayId(),
-                                                "Fetch failed",
-                                                "Fail to fetch " + repository.toString(),
-                                                NotificationType.ERROR);
-                                notification.notify(project);
-                            });
-                }
-                repository.update();
-            }
-        });*/
-    }
-
-    private void pushGit() {
-        GitRepository repository = getGitRepository();
-        if (repository == null) {
-            /*repository = GitRepositoryImpl.getInstance(gitRoot, project, true);
-            repositoryManager.addExternalRepository(gitRoot, repository);
-            repository*/
-            return;
-        }
-
-        GitRemote remote = getRemote(repository.getRemotes(), plugin.getRemoteGitRepositoryURL());
-        if (remote == null) return;
-        GitRemoteBranch branch = getBranch(repository, remote);
-/*
-        ProjectLevelVcsManager projectLevelVcsManager = ProjectLevelVcsManager.getInstance(project);
-        AbstractVcs abstractVcs = projectLevelVcsManager.getVcsFor(gitRoot);
-        assert abstractVcs != null;
-        GitPushSupport pushSupport = (GitPushSupport) DvcsUtil.getPushSupport(abstractVcs);
-        assert pushSupport != null;
-        GitPushSource source = pushSupport.getSource(repository);
-        GitPushTarget target = new GitPushTarget(branch, false);
-
-        PushSpec<GitPushSource, GitPushTarget> pushSourceGitPushTargetPushSpec = new PushSpec<>(source, target);
-        Map<GitRepository, PushSpec<GitPushSource, GitPushTarget>> pushSpecs =
-                Collections.singletonMap(repository, pushSourceGitPushTargetPushSpec);
-
-        pushSupport.getPusher().push(pushSpecs, null, false);
-        */
-    }
-
+    @NonNls
     @NotNull
     private GitRemoteBranch getBranch(@NotNull GitRepository repository, @NotNull GitRemote remote) {
         for (GitRemoteBranch remoteBranch : repository.getBranches().getRemoteBranches()) {

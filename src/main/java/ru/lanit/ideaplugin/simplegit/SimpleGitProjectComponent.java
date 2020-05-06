@@ -1,8 +1,13 @@
 package ru.lanit.ideaplugin.simplegit;
 
+import com.intellij.ide.plugins.IdeaPluginDescriptor;
+import com.intellij.ide.plugins.PluginManagerCore;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.application.ApplicationInfo;
 import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.extensions.PluginId;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
@@ -27,7 +32,16 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class SimpleGitProjectComponent implements ProjectComponent, SettingsChangeListener {
+public class SimpleGitProjectComponent implements ProjectComponent {
+    private static final Logger log = Logger.getInstance(SimpleGitProjectComponent.class);
+
+    public static ApplicationInfo applicationInfo = ApplicationInfo.getInstance();
+    public static PluginId pluginId = PluginManagerCore.getPluginByClassName(SimpleGitProjectComponent.class.getCanonicalName());
+    public static IdeaPluginDescriptor ideaPluginDescriptor;
+    static {
+        ideaPluginDescriptor = Arrays.stream(PluginManagerCore.getPlugins()).filter(plugin -> plugin.getPluginId().equals(pluginId)).findFirst().get();
+    }
+
     private final Project project;
     private FeatureList featureList;
     private PluginSettingsProvider settings;

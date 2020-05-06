@@ -2,7 +2,7 @@ package ru.lanit.ideaplugin.simplegit.tags.tag;
 
 public enum  TagType {
     JIRA_TAG(JiraTag.class),
-    COMMON_TAG(CommonTag.class),
+    FAVORITE_TAG(FavoriteTag.class),
     FEATURE_TAG(FeatureTag.class);
 
     private Class<? extends AbstractTag> aClass;

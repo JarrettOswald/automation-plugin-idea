@@ -5,14 +5,14 @@ import ru.lanit.ideaplugin.simplegit.tags.model.AbstractTagList;
 
 import javax.swing.*;
 
-public class CommonTag extends AbstractTag {
+public class FavoriteTag extends AbstractTag {
     private static Icon ICON = initializeIcon(AllIcons.Toolwindows.ToolWindowFavorites);
 
-    public CommonTag(AbstractTagList<CommonTag> tagList) {
+    public FavoriteTag(AbstractTagList<FavoriteTag> tagList) {
         super(tagList);
     }
 
-    public CommonTag(AbstractTagList<CommonTag> tagList, String name) {
+    public FavoriteTag(AbstractTagList<FavoriteTag> tagList, String name) {
         super(tagList, name);
     }
 

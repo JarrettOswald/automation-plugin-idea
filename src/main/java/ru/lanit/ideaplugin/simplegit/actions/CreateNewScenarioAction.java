@@ -4,16 +4,26 @@ import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.SizedIcon;
 import com.intellij.util.ui.JBUI;
 import org.jetbrains.annotations.NotNull;
 import ru.lanit.ideaplugin.simplegit.SimpleGitProjectComponent;
 
-public class CreateNewFeatureAction extends AnAction {
+import java.util.Collections;
+import java.util.List;
 
-    public CreateNewFeatureAction() {
-        super(JBUI.scale(new SizedIcon(AllIcons.General.Add, 16, 16)));
+import static ru.lanit.ideaplugin.simplegit.localization.Language.simpleGitPluginBundle;
+
+public class CreateNewScenarioAction extends AnAction {
+    private static final Logger log = Logger.getInstance(CreateNewScenarioAction.class);
+    private static boolean listenerRegistered = false;
+
+    public CreateNewScenarioAction() {
+        super(simpleGitPluginBundle.getString("create-new-scenario.action.text"),
+                simpleGitPluginBundle.getString("create-new-scenario.action.description"),
+                JBUI.scale(new SizedIcon(AllIcons.General.Add, 16, 16)));
     }
 
     public void actionPerformed(@NotNull AnActionEvent event) {

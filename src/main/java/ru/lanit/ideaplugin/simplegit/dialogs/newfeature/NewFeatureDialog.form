@@ -12,13 +12,14 @@
       <font/>
     </border>
     <children>
-      <component id="cb909" class="javax.swing.JLabel">
+      <component id="cb909" class="javax.swing.JLabel" binding="featureNameLabel">
         <constraints>
           <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
           <gridbag top="5" left="5" bottom="5" right="5" weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties>
           <focusable value="false"/>
+          <labelFor value="d7f16"/>
           <text value="Feature Name:"/>
         </properties>
       </component>
@@ -33,7 +34,7 @@
           <columns value="30"/>
         </properties>
       </component>
-      <component id="9ad6d" class="javax.swing.JLabel">
+      <component id="9ad6d" class="javax.swing.JLabel" binding="scenarioNameLabel">
         <constraints>
           <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
           <gridbag top="5" left="5" bottom="5" right="5" weightx="0.0" weighty="0.0"/>
@@ -58,7 +59,7 @@
           <verifyInputWhenFocusTarget value="false"/>
         </properties>
       </component>
-      <component id="a21e1" class="javax.swing.JLabel">
+      <component id="a21e1" class="javax.swing.JLabel" binding="featureFilenameLabel">
         <constraints>
           <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
           <gridbag top="5" left="5" bottom="5" right="5" weightx="0.0" weighty="0.0"/>
@@ -69,7 +70,7 @@
           <text value="Feature Filename:"/>
         </properties>
       </component>
-      <component id="96d1e" class="javax.swing.JLabel">
+      <component id="96d1e" class="javax.swing.JLabel" binding="favoriteTagsLabel">
         <constraints>
           <grid row="4" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
           <gridbag top="5" left="5" bottom="5" right="5" weightx="0.0" weighty="0.0"/>
@@ -77,7 +78,7 @@
         <properties>
           <focusable value="false"/>
           <labelFor value="3bbd9"/>
-          <text value="Common tags:"/>
+          <text value="Favorite Tags:"/>
         </properties>
       </component>
       <grid id="2ebef" layout-manager="GridBagLayout">
@@ -124,7 +125,7 @@
               <text value=""/>
             </properties>
           </component>
-          <component id="c29a0" class="javax.swing.JButton" binding="getCommonTag">
+          <component id="c29a0" class="javax.swing.JButton" binding="getFavoriteTag">
             <constraints>
               <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
               <gridbag weightx="0.0" weighty="0.0"/>
@@ -181,7 +182,7 @@
         <properties/>
         <border type="bevel-lowered"/>
         <children>
-          <component id="2043d" class="javax.swing.JTable" binding="commonTagsTable">
+          <component id="2043d" class="javax.swing.JTable" binding="favoriteTagsTable">
             <constraints/>
             <properties>
               <autoCreateColumnsFromModel value="false"/>
@@ -206,25 +207,25 @@
           <editable value="true"/>
         </properties>
       </component>
-      <component id="91a95" class="javax.swing.JLabel">
+      <component id="91a95" class="javax.swing.JLabel" binding="scenarioTypeLabel">
         <constraints>
           <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
           <gridbag top="5" left="5" bottom="5" right="5" weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties>
           <focusable value="false"/>
-          <labelFor value="81788"/>
+          <labelFor value="d0be4"/>
           <text value="Scenario Type:"/>
         </properties>
       </component>
-      <component id="30392" class="javax.swing.JLabel">
+      <component id="30392" class="javax.swing.JLabel" binding="jiraIssueKeyLabel">
         <constraints>
           <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
           <gridbag top="5" left="5" bottom="5" right="5" weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties>
           <focusable value="false"/>
-          <labelFor value="81788"/>
+          <labelFor value="82eba"/>
           <text value="Jira Issue Key:"/>
         </properties>
       </component>
@@ -237,7 +238,7 @@
           <model/>
         </properties>
       </component>
-      <component id="8b4f7" class="javax.swing.JLabel">
+      <component id="8b4f7" class="javax.swing.JLabel" binding="scenarioTagsLabel">
         <constraints>
           <grid row="4" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
           <gridbag top="5" left="5" bottom="5" right="5" weightx="0.0" weighty="0.0"/>
@@ -245,7 +246,7 @@
         <properties>
           <focusable value="false"/>
           <labelFor value="a827d"/>
-          <text value="Feature tags:"/>
+          <text value="Scenario Tags:"/>
         </properties>
       </component>
       <component id="82eba" class="javax.swing.JTextField" binding="jiraIssueKey">
