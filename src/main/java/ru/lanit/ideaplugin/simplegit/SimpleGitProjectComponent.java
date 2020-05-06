@@ -21,12 +21,13 @@ import ru.lanit.ideaplugin.simplegit.dialogs.pluginsettings.PluginSettingsDialog
 import ru.lanit.ideaplugin.simplegit.features.FeatureList;
 import ru.lanit.ideaplugin.simplegit.features.ScenarioType;
 import ru.lanit.ideaplugin.simplegit.git.GitManager;
-import ru.lanit.ideaplugin.simplegit.settings.PluginSettings;
-import ru.lanit.ideaplugin.simplegit.settings.PluginSettingsProvider;
-import ru.lanit.ideaplugin.simplegit.settings.SettingsChangeListener;
+import ru.lanit.ideaplugin.simplegit.settings.ProjectSettings;
+import ru.lanit.ideaplugin.simplegit.settings.SettingsProvider;
 import ru.lanit.ideaplugin.simplegit.tags.tag.AbstractTag;
 import ru.lanit.ideaplugin.simplegit.tags.tag.TagType;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
@@ -44,16 +45,19 @@ public class SimpleGitProjectComponent implements ProjectComponent {
 
     private final Project project;
     private FeatureList featureList;
-    private PluginSettingsProvider settings;
+    private SettingsProvider settings;
     private GitManager gitManager;
     private RefreshSession refreshSession;
+    private PropertyChangeListener settingsChangeListener;
 
     public SimpleGitProjectComponent(Project project) {
         this.project = project;
         gitManager = new GitManager(this);
 //        this.refreshSession = RefreshQueue.getInstance().createSession(true, true, null);
-        settings = new PluginSettingsProvider(project, this);
+        settings = new SettingsProvider(project);
         settings.restoreAllSettings();
+        settingsChangeListener = new SettingsChangeListener();
+        settings.addPropertyChangeListener(settingsChangeListener);
     }
 
     public void initComponent() {
@@ -155,13 +159,6 @@ public class SimpleGitProjectComponent implements ProjectComponent {
         return baseDir.findFileByRelativePath(settings.getFeaturePath());
     }
 
-    @Override
-    public void onSettingsChange(PluginSettings newOptions, PluginSettings oldOptions) {
-        if (oldOptions != null && newOptions.isPluginActive() && !newOptions.getFeaturePath().equals(oldOptions.getFeaturePath())) {
-            featureList.updateFeatures();
-        }
-    }
-
     public void updateFeatures() {
         featureList.updateFeatures();/*
         final SvnVcs vcs = SvnVcs.getInstance(project);
@@ -192,5 +189,15 @@ public class SimpleGitProjectComponent implements ProjectComponent {
 
     public String getRemoteGitRepositoryURL() {
         return settings.getRemoteGitRepositoryURL();
+    }
+
+    private class SettingsChangeListener implements PropertyChangeListener {
+        @Override
+        public void propertyChange(PropertyChangeEvent evt) {
+            String propertyName = evt.getPropertyName();
+            if (ProjectSettings.FEATURE_PATH.equals(propertyName) && isPluginActive()) {
+                featureList.updateFeatures();
+            }
+        }
     }
 }

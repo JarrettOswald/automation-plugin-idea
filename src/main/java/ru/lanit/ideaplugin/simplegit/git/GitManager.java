@@ -35,7 +35,7 @@ import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.lanit.ideaplugin.simplegit.SimpleGitProjectComponent;
-import ru.lanit.ideaplugin.simplegit.settings.PluginSettingsProvider;
+import ru.lanit.ideaplugin.simplegit.settings.SettingsProvider;
 
 import javax.swing.*;
 import java.util.*;
@@ -60,7 +60,7 @@ public class GitManager {
         subscribeToRepoChangeEvents();
     }
 
-    public void suggestRepository(PluginSettingsProvider settings) {
+    public void suggestRepository(SettingsProvider settings) {
         settings.setRemoteGitRepositoryURL("");
     }
 

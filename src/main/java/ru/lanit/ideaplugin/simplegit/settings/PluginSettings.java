@@ -10,56 +10,10 @@ public class PluginSettings {
     private static final Logger log = Logger.getInstance(PluginSettings.class);
     @NonNls public static final String SIMPLEGIT_SETTINGS_LOCALE = "simplegit.settings.locale";
 
-    @PropertyName(value = "simplegit.settings.remoteGitRepositoryURL")
-    private String remoteGitRepositoryURL;
+    @PropertyName(value = SIMPLEGIT_SETTINGS_LOCALE)
+    private String locale;
 
-    public boolean isPluginActive() {
-        return pluginActive;
-    }
-
-    public void setPluginActive(boolean pluginActive) {
-        this.pluginActive = pluginActive;
-    }
-
-    public EditableCommonTagList getCommonTags() {
-        if (commonTags == null) {
-            return new EditableCommonTagList();
-        }
-        return new EditableCommonTagList(commonTags.split(";"));
-    }
-
-    public void setCommonTags(EditableCommonTagList commonTags) {
-        this.commonTags = commonTags == null ? "" : commonTags.toString();
-    }
-
-    public String getFeaturePath() {
-        return featurePath == null ? "" : featurePath;
-    }
-
-    public void setFeaturePath(String featurePath) {
-        this.featurePath = featurePath == null ? "" : featurePath;
-    }
-
-    public String getGitRepositoryRootPath() {
-        return gitRepositoryRootPath == null ? "" : gitRepositoryRootPath;
-    }
-
-    public void setGitRepositoryRootPath(String gitRepositoryRootPath) {
-        this.gitRepositoryRootPath = gitRepositoryRootPath == null ? "" : gitRepositoryRootPath;
-    }
-
-    public String getRemoteGitRepositoryURL() {
-        return remoteGitRepositoryURL == null ? "" : remoteGitRepositoryURL;
-    }
-
-    public void setRemoteGitRepositoryURL(String remoteGitRepositoryURL) {
-        this.remoteGitRepositoryURL = remoteGitRepositoryURL == null ? "" : remoteGitRepositoryURL;
-    }
-
-    public void cleanup() {
-        this.commonTags = commonTags == null ? "" : commonTags;
-        this.featurePath = featurePath == null ? "" : featurePath;
-        this.gitRepositoryRootPath = gitRepositoryRootPath == null ? "" : gitRepositoryRootPath;
-        this.remoteGitRepositoryURL = remoteGitRepositoryURL == null ? "" : remoteGitRepositoryURL;
+    public Locale getLocale() {
+        return locale == null || locale.isEmpty() ? Locale.ENGLISH: Locale.forLanguageTag(locale);
     }
 }
