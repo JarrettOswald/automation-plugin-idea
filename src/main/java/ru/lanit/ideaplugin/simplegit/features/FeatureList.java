@@ -2,6 +2,7 @@ package ru.lanit.ideaplugin.simplegit.features;
 
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
 import cucumber.runtime.model.CucumberFeature;
 import org.jetbrains.annotations.NotNull;
 
@@ -16,7 +17,7 @@ public abstract class FeatureList {
 
     public abstract void updateFeatures();
 
-    public abstract void updateFeaturesAndSelectByFilename(String filename);
+    public abstract void updateFeaturesAndSelectByFile(VirtualFile file);
 
     public abstract CucumberFeature getSelectedFeature();
 

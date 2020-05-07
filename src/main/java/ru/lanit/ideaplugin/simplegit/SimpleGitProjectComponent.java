@@ -82,7 +82,7 @@ public class SimpleGitProjectComponent implements ProjectComponent {
         return project;
     }
 
-    public void createNewScenario() {
+    public VirtualFile createNewScenario() {
         System.out.println("Create new scenario in project " + project.getBasePath());
         NewFeatureDialog newFeatureDialog = new NewFeatureDialog(project);
         settings.setSettingsToNewFeatureDialog(newFeatureDialog);
@@ -113,14 +113,15 @@ public class SimpleGitProjectComponent implements ProjectComponent {
                         printWriter.close();
                         VirtualFileSystem fileSystem = LocalFileSystem.getInstance();
                         VirtualFile virtualFile = fileSystem.refreshAndFindFileByPath(file.getAbsolutePath());
-                        FileEditorManager.getInstance(project).openFile(virtualFile, true);
-                        FeatureList.getInstance(project).updateFeaturesAndSelectByFilename(file.getAbsolutePath());
+                        if (virtualFile != null) FileEditorManager.getInstance(project).openFile(virtualFile, true);
+                        return virtualFile;
                     }
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
+        return null;
     }
 
     public void gitSynchronize(AnActionEvent event) {
@@ -189,6 +190,10 @@ public class SimpleGitProjectComponent implements ProjectComponent {
 
     public String getRemoteGitRepositoryURL() {
         return settings.getRemoteGitRepositoryURL();
+    }
+
+    public String getGitRepositoryRootPath() {
+        return settings.getGitRepositoryRootPath();
     }
 
     private class SettingsChangeListener implements PropertyChangeListener {

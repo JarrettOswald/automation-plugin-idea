@@ -19,10 +19,7 @@ import gherkin.util.FixJava;
 import org.jetbrains.annotations.NotNull;
 import ru.lanit.ideaplugin.simplegit.SimpleGitProjectComponent;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -93,8 +90,9 @@ public class FeatureListImpl extends FeatureList implements BulkFileListener {
     }
 
     @Override
-    public void updateFeaturesAndSelectByFilename(String filename) {
+    public void updateFeaturesAndSelectByFile(VirtualFile file) {
         updateFeaturesList();
+        String filename = new File(plugin.getFeaturePath()).toURI().relativize(new File(file.getPath()).toURI()).getPath();
         CucumberFeature select = featureList.stream()
                 .filter(feature -> feature.getPath().equals(filename))
                 .findFirst().orElse(null);
