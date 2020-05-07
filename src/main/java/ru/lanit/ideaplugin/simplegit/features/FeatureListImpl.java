@@ -14,7 +14,6 @@ import cucumber.runtime.CucumberException;
 import cucumber.runtime.io.FileResourceLoader;
 import cucumber.runtime.model.CucumberFeature;
 import cucumber.runtime.model.CucumberTagStatement;
-import gherkin.formatter.JSONFormatter;
 import gherkin.parser.Parser;
 import gherkin.util.FixJava;
 import org.jetbrains.annotations.NotNull;
@@ -46,25 +45,14 @@ public class FeatureListImpl extends FeatureList implements BulkFileListener {
         plugin.getProject().getMessageBus().connect().subscribe(VirtualFileManager.VFS_CHANGES, this);
     }
 
-    private String readFeatureFile(String path) throws FileNotFoundException, UnsupportedEncodingException {
+    private FeatureModel readFeatureFile(String path) throws FileNotFoundException, UnsupportedEncodingException {
         String gherkin = FixJava.readReader(new InputStreamReader(
                 new FileInputStream(path), "UTF-8"));
         System.out.println("gherkin...\n" + gherkin);
-
-        StringBuilder json = new StringBuilder();
-
-        System.out.println("json: '" + json + "'");
-
-        JSONFormatter formatter = new JSONFormatter(json);
-
-        System.out.println("formatter: "+formatter.toString());
-
-        Parser parser = new Parser(formatter);
-
-        System.out.println("parser: " + parser.toString());
+        FeatureFormatter formatter = new FeatureFormatter();
+        Parser parser = new Parser(formatter, false);
         parser.parse(gherkin, path, 0);
-        System.out.println("json: '" + json + "'"); // Gherkin source as JSON
-        return json.toString();
+        return formatter.getFeatureModel();
     }
 
     private void updateFeaturesList() {
@@ -74,6 +62,11 @@ public class FeatureListImpl extends FeatureList implements BulkFileListener {
                     new FileResourceLoader(), Collections.singletonList(plugin.getFeaturePath()), Collections.emptyList());
         } catch (CucumberException e) {
             features = new ArrayList<>();
+        }
+        try {
+            readFeatureFile("test.feature");
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
         }
         for (CucumberFeature feature : features) {
             System.out.println("New feature found at " + feature.getPath());
