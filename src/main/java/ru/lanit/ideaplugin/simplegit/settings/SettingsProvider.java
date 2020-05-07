@@ -77,6 +77,7 @@ public class SettingsProvider {
         projectSettings.setFeaturePath(pluginSettingsDialog.getFeaturePath());
         projectSettings.setGitRepositoryRootPath(pluginSettingsDialog.getGitRepositoryRootPath());
         projectSettings.setRemoteGitRepositoryURL(pluginSettingsDialog.getRemoteGitRepositoryURL());
+        projectSettings.setRemoteMainBranch(pluginSettingsDialog.getRemoteMainBranch());
         saveAllSettings();
     }
 
@@ -86,6 +87,7 @@ public class SettingsProvider {
         pluginSettingsDialog.setFeaturePath(projectSettings.getFeaturePath());
         pluginSettingsDialog.setGitRepositoryRootPath(projectSettings.getGitRepositoryRootPath());
         pluginSettingsDialog.setRemoteGitRepositoryURL(projectSettings.getRemoteGitRepositoryURL());
+        pluginSettingsDialog.setRemoteMainBranch(projectSettings.getRemoteMainBranch());
     }
 
     public void setSettingsToNewFeatureDialog(NewFeatureDialog newFeatureDialog) {

@@ -12,6 +12,7 @@ import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.SizedIcon;
 import com.intellij.util.ui.JBUI;
+import git4idea.GitRemoteBranch;
 import git4idea.repo.GitRemote;
 import git4idea.repo.GitRepository;
 import org.jetbrains.annotations.Nullable;
@@ -47,6 +48,8 @@ public class PluginSettingsDialog extends DialogWrapper {
     private JLabel remoteGitRepositoryLabel;
     private JLabel featuresPathLabel;
     private JLabel favoriteTagsLabel;
+    private JLabel remoteMainBranchLabel;
+    private JComboBox<String> remoteMainBranch;
     private TextFieldWithBrowseButton featurePath;
     private EditableFavoriteTagList favoriteTagsList;
 
@@ -56,6 +59,7 @@ public class PluginSettingsDialog extends DialogWrapper {
         isPluginActive.setText(simpleGitPluginBundle.getString("plugin-settings.dialog.enable.plugin"));
         localGitRepositoryLabel.setText(simpleGitPluginBundle.getString("plugin-settings.dialog.git-repository.local"));
         remoteGitRepositoryLabel.setText(simpleGitPluginBundle.getString("plugin-settings.dialog.git-repository.remote"));
+        remoteMainBranchLabel.setText(simpleGitPluginBundle.getString("plugin-settings.dialog.main-branch"));
         featuresPathLabel.setText(simpleGitPluginBundle.getString("plugin-settings.dialog.features.path"));
         favoriteTagsLabel.setText(simpleGitPluginBundle.getString("plugin-settings.dialog.tags.favorite"));
 
@@ -67,7 +71,7 @@ public class PluginSettingsDialog extends DialogWrapper {
         GridBagConstraints constraints = new GridBagConstraints();
         constraints.gridwidth = 2;
         constraints.gridx = 1;
-        constraints.gridy = 3;
+        constraints.gridy = 4;
         constraints.weightx = 1;
         constraints.fill = 1;
         constraints.insets = JBUI.insets(2, 0);
@@ -121,9 +125,9 @@ public class PluginSettingsDialog extends DialogWrapper {
                     .filter(repo -> repo.getRoot().getPath().equals(repositoryPath))
                     .findFirst();
             if (repository.isPresent()) {
-                Collection<GitRemote> repositories = plugin.getGitManager().getRemoteGitRepositories(repository.get());
-                for (GitRemote repositoriy : repositories) {
-                    String url = repositoriy.getFirstUrl();
+                Collection<GitRemote> remotes = plugin.getGitManager().getRemoteGitRepositories(repository.get());
+                for (GitRemote repo : remotes) {
+                    String url = repo.getFirstUrl();
                     this.remoteGitRepositoryURL.addItem(url);
                 }
                 if (this.remoteGitRepositoryURL.getItemCount() >= 2) {
@@ -136,6 +140,45 @@ public class PluginSettingsDialog extends DialogWrapper {
             }
         }
         this.remoteGitRepositoryURL.setEnabled(false);
+        if (isShowing()) {
+            initValidation();
+        }
+    }
+
+    private void fillRemoteMainBranch(ActionEvent actionEvent) {
+        String repositoryPath = getGitRepositoryRootPath();
+        String remoteURL = getRemoteGitRepositoryURL();
+        remoteMainBranch.removeAllItems();
+        if (repositoryPath!= null && remoteURL != null) {
+            Optional<GitRepository> repository = plugin.getGitManager().getGitRepositories().stream()
+                    .filter(repo -> repo.getRoot().getPath().equals(repositoryPath))
+                    .findFirst();
+            if (repository.isPresent()) {
+                Collection<GitRemote> remotes = plugin.getGitManager().getRemoteGitRepositories(repository.get());
+                GitRemote remote = null;
+                for (GitRemote repo : remotes) {
+                    if (repo.getFirstUrl()!= null && repo.getFirstUrl().equals(remoteURL)) {
+                        remote = repo;
+                        break;
+                    }
+                }
+                if (remote != null) {
+                    for (GitRemoteBranch remoteBranch : repository.get().getBranches().getRemoteBranches()) {
+                        if (remoteBranch.getRemote().equals(remote))
+                            this.remoteMainBranch.addItem(remoteBranch.getName());
+                    }
+                }
+
+                if (this.remoteMainBranch.getItemCount() >= 2) {
+                    this.remoteMainBranch.setEnabled(isPluginActive.isSelected());
+                    return;
+                }
+                if (this.remoteMainBranch.getItemCount() == 1) {
+                    this.remoteMainBranch.setSelectedIndex(0);
+                }
+            }
+        }
+        this.remoteMainBranch.setEnabled(false);
         if (isShowing()) {
             initValidation();
         }
@@ -177,7 +220,9 @@ public class PluginSettingsDialog extends DialogWrapper {
         isPluginActive.addChangeListener(this::updateEnabledStateOfElements);
         updateEnabledStateOfElements(null);
         gitRepositoryRootPath.addActionListener(this::fillRemoteGitRepositoryURL);
+        remoteGitRepositoryURL.addActionListener(this::fillRemoteMainBranch);
         fillRemoteGitRepositoryURL(null);
+        fillRemoteMainBranch(null);
         AbstractTagList.prepareTable(favoriteTagsTable);
         return contentPane;
     }
@@ -194,11 +239,13 @@ public class PluginSettingsDialog extends DialogWrapper {
 
     @Override
     public ValidationInfo doValidate() {
-        if (gitRepositoryRootPath.getItemCount() == 0 || remoteGitRepositoryURL.getItemCount() == 0) {
+        if (gitRepositoryRootPath.getItemCount() == 0 || remoteGitRepositoryURL.getItemCount() == 0 || remoteMainBranch.getItemCount() == 0) {
             isPluginActive.setEnabled(false);
             if (gitRepositoryRootPath.getItemCount() == 0)
                 return new ValidationInfo(simpleGitPluginBundle.getString("plugin-settings.dialog.validate-error.git-repository.local"), isPluginActive);
-            return new ValidationInfo(simpleGitPluginBundle.getString("plugin-settings.dialog.validate-error.git-repository.remote"), isPluginActive);
+            else if (remoteGitRepositoryURL.getItemCount() == 0)
+                return new ValidationInfo(simpleGitPluginBundle.getString("plugin-settings.dialog.validate-error.git-repository.remote"), isPluginActive);
+            return new ValidationInfo(simpleGitPluginBundle.getString("plugin-settings.dialog.validate-error.main-branch"), isPluginActive);
         }
         isPluginActive.setEnabled(true);
         if (isPluginActive.isSelected() && featurePath.getText().isEmpty()) {
@@ -251,8 +298,21 @@ public class PluginSettingsDialog extends DialogWrapper {
 
     public void setRemoteGitRepositoryURL(String select) {
         for (int i = 0; i < remoteGitRepositoryURL.getItemCount(); i++) {
-            if (select.equals(gitRepositoryRootPath.getItemAt(i))) {
-                this.gitRepositoryRootPath.setSelectedItem(select);
+            if (select.equals(remoteGitRepositoryURL.getItemAt(i))) {
+                this.remoteGitRepositoryURL.setSelectedItem(select);
+                break;
+            }
+        }
+    }
+
+    public String getRemoteMainBranch() {
+        return (String) remoteMainBranch.getSelectedItem();
+    }
+
+    public void setRemoteMainBranch(String select) {
+        for (int i = 0; i < remoteMainBranch.getItemCount(); i++) {
+            if (select.equals(remoteMainBranch.getItemAt(i))) {
+                this.remoteMainBranch.setSelectedItem(select);
                 break;
             }
         }
@@ -262,6 +322,7 @@ public class PluginSettingsDialog extends DialogWrapper {
         // TODO: place custom component creation code here
         gitRepositoryRootPath = new JComboBox<>();
         remoteGitRepositoryURL = new JComboBox<>();
+        remoteMainBranch = new JComboBox<>();
     }
 
     protected void doAction(ActionEvent e) {

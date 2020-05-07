@@ -13,6 +13,7 @@ public class ProjectSettings {
     @NonNls public static final String FEATURE_PATH = "simplegit.settings.featurePath";
     @NonNls public static final String GIT_REPOSITORY_ROOT_PATH = "simplegit.settings.gitRepositoryRootPath";
     @NonNls public static final String REMOTE_GIT_REPOSITORY_URL = "simplegit.settings.remoteGitRepositoryURL";
+    @NonNls public static final String REMOTE_MAIN_BRANCH = "simplegit.settings.remoteMainBranch";
 
     @NonNls
     @PropertyName(value = PLUGIN_ACTIVE, defaultValue = "false")
@@ -29,6 +30,9 @@ public class ProjectSettings {
 
     @PropertyName(value = REMOTE_GIT_REPOSITORY_URL)
     private String remoteGitRepositoryURL;
+
+    @PropertyName(value = REMOTE_MAIN_BRANCH)
+    private String remoteMainBranch;
 
     public boolean isPluginActive() {
         return pluginActive;
@@ -78,5 +82,13 @@ public class ProjectSettings {
         this.featurePath = featurePath == null ? "" : featurePath;
         this.gitRepositoryRootPath = gitRepositoryRootPath == null ? "" : gitRepositoryRootPath;
         this.remoteGitRepositoryURL = remoteGitRepositoryURL == null ? "" : remoteGitRepositoryURL;
+    }
+
+    public String getRemoteMainBranch() {
+        return remoteMainBranch;
+    }
+
+    public void setRemoteMainBranch(String remoteMainBranch) {
+        this.remoteMainBranch = remoteMainBranch;
     }
 }

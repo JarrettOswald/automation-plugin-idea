@@ -2,13 +2,13 @@
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="ru.lanit.ideaplugin.simplegit.dialogs.pluginsettings.PluginSettingsDialog">
   <grid id="cbd77" binding="contentPane" layout-manager="GridBagLayout">
     <constraints>
-      <xy x="20" y="43" width="696" height="334"/>
+      <xy x="20" y="43" width="700" height="334"/>
     </constraints>
     <properties>
       <alignmentY value="0.0"/>
       <autoscrolls value="true"/>
-      <minimumSize width="500" height="300"/>
-      <preferredSize width="500" height="300"/>
+      <minimumSize width="700" height="300"/>
+      <preferredSize width="700" height="300"/>
     </properties>
     <border type="empty" title="">
       <font/>
@@ -16,7 +16,7 @@
     <children>
       <component id="cb909" class="javax.swing.JLabel" binding="featuresPathLabel">
         <constraints>
-          <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
           <gridbag top="5" left="5" bottom="5" right="5" weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties>
@@ -26,7 +26,7 @@
       </component>
       <component id="9ad6d" class="javax.swing.JLabel" binding="favoriteTagsLabel">
         <constraints>
-          <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="5" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="5" fill="0" indent="0" use-parent-layout="false"/>
           <gridbag top="5" left="5" bottom="5" right="5" weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties>
@@ -48,7 +48,7 @@
       </component>
       <vspacer id="cd1d9">
         <constraints>
-          <grid row="5" column="1" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+          <grid row="6" column="1" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
           <gridbag weightx="0.0" weighty="0.0"/>
         </constraints>
       </vspacer>
@@ -92,7 +92,7 @@
       </component>
       <scrollpane id="be090">
         <constraints>
-          <grid row="4" column="1" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="5" column="1" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
           <gridbag top="3" left="3" bottom="3" right="3" weightx="1.0" weighty="1.0"/>
         </constraints>
         <properties>
@@ -118,7 +118,7 @@
       </scrollpane>
       <grid id="40448" binding="favoriteTagsToolbar" layout-manager="GridBagLayout">
         <constraints>
-          <grid row="4" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="5" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
           <gridbag top="3" left="3" bottom="3" right="3" weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties>
@@ -168,6 +168,26 @@
           </vspacer>
         </children>
       </grid>
+      <component id="af3b2" class="javax.swing.JComboBox" binding="remoteMainBranch" custom-create="true">
+        <constraints>
+          <grid row="3" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+          <gridbag top="2" left="0" bottom="2" right="0" weightx="1.0" weighty="0.0"/>
+        </constraints>
+        <properties>
+          <model/>
+        </properties>
+      </component>
+      <component id="cbaa3" class="javax.swing.JLabel" binding="remoteMainBranchLabel">
+        <constraints>
+          <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+          <gridbag top="5" left="5" bottom="5" right="5" weightx="0.0" weighty="0.0"/>
+        </constraints>
+        <properties>
+          <focusable value="false"/>
+          <labelFor value="af3b2"/>
+          <text value="Remote Main Branch:"/>
+        </properties>
+      </component>
     </children>
   </grid>
 </form>
