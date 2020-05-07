@@ -207,7 +207,7 @@ public class Updater extends Task.Backgroundable {
     }
 
     private int getFilesCount(@NotNull FileGroup group) {
-        return group.getFiles().size() + group.getChildren().stream().mapToInt(g -> getFilesCount(g)).sum();
+        return group.getFiles().size() + group.getChildren().stream().mapToInt(this::getFilesCount).sum();
     }
 
     @Nullable
@@ -308,7 +308,7 @@ public class Updater extends Task.Backgroundable {
             else if (!myUpdatedFiles.isEmpty()) {
                 final UpdateInfoTree tree = showUpdateTree(continueChainFinal && updateSuccess && noMerged, someSessionWasCancelled);
                 final CommittedChangesCache cache = CommittedChangesCache.getInstance(myProject);
-                cache.processUpdatedFiles(myUpdatedFiles, incomingChangeLists -> tree.setChangeLists(incomingChangeLists));
+                cache.processUpdatedFiles(myUpdatedFiles, tree::setChangeLists);
 
                 Notification notification = prepareNotification(tree, someSessionWasCancelled);
                 notification.addAction(new ViewUpdateInfoNotification(myProject, tree, "View", notification));
@@ -327,7 +327,7 @@ public class Updater extends Task.Backgroundable {
                     ProgressManager.getInstance().run(this);
                 }
             }
-            myPlugin.updateFeatures();
+            myPlugin.getGitManager().afterUpdate(updateSuccess);
         }, null, myProject);
     }
 

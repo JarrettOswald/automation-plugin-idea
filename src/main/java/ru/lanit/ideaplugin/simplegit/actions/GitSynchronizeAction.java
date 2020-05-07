@@ -10,16 +10,20 @@ import com.intellij.ui.SizedIcon;
 import com.intellij.util.ui.JBUI;
 import org.jetbrains.annotations.NotNull;
 import ru.lanit.ideaplugin.simplegit.SimpleGitProjectComponent;
+import ru.lanit.ideaplugin.simplegit.git.GitManager;
+import ru.lanit.ideaplugin.simplegit.git.SynchronizeStatus;
 
 import static ru.lanit.ideaplugin.simplegit.localization.Language.simpleGitPluginBundle;
 
 public class GitSynchronizeAction extends AnAction {
     private static final Logger log = Logger.getInstance(GitSynchronizeAction.class);
+    private static SynchronizeStatus status;
 
     public GitSynchronizeAction() {
         super(simpleGitPluginBundle.getString("git-synchronize.action.text"),
                 simpleGitPluginBundle.getString("git-synchronize.action.description"),
                 JBUI.scale(new SizedIcon(AllIcons.Actions.Refresh, 16, 16)));
+        status = SynchronizeStatus.READY;
     }
     public void actionPerformed(@NotNull AnActionEvent event) {
         Project project = event.getData(CommonDataKeys.PROJECT);
@@ -29,13 +33,28 @@ public class GitSynchronizeAction extends AnAction {
         }
     }
 
+    public static void setStatus(SynchronizeStatus st) {
+        if (st == SynchronizeStatus.READY || st.ordinal() > status.ordinal()) {
+            status = st;
+        }
+    }
+
     public void update(AnActionEvent event) {
-//        JFrame frame = new JFrame();
-//        JBPopupFactory.getInstance().createComponentPopupBuilder(frame, frame);
-//        Project project = event.getData(CommonDataKeys.PROJECT);
-//        if (project != null) {
-//            SimpleGitProjectComponent plugin = project.getComponent(SimpleGitProjectComponent.class);
-//            event.getPresentation().setEnabled(plugin.isPluginActive());
-//        }
+        Project project = event.getData(CommonDataKeys.PROJECT);
+        if (project != null) {
+            SimpleGitProjectComponent plugin = project.getComponent(SimpleGitProjectComponent.class);
+            if (plugin.isPluginActive() && status == SynchronizeStatus.READY) {
+                event.getPresentation().setEnabled(true);
+            } else {
+                event.getPresentation().setEnabled(false);
+                if (status != SynchronizeStatus.READY) {
+                    GitManager manager = plugin.getGitManager();
+                    if (status == SynchronizeStatus.UPDATED)
+                        manager.commit();
+                    if (status == SynchronizeStatus.COMMITED)
+                        manager.pushGit();
+                }
+            }
+        }
     }
 }
