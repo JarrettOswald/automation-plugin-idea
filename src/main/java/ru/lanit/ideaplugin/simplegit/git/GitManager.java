@@ -29,8 +29,10 @@ import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
 import com.intellij.vcsUtil.VcsUtil;
-import git4idea.GitRemoteBranch;
-import git4idea.GitStandardRemoteBranch;
+import git4idea.*;
+import git4idea.branch.GitBranchUiHandlerImpl;
+import git4idea.branch.GitBranchWorker;
+import git4idea.commands.Git;
 import git4idea.push.GitPushSource;
 import git4idea.push.GitPushSupport;
 import git4idea.push.GitPushTarget;
@@ -65,6 +67,7 @@ public class GitManager {
     private GitRepositoryManager repositoryManager;
     private ActionInfo myActionInfo;
     private ScopeInfo myScopeInfo;
+    private Git git;
 
     public GitManager(SimpleGitProjectComponent plugin) {
         this.plugin = plugin;
@@ -72,6 +75,7 @@ public class GitManager {
         myActionInfo = ActionInfo.UPDATE;
 
         repositoryManager = ServiceManager.getService(plugin.getProject(), GitRepositoryManager.class);
+        git = Git.getInstance();
         subscribeToRepoChangeEvents();
     }
 
@@ -483,6 +487,68 @@ public class GitManager {
         );
         if (!result)
             GitSynchronizeAction.setStatus(SynchronizeStatus.READY);
+    }
+
+    public GitLocalBranch getCurrentBranch() {
+        GitRepository repository = getGitRepository();
+        return repository.getCurrentBranch();
+    }
+
+    public void checkoutExistingOrNewBranch(String branchName, Runnable callInAwtAfterExecution) {
+//        fetchGit();
+        GitRepository repository = getGitRepository();
+        GitLocalBranch branch = repository.getBranches().findLocalBranch(branchName);
+        if (branch == null) {
+            new CommonBackgroundTask(plugin.getProject(), "Checking out new branch " + branchName, this::pushGit) {
+                @Override public void execute(@NotNull ProgressIndicator indicator) {
+                    newWorker(indicator).checkoutNewBranch(branchName, Collections.singletonList(repository));
+                }
+            }.runInBackground();
+//            GitBrancher brancher = GitBrancher.getInstance(plugin.getProject());
+//            brancher.checkoutNewBranch(branchName, Collections.singletonList(repository));
+        } else {
+            new CommonBackgroundTask(plugin.getProject(), "Checking out new branch " + branchName, callInAwtAfterExecution) {
+                @Override public void execute(@NotNull ProgressIndicator indicator) {
+                    newWorker(indicator).checkout(branchName, false, Collections.singletonList(repository));
+                }
+            }.runInBackground();
+        }
+    }
+
+    private static abstract class CommonBackgroundTask extends Task.Backgroundable {
+
+        @Nullable private final Runnable myCallInAwtAfterExecution;
+
+        private CommonBackgroundTask(@Nullable final Project project, @NotNull final String title, @Nullable Runnable callInAwtAfterExecution) {
+            super(project, title);
+            myCallInAwtAfterExecution = callInAwtAfterExecution;
+        }
+
+        @Override
+        public final void run(@NotNull ProgressIndicator indicator) {
+            execute(indicator);
+            if (myCallInAwtAfterExecution != null) {
+                Application application = ApplicationManager.getApplication();
+                if (application.isUnitTestMode()) {
+                    myCallInAwtAfterExecution.run();
+                }
+                else {
+                    application.invokeLater(myCallInAwtAfterExecution, application.getDefaultModalityState());
+                }
+            }
+        }
+
+        abstract void execute(@NotNull ProgressIndicator indicator);
+
+        void runInBackground() {
+            GitVcs.runInBackground(this);
+        }
+
+    }
+
+    private GitBranchWorker newWorker(ProgressIndicator indicator) {
+        Project project = plugin.getProject();
+        return new GitBranchWorker(project, git, new GitBranchUiHandlerImpl(project, git, indicator));
     }
 
     static private class MyCommitResultHandler implements CommitResultHandler {

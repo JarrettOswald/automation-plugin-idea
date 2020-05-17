@@ -14,8 +14,11 @@ import com.intellij.util.messages.MessageBus;
 import gherkin.formatter.model.TagStatement;
 import gherkin.parser.Parser;
 import gherkin.util.FixJava;
+import git4idea.GitLocalBranch;
 import org.jetbrains.annotations.NotNull;
 import ru.lanit.ideaplugin.simplegit.SimpleGitProjectComponent;
+import ru.lanit.ideaplugin.simplegit.git.GitManager;
+import ru.lanit.ideaplugin.simplegit.tags.tag.JiraTag;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -107,7 +110,7 @@ public class FeatureListImpl extends FeatureList implements BulkFileListener {
                     .filter(feature -> feature.getPath().equals(path))
                     .findFirst().orElse(null);
         }
-        this.selectedFeature = select;
+        if (select != null) selectFeature(select);
     }
 
     @Override
@@ -124,7 +127,7 @@ public class FeatureListImpl extends FeatureList implements BulkFileListener {
                     .filter(feature -> feature.getPath().equals(path))
                     .findFirst().orElse(null);
         }
-        this.selectedFeature = select;
+        if (select != null) selectFeature(select);
     }
 
     public void addNewFiles() {
@@ -144,6 +147,26 @@ public class FeatureListImpl extends FeatureList implements BulkFileListener {
         return selectedFeature;
     }
 
+    private void selectFeature(FeatureModel selectedFeature) {
+        this.selectedFeature = selectedFeature;
+        if (selectedFeature != null) {
+            VirtualFile file = LocalFileSystem.getInstance().refreshAndFindFileByPath(selectedFeature.getPath());
+            boolean unv = ChangeListManagerImpl.getInstanceImpl(project).getUnversionedFiles().stream().anyMatch(unversioned -> unversioned.equals(file));
+            if (unv) {
+                List<VirtualFile> unversionedFiles = Collections.singletonList(file);
+                ScheduleForAdditionAction.addUnversioned(project, unversionedFiles, status -> true, null);
+            }
+            JiraTag jiraTag = selectedFeature.getJiraTag();
+            if (jiraTag != null) {
+                String branchName = "feature/" + jiraTag.getName().toLowerCase();
+                GitManager manager = plugin.getGitManager();
+                GitLocalBranch currentBranch = manager.getCurrentBranch();
+                if (!currentBranch.getName().equalsIgnoreCase(branchName)) {
+                    manager.checkoutExistingOrNewBranch(branchName, null);
+                }
+            }
+        }
+    }
     @Override
     public void setSelectedFeature(FeatureModel selectedFeature) {
         selectFeature(selectedFeature);
