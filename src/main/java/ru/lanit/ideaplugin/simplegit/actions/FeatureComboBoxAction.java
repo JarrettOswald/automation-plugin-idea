@@ -15,10 +15,11 @@ import com.intellij.ui.SizedIcon;
 import com.intellij.ui.components.panels.NonOpaquePanel;
 import com.intellij.util.ui.EmptyIcon;
 import com.intellij.util.ui.JBUI;
-import cucumber.runtime.model.CucumberFeature;
+import gherkin.formatter.model.BasicStatement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.lanit.ideaplugin.simplegit.features.FeatureList;
+import ru.lanit.ideaplugin.simplegit.features.FeatureModel;
 import ru.lanit.ideaplugin.simplegit.features.FeatureState;
 
 import javax.swing.*;
@@ -57,14 +58,14 @@ public class FeatureComboBoxAction extends ComboBoxAction implements DumbAware {
         }
     }
 
-    private static void updatePresentation(@Nullable CucumberFeature feature,
+    private static void updatePresentation(@Nullable FeatureModel feature,
                                            @Nullable Project project,
                                            @NotNull Presentation presentation) {
         if (project != null && feature != null) {
-            String name = feature.getFeatureElements().stream()
-                    .map(segment -> segment.getGherkinModel().getName())
+            String name = feature.getScenarioList().stream()
+                    .map(BasicStatement::getName)
                     .findFirst()
-                    .orElse(feature.getGherkinFeature().getName());
+                    .orElse(feature.getFeature().getName());
             presentation.setText(name, false);
             setConfigurationIcon(presentation, feature, project, false);
         }
@@ -76,7 +77,7 @@ public class FeatureComboBoxAction extends ComboBoxAction implements DumbAware {
     }
 
     private static void setConfigurationIcon(final Presentation presentation,
-                                             final CucumberFeature feature,
+                                             final FeatureModel feature,
                                              final Project project,
                                              boolean isPopup) {
         Icon icon;
@@ -139,7 +140,7 @@ public class FeatureComboBoxAction extends ComboBoxAction implements DumbAware {
                 allActionsGroup.addSeparator();
             }*/
 
-            for (CucumberFeature feature : FeatureList.getInstance(project).getFeatureList()) {
+            for (FeatureModel feature : FeatureList.getInstance(project).getFeatureList()) {
                 /*
                 ConfigurationType type = var18[var8];
                 DefaultActionGroup actionGroup = new DefaultActionGroup();
@@ -168,16 +169,16 @@ public class FeatureComboBoxAction extends ComboBoxAction implements DumbAware {
     }
 
     private static class SelectFeatureAction extends DumbAwareAction {
-        private final CucumberFeature myFeature;
+        private final FeatureModel myFeature;
         private final Project myProject;
 
-        public SelectFeatureAction(final CucumberFeature feature, final Project project) {
+        public SelectFeatureAction(final FeatureModel feature, final Project project) {
             myFeature = feature;
             myProject = project;
-            String name = feature.getFeatureElements().stream()
-                    .map(segment -> segment.getGherkinModel().getKeyword() + ": " + segment.getGherkinModel().getName())
+            String name = feature.getScenarioList().stream()
+                    .map(segment -> segment.getKeyword() + ": " + segment.getName())
                     .findFirst()
-                    .orElse(feature.getGherkinFeature().getName());
+                    .orElse(feature.getFeature().getName());
             if (name.isEmpty()) {
                 name = " ";
             }

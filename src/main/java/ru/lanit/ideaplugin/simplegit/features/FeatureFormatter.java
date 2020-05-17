@@ -3,6 +3,7 @@ package ru.lanit.ideaplugin.simplegit.features;
 import com.intellij.openapi.diagnostic.Logger;
 import gherkin.formatter.Formatter;
 import gherkin.formatter.model.*;
+import ru.lanit.ideaplugin.simplegit.SimpleGitProjectComponent;
 
 import java.util.List;
 
@@ -11,8 +12,8 @@ public class FeatureFormatter implements Formatter {
 
     private final FeatureModel featureModel;
 
-    FeatureFormatter() {
-        featureModel = new FeatureModel();
+    FeatureFormatter(SimpleGitProjectComponent plugin) {
+        featureModel = new FeatureModel(plugin);
     }
 
     @Override
@@ -22,7 +23,7 @@ public class FeatureFormatter implements Formatter {
 
     @Override
     public void uri(String uri) {
-        featureModel.setUri(uri);
+        featureModel.setPath(uri);
     }
 
     @Override

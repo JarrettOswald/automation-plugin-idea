@@ -4,16 +4,14 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vcs.changes.ChangeListManagerImpl;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileManager;
+import com.intellij.openapi.vcs.changes.actions.ScheduleForAdditionAction;
+import com.intellij.openapi.vfs.*;
 import com.intellij.openapi.vfs.newvfs.BulkFileListener;
 import com.intellij.openapi.vfs.newvfs.RefreshQueue;
 import com.intellij.openapi.vfs.newvfs.RefreshSession;
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent;
-import cucumber.runtime.CucumberException;
-import cucumber.runtime.io.FileResourceLoader;
-import cucumber.runtime.model.CucumberFeature;
-import cucumber.runtime.model.CucumberTagStatement;
+import com.intellij.util.messages.MessageBus;
+import gherkin.formatter.model.TagStatement;
 import gherkin.parser.Parser;
 import gherkin.util.FixJava;
 import org.jetbrains.annotations.NotNull;
@@ -29,8 +27,8 @@ public class FeatureListImpl extends FeatureList implements BulkFileListener {
 
     private final Project project;
     private final SimpleGitProjectComponent plugin;
-    private List<CucumberFeature> featureList;
-    private CucumberFeature selectedFeature;
+    private List<FeatureModel> featureList;
+    private FeatureModel selectedFeature;
     private boolean editFeature;
 
     public FeatureListImpl(Project project) {
@@ -42,35 +40,58 @@ public class FeatureListImpl extends FeatureList implements BulkFileListener {
         plugin.getProject().getMessageBus().connect().subscribe(VirtualFileManager.VFS_CHANGES, this);
     }
 
-    private FeatureModel readFeatureFile(String path) throws FileNotFoundException, UnsupportedEncodingException {
-        String gherkin = FixJava.readReader(new InputStreamReader(
-                new FileInputStream(path), "UTF-8"));
-        System.out.println("gherkin...\n" + gherkin);
-        FeatureFormatter formatter = new FeatureFormatter();
-        Parser parser = new Parser(formatter, false);
-        parser.parse(gherkin, path, 0);
-        return formatter.getFeatureModel();
-    }
-
-    private void updateFeaturesList() {
-        List<CucumberFeature> features;
+    private FeatureModel readFeatureFile(String path) {
         try {
-            features = CucumberFeature.load(
-                    new FileResourceLoader(), Collections.singletonList(plugin.getFeaturePath()), Collections.emptyList());
-        } catch (CucumberException e) {
-            features = new ArrayList<>();
-        }
-        try {
-            readFeatureFile("test.feature");
+            String gherkin = FixJava.readReader(new InputStreamReader(
+                    new FileInputStream(path), "UTF-8"));
+            System.out.println("gherkin...\n" + gherkin);
+            FeatureFormatter formatter = new FeatureFormatter(plugin);
+            Parser parser = new Parser(formatter, false);
+            parser.parse(gherkin, path, 0);
+            return formatter.getFeatureModel();
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
-        for (CucumberFeature feature : features) {
+        return null;
+    }
+
+    private void updateFeaturesList() {
+        List<FeatureModel> features = new ArrayList<>();
+//        try {
+//            features = CucumberFeature.load(
+//                    new FileResourceLoader(), Collections.singletonList(plugin.getFeaturePath()), Collections.emptyList());
+//        } catch (CucumberException e) {
+//            features = new ArrayList<>();
+//        }
+        VfsUtil.processFilesRecursively(plugin.getFeatureDir(), file -> {
+            if ("feature".equals(file.getExtension())) {
+                FeatureModel feature = readFeatureFile(file.getPath());
+                if (feature != null) {
+                    features.add(feature);
+                }
+            }
+            return true;
+        });
+        features.sort((f1, f2) -> {
+            int feature = f1.getFeature().getName().compareTo(f2.getFeature().getName());
+            if (feature == 0) {
+                TagStatement s1 = f1.getScenarioList().get(0);
+                TagStatement s2 = f2.getScenarioList().get(0);
+                if (s1 != null) {
+                    return s2 != null ? s1.getName().compareTo(s2.getName()) : -1;
+                } else {
+                    return s2 != null ? 1 : 0;
+                }
+            } else {
+                return feature;
+            }
+        });
+        for (FeatureModel feature : features) {
             System.out.println("New feature found at " + feature.getPath());
-            System.out.println("  Language: " + feature.getI18n().getIsoCode());
-            System.out.println("  Name    : " + feature.getGherkinFeature().getName());
-            for (CucumberTagStatement segment : feature.getFeatureElements()) {
-                System.out.println("    " + segment.getGherkinModel().getKeyword() + ": " + segment.getGherkinModel().getName());
+//            System.out.println("  Language: " + feature.getI18n().getIsoCode());
+            System.out.println("  Name    : " + feature.getFeature().getName());
+            for (TagStatement segment : feature.getScenarioList()) {
+                System.out.println("    " + segment.getKeyword() + ": " + segment.getName());
             }
         }
         this.featureList = features;
@@ -79,7 +100,7 @@ public class FeatureListImpl extends FeatureList implements BulkFileListener {
     @Override
     public void updateFeatures() {
         updateFeaturesList();
-        CucumberFeature select = null;
+        FeatureModel select = null;
         if (selectedFeature != null) {
             String path = selectedFeature.getPath();
             select = featureList.stream()
@@ -92,8 +113,8 @@ public class FeatureListImpl extends FeatureList implements BulkFileListener {
     @Override
     public void updateFeaturesAndSelectByFile(VirtualFile file) {
         updateFeaturesList();
-        String filename = new File(plugin.getFeaturePath()).toURI().relativize(new File(file.getPath()).toURI()).getPath();
-        CucumberFeature select = featureList.stream()
+        String filename = file.getPath();
+        FeatureModel select = featureList.stream()
                 .filter(feature -> feature.getPath().equals(filename))
                 .findFirst().orElse(null);
 
@@ -119,20 +140,21 @@ public class FeatureListImpl extends FeatureList implements BulkFileListener {
     }
 
     @Override
-    public CucumberFeature getSelectedFeature() {
+    public FeatureModel getSelectedFeature() {
         return selectedFeature;
     }
 
     @Override
-    public void setSelectedFeature(CucumberFeature selectedFeature) {
-        this.selectedFeature = selectedFeature;
-        VirtualFile file = plugin.getFeatureDir().findFileByRelativePath(selectedFeature.getPath());
+    public void setSelectedFeature(FeatureModel selectedFeature) {
+        selectFeature(selectedFeature);
+        VirtualFileSystem fileSystem = LocalFileSystem.getInstance();
+        VirtualFile file = fileSystem.refreshAndFindFileByPath(selectedFeature.getPath());
         if (file != null)
             FileEditorManager.getInstance(project).openFile(file, true);
     }
 
     @Override
-    public FeatureState getFeatureState(@NotNull CucumberFeature feature) {
+    public FeatureState getFeatureState(@NotNull FeatureModel feature) {
         if (feature == selectedFeature) {
             return editFeature ? FeatureState.EDITED : FeatureState.SELECTED;
         }
@@ -140,12 +162,12 @@ public class FeatureListImpl extends FeatureList implements BulkFileListener {
     }
 
     @Override
-    public List<CucumberFeature> getFeatureList() {
+    public List<FeatureModel> getFeatureList() {
         return featureList;
     }
 
     @Override
-    public boolean isEnabledFeature(CucumberFeature myFeature) {
+    public boolean isEnabledFeature(FeatureModel myFeature) {
         return myFeature == selectedFeature || !editFeature;
     }
 

@@ -3,7 +3,6 @@ package ru.lanit.ideaplugin.simplegit.features;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import cucumber.runtime.model.CucumberFeature;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -19,13 +18,13 @@ public abstract class FeatureList {
 
     public abstract void updateFeaturesAndSelectByFile(VirtualFile file);
 
-    public abstract CucumberFeature getSelectedFeature();
+    public abstract FeatureModel getSelectedFeature();
 
-    public abstract FeatureState getFeatureState(@NotNull CucumberFeature feature);
+    public abstract FeatureState getFeatureState(@NotNull FeatureModel feature);
 
-    public abstract List<CucumberFeature> getFeatureList();
+    public abstract List<FeatureModel> getFeatureList();
 
-    public abstract void setSelectedFeature(CucumberFeature selectedFeature);
+    public abstract void setSelectedFeature(FeatureModel selectedFeature);
 
-    public abstract boolean isEnabledFeature(CucumberFeature myFeature);
+    public abstract boolean isEnabledFeature(FeatureModel myFeature);
 }

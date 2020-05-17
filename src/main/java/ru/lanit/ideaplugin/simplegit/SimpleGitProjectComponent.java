@@ -23,7 +23,9 @@ import ru.lanit.ideaplugin.simplegit.features.ScenarioType;
 import ru.lanit.ideaplugin.simplegit.git.GitManager;
 import ru.lanit.ideaplugin.simplegit.settings.ProjectSettings;
 import ru.lanit.ideaplugin.simplegit.settings.SettingsProvider;
+import ru.lanit.ideaplugin.simplegit.tags.model.EditableFavoriteTagList;
 import ru.lanit.ideaplugin.simplegit.tags.tag.AbstractTag;
+import ru.lanit.ideaplugin.simplegit.tags.tag.FavoriteTag;
 import ru.lanit.ideaplugin.simplegit.tags.tag.TagType;
 
 import java.beans.PropertyChangeEvent;
@@ -148,6 +150,10 @@ public class SimpleGitProjectComponent implements ProjectComponent {
         return settings.isPluginActive();
     }
 
+    public EditableFavoriteTagList getFavoriteTags() {
+        return settings.getFavoriteTags();
+    }
+
     public String getFeaturePath() {
         System.out.println("getFeaturePath");
         return getFeatureDir().getPath();
@@ -161,7 +167,8 @@ public class SimpleGitProjectComponent implements ProjectComponent {
     }
 
     public void updateFeatures() {
-        featureList.updateFeatures();/*
+        featureList.updateFeatures();
+        /*
         final SvnVcs vcs = SvnVcs.getInstance(project);
         VirtualFile file = getFeatureDir().findChild("a.feature");
         if (file != null) {

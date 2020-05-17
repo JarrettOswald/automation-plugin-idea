@@ -79,6 +79,12 @@ abstract public class AbstractTagList<T extends AbstractTag> extends AbstractTab
         return tags.get(row);
     }
 
+    public T getTag(String tagName) {
+        return tags.stream()
+                .filter(tag -> tag.getName().equals(tagName))
+                .findFirst().orElse(null);
+    }
+
     public void clear() {
         int size = tags.size() - 1;
         if (size >= 0) {
@@ -152,6 +158,12 @@ abstract public class AbstractTagList<T extends AbstractTag> extends AbstractTab
             tags.addAll(newTags);
             fireTableRowsInserted(from, tags.size() - 1);
         }
+    }
+
+    public <E extends T> void addTag(@NotNull E newTag) {
+        int from = tags.size();
+        tags.add(newTag);
+        fireTableRowsInserted(from, from);
     }
 
     protected abstract <E extends T> E getNewTag();

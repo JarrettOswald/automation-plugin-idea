@@ -39,7 +39,7 @@ import static ru.lanit.ideaplugin.simplegit.localization.Language.simpleGitPlugi
 public class NewFeatureDialog extends DialogWrapper {
     private static final Logger log = Logger.getInstance(NewFeatureDialog.class);
 
-    private static Pattern jiraIssueKeyPattern = Pattern.compile("^([a-zA-Z][_0-9a-zA-Z]*)-([0-9]+)$");
+    public static Pattern jiraIssueKeyPattern = Pattern.compile("^([a-zA-Z][_0-9a-zA-Z]*)-([0-9]+)$");
     private final SimpleGitProjectComponent plugin;
     private JPanel contentPane;
     private JTextField scenarioName;

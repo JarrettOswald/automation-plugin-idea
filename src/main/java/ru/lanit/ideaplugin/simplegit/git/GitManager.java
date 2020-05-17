@@ -2,48 +2,32 @@ package ru.lanit.ideaplugin.simplegit.git;
 
 import com.google.common.collect.ImmutableList;
 import com.intellij.dvcs.DvcsUtil;
-import com.intellij.dvcs.push.PrePushHandler;
-import com.intellij.dvcs.push.PushController;
 import com.intellij.dvcs.push.PushSpec;
 import com.intellij.dvcs.repo.Repository;
 import com.intellij.dvcs.repo.VcsRepositoryManager;
-import com.intellij.history.Label;
-import com.intellij.history.LocalHistory;
-import com.intellij.history.LocalHistoryAction;
-import com.intellij.ide.errorTreeView.HotfixData;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.progress.*;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.project.ex.ProjectManagerEx;
-import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vcs.*;
 import com.intellij.openapi.vcs.actions.DescindingFilesFilter;
 import com.intellij.openapi.vcs.actions.VcsContext;
 import com.intellij.openapi.vcs.actions.VcsContextWrapper;
 import com.intellij.openapi.vcs.changes.*;
-import com.intellij.openapi.vcs.changes.committed.CommittedChangesCache;
-import com.intellij.openapi.vcs.ex.ProjectLevelVcsManagerEx;
 import com.intellij.openapi.vcs.impl.ProjectLevelVcsManagerImpl;
 import com.intellij.openapi.vcs.update.*;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.util.ObjectUtils;
-import com.intellij.util.WaitForProgressToShow;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
-import com.intellij.util.ui.UIUtil;
-import com.intellij.vcs.ViewUpdateInfoNotification;
 import com.intellij.vcsUtil.VcsUtil;
 import git4idea.GitRemoteBranch;
 import git4idea.GitStandardRemoteBranch;
@@ -69,14 +53,9 @@ import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Stream;
 
-import static com.intellij.openapi.util.text.StringUtil.notNullize;
-import static com.intellij.openapi.util.text.StringUtil.pluralize;
 import static com.intellij.openapi.vcs.VcsNotifier.NOTIFICATION_GROUP_ID;
-import static com.intellij.openapi.vcs.VcsNotifier.STANDARD_NOTIFICATION;
-import static com.intellij.util.ObjectUtils.notNull;
 
 public class GitManager {
     private static final Logger log = Logger.getInstance(GitManager.class);
@@ -325,7 +304,7 @@ public class GitManager {
         Project project = ObjectUtils.notNull(plugin.getProject());
         ProjectLevelVcsManager projectLevelVcsManager = ProjectLevelVcsManager.getInstance(project);
 
-        String filePath = new File(plugin.getFeaturePath(), FeatureList.getInstance(project).getSelectedFeature().getPath()).getPath();
+        String filePath = FeatureList.getInstance(project).getSelectedFeature().getPath();
 
         AbstractVcs abstractVcs = projectLevelVcsManager.getVcsFor(new LocalFilePath(filePath, false));
         GitPushSupport pushSupport = (GitPushSupport) DvcsUtil.getPushSupport(abstractVcs);
@@ -451,23 +430,26 @@ public class GitManager {
         Project project = ObjectUtils.notNull(plugin.getProject());
 
         ChangeListManager manager = ChangeListManager.getInstance(project);
-        LocalChangeList initialSelection = manager.getDefaultChangeList();
-        String relativePath = FeatureList.getInstance(project).getSelectedFeature().getPath();
-        String absolutePath = new File(plugin.getFeaturePath(), relativePath).getPath();
+//        LocalChangeList initialSelection = manager.getDefaultChangeList();
+        String absolutePath = FeatureList.getInstance(project).getSelectedFeature().getPath();
+        String relativePath = new File(plugin.getFeaturePath()).toURI().relativize(new File(absolutePath).toURI()).getPath();
         FilePath filePath = new LocalFilePath(absolutePath, false);
 
-        List<Change> changesToCommit = Collections.singletonList(manager.getChange(filePath));
-
-        ProjectLevelVcsManager plvm = ProjectLevelVcsManager.getInstance(project);
-        AbstractVcs vcs = plvm.getVcsFor(filePath);
-        List<VcsException> exceptionList = vcs.getCheckinEnvironment().commit(changesToCommit, "Commit " + relativePath);
-        VcsDirtyScopeManager.getInstance(project).filePathsDirty(ChangesUtil.getPaths(changesToCommit), null);
-        if (exceptionList != null && exceptionList.size() > 0) {
-            GitSynchronizeAction.setStatus(SynchronizeStatus.READY);
+        Change change = manager.getChange(filePath);
+        if (change != null) {
+            List<Change> changesToCommit = Collections.singletonList(change);
+            ProjectLevelVcsManager plvm = ProjectLevelVcsManager.getInstance(project);
+            AbstractVcs vcs = plvm.getVcsFor(filePath);
+            List<VcsException> exceptionList = vcs.getCheckinEnvironment().commit(changesToCommit, "Commit " + relativePath);
+            VcsDirtyScopeManager.getInstance(project).filePathsDirty(ChangesUtil.getPaths(changesToCommit), null);
+            if (exceptionList != null && exceptionList.size() > 0) {
+                GitSynchronizeAction.setStatus(SynchronizeStatus.READY);
+            } else {
+                GitSynchronizeAction.setStatus(SynchronizeStatus.COMMITED);
+            }
         } else {
-            GitSynchronizeAction.setStatus(SynchronizeStatus.COMMITED);
+            GitSynchronizeAction.setStatus(SynchronizeStatus.READY);
         }
-
 
 //        if (ProjectLevelVcsManager.getInstance(project).isBackgroundVcsOperationRunning()) {
 //            log.debug("Background operation is running. returning.");
@@ -491,7 +473,7 @@ public class GitManager {
         log.debug("invoking commit dialog after update");
         ChangeListManager manager = ChangeListManager.getInstance(project);
         LocalChangeList initialSelection = manager.getDefaultChangeList();
-        String filePath = new File(plugin.getFeaturePath(), FeatureList.getInstance(project).getSelectedFeature().getPath()).getPath();
+        String filePath = FeatureList.getInstance(project).getSelectedFeature().getPath();
         Collection<Change> changesToCommit = Collections.singletonList(manager.getChange(
                 new LocalFilePath(filePath, false)
         ));
