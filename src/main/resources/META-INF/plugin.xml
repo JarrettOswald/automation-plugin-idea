@@ -1,34 +1,131 @@
 <idea-plugin>
-    <id>ru.lanit.qa.ideaplugin.simplegit</id>
+    <id>ru.lanit.ideaplugin</id>
     <name>Simple Git</name>
-    <version>1.0</version>
-    <vendor email="schurin@lanit.ru" url="http://lanit.ru">ООО "Ланит Экспертиза"</vendor>
+    <version>1.9</version>
+    <idea-version since-build="172.3757.5" until-build="999.*"/>
+    <vendor email="lanit@lanit.ru" url="https://lanit.ru">Ланит</vendor>
 
-    <description>This plugin helps to use git in simple cases</description>
+    <description>This plugin helps in community development of Cucumber scenarios by simplifying process of Git interaction.</description>
+    <change-notes>
+        <![CDATA[
+            Версия 1.9<br><ul>
+            <li>[+] При синхронизации коммит и выгрузка изменений не производятся, если у текущего feature-файла отсутствует тег задачи JIRA</li>
+            <li>[+] Если при выборе текущего feature-файла у него отсутствует тег задачи JIRA, происходит переключение в ветку по умолчанию</li>
+            <li>[+] Добавлено создание и переключение в ветку текущего сценария</li>
+            <li>[/] Исправлен парсинг feature-файлов</li>
+            </ul><br>
+            Версия 1.8<br><ul>
+            <li>[+] Добавлено обновление локального репозитория при синхронизации с удаленным репозиторием</li>
+            <li>[+] Добавлено создание коммита редактируемого feature-файла при синхронизации с удаленным репозиторием</li>
+            <li>[+] Добавлена выгрузка коммитов при синхронизации с удаленным репозиторием</li>
+            <li>[+] Новый feature-файл после создания добавляется в отслеживаемый список изменений, выбирается в списке feature-файлов и открывается в редакторе</li>
+            <li>[+] В диалог настроек плагина добавлен элемент для выбора бранча, с которым в дальнейшем предполагается проводить слияние</li>
+            <li>[/] Доработан механизм парсинга feature файлов с учетом невалидных файлов</li>
+            <li>[/] Изменения в механизме оповещения об изменившихся настройках плагина</li>
+            <li>[+] Добавлен перевод элементов пользовательского интерфейса на русский язык</li>
+            <li>[+] Добавлен вывод лога в стандартный лог IntelliJ IDEA</li>
+            <li>[/] Рефакторинг: CommonTag переименован в FavoriteTag</li>
+            </ul><br>
+            Версия 1.7<br><ul>
+            <li>[+] Автоматическое формирование имени feature файла на основе имени функционала и сценария</li>
+            <li>[+] Добавлены элементы выбора типа сценария и задачи в JIRA</li>
+            <li>[/] Замена компонента списка тегов сценария в окне создания сценария</li>
+            <li>[+] Добавлена модель таблицы с тегами</li>
+            <li>[+] Добавлены классы общих тегов и тегов сценария</li>
+            <li>[+] Модель таблицы тегов разбита на классы с различным поведением для окна настроек и для двух таблиц в окне создания сценария</li>
+            <li>[/] Исправлен тип списка тегов, хранимый в настройках плагина</li>
+            <li>[/] Исправлена проблема с сохранением общих тегов в настройках плагина</li>
+            <li>[+] Добавлена возможность добавления новых тегов</li>
+            <li>[/] Крупный рефакторинг классов тегов и моделей таблиц для их отображения</li>
+            <li>[+] Добавлен метод удаления тегов из списка</li>
+            <li>[+] Добавлен редактор тегов с запретом ввода пробельных символов</li>
+            <li>[/] В диалоге создания сценария изменен компонент списка общих тегов на табличный</li>
+            <li>[+] Добавлен редактор тега задачи JIRA, преобразующий ввод в верхний регистр</li>
+            <li>[+] Добавлен тег задачи JIRA</li>
+            <li>[+] Для диалога создания сценария добавлен отдельный тип значений для списка выбора типа сценария</li>
+            <li>[/] В диалоге настроек изменен компонент списка общих тегов на табличный, добавлен тулбар для редактирования списка</li>
+            <li>[/] Исправлен шаблон нового feature файла с учетом типа сценария, теги разных типов размещаются на разных строках через пробел</li>
+            </ul><br>
+            Версия 1.6<br><ul>
+            <li>[/] Фикс отображения выбранного сценария</li>
+            <li>[/] Исправлен вывод списка сценариев. Теперь выводятся названия сценариев, а не функционала</li>
+            <li>[/] Фикс. Исправлен вывод списка внешних репозиториев при открытии формы настроек</li>
+            <li>[+] Добавлен метод создания нового сценария с параметрами из соответствующей формы</li>
+            <li>[+] В сервис отслеживания feature файлов добавлен метод обновления и открытия созданного сценария</li>
+            <li>[/] В форму создания нового сценария добавлена работа с тегами</li>
+            <li>[+] Добавлен класс тэга сценария</li>
+            </ul><br>
+            Версия 1.5<br><ul>
+            <li>[+] Добавлена функциональность обновления проекта. При нажатии на кнопку синхронизации обновляется проект и список feature файлов</li>
+            <li>[/] Изменение в совместимости с IntelliJ IDEA: начиная с версии IC-2017.2.2</li>
+            </ul><br>
+            Версия 1.4<br><ul>
+            <li>[/] Исправлена проблема с библиотекой стандартного плагина git4idea</li>
+            <li>[+] Добавлено определение локального и удаленного репозиториев git</li>
+            <li>[+] Добавлены поля репозиториев в настройки плагина</li>
+            <li>[+] Добавлен менеджер репозиториев git</li>
+            <li>[/] Фикс диалога настроек для работы с репозиторием</li>
+            </ul><br>
+            Версия 1.3<br><ul>
+            <li>[/] Исправлен баг с несовместимостью с новыми версиями IDEA</li>
+            <li>[+] Добавлен сервис поиска</li>
+            <li>[+] Добавлен компонент проекта</li>
+            </ul><br>
+            Версия 1.2<br><ul>
+            <li>[/] Поиск feature файлов производится в указанной в настройках папке</li>
+            <li>[+] Добавлен диалог выбора папки с feature файлами</li>
+            <li>[+] Добавлены валидация и сохранение настроек</li>
+            <li>[+] Добавлена кнопка и диалог настроек плагина</li>
+            </ul><br>
+            Версия 1.1<br><ul>
+            <li>[/] Фикс: селектор сценариев работает правильно в нескольких открытых проектах</li>
+            <li>[+] Выбранный сценарий открывается в редакторе</li>
+            </ul><br>
+            Версия 1.0<br><ul>
+            <li>[+] Добавлен парсер feature файлов Cucumber
+            <li>[+] Добавлен шаблон диалогового окна</li>
+            <li>[+] Добавлен селектор сценария</li>
+            <li>[+] Добавлена работа с настройками плагина</li>
+            <li>[+] Добавлен обработчик postStartupActivity</li>
+            <li>[+] Добавлен класс состояния плагина</li>
+            </ul>
+        ]]>
+    </change-notes>
 
-    <change-notes>First try</change-notes>
-
-    <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
-    <idea-version since-build="173.0"/>
-
-    <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
-         on how to target different products -->
-    <!-- uncomment to enable plugin in all products
     <depends>com.intellij.modules.lang</depends>
-    -->
+        <!--<depends optional="true" config-file="idea.xml">com.intellij.modules.java</depends>-->
+    <depends>Git4Idea</depends>
 
     <extensions defaultExtensionNs="com.intellij">
-        <!-- Add your extensions here -->
+        <postStartupActivity implementation="ru.lanit.ideaplugin.simplegit.activity.PluginStartupActivity"/>
+        <projectService serviceInterface="ru.lanit.ideaplugin.simplegit.features.FeatureList"
+                        serviceImplementation="ru.lanit.ideaplugin.simplegit.features.FeatureListImpl" />
     </extensions>
 
+    <project-components>
+        <component>
+            <implementation-class>ru.lanit.ideaplugin.simplegit.SimpleGitProjectComponent</implementation-class>
+        </component>
+    </project-components>
+
     <actions>
-        <!-- Add your actions here -->
-        <action id="GitPush" class="ru.lanit.ideaplugin.simplegit.GitPush" text="Push" description="Push changes to git">
-            <keyboard-shortcut keymap="$default" first-keystroke="ctrl P"/>
+        <action id="ru.lanit.ideaplugin.simplegit.actions.PluginSettingsAction"
+                class="ru.lanit.ideaplugin.simplegit.actions.PluginSettingsAction">
+            <!--<keyboard-shortcut keymap="$default" first-keystroke="ctrl P"/>-->
+            <add-to-group group-id="ToolbarRunGroup" anchor="first"/>
+        </action>
+        <action id="ru.lanit.ideaplugin.simplegit.actions.GitSynchronizeAction"
+                class="ru.lanit.ideaplugin.simplegit.actions.GitSynchronizeAction">
+                <!--<keyboard-shortcut keymap="$default" first-keystroke="ctrl P"/>-->
+            <add-to-group group-id="ToolbarRunGroup" anchor="first"/>
+        </action>
+        <action id="ru.lanit.ideaplugin.simplegit.actions.CreateNewScenarioAction"
+                class="ru.lanit.ideaplugin.simplegit.actions.CreateNewScenarioAction">
+        <add-to-group group-id="ToolbarRunGroup" anchor="first"/>
+        </action>
+        <action id="ru.lanit.ideaplugin.simplegit.actions.FeatureComboBoxAction"
+                class="ru.lanit.ideaplugin.simplegit.actions.FeatureComboBoxAction">
             <add-to-group group-id="ToolbarRunGroup" anchor="first"/>
         </action>
     </actions>
-
-    <depends>Git4Idea</depends>
-
 </idea-plugin>

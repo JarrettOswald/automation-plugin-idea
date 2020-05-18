@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="ru.lanit.ideaplugin.simplegit.dialogs.pluginsettings.PluginSettingsDialog">
+  <grid id="cbd77" binding="contentPane" layout-manager="GridBagLayout">
+    <constraints>
+      <xy x="20" y="43" width="700" height="334"/>
+    </constraints>
+    <properties>
+      <alignmentY value="0.0"/>
+      <autoscrolls value="true"/>
+      <minimumSize width="700" height="300"/>
+      <preferredSize width="700" height="300"/>
+    </properties>
+    <border type="empty" title="">
+      <font/>
+    </border>
+    <children>
+      <component id="cb909" class="javax.swing.JLabel" binding="featuresPathLabel">
+        <constraints>
+          <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+          <gridbag top="5" left="5" bottom="5" right="5" weightx="0.0" weighty="0.0"/>
+        </constraints>
+        <properties>
+          <focusable value="false"/>
+          <text value="Features Path:"/>
+        </properties>
+      </component>
+      <component id="9ad6d" class="javax.swing.JLabel" binding="favoriteTagsLabel">
+        <constraints>
+          <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="5" fill="0" indent="0" use-parent-layout="false"/>
+          <gridbag top="5" left="5" bottom="5" right="5" weightx="0.0" weighty="0.0"/>
+        </constraints>
+        <properties>
+          <focusable value="false"/>
+          <text value="Favorite Tags:"/>
+        </properties>
+      </component>
+      <component id="1df66" class="javax.swing.JCheckBox" binding="isPluginActive">
+        <constraints>
+          <grid row="0" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+          <gridbag top="5" left="5" bottom="5" right="5" weightx="0.0" weighty="0.0"/>
+        </constraints>
+        <properties>
+          <text value="Enable SimpleGit plugin for this project"/>
+        </properties>
+        <clientProperties>
+          <hideActionText class="java.lang.Boolean" value="false"/>
+        </clientProperties>
+      </component>
+      <vspacer id="cd1d9">
+        <constraints>
+          <grid row="6" column="1" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+          <gridbag weightx="0.0" weighty="0.0"/>
+        </constraints>
+      </vspacer>
+      <component id="7c97d" class="javax.swing.JLabel" binding="remoteGitRepositoryLabel">
+        <constraints>
+          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+          <gridbag top="5" left="5" bottom="5" right="5" weightx="0.0" weighty="0.0"/>
+        </constraints>
+        <properties>
+          <focusable value="false"/>
+          <labelFor value="f7bc0"/>
+          <text value="Remote Git Repository:"/>
+        </properties>
+      </component>
+      <component id="41a1e" class="javax.swing.JLabel" binding="localGitRepositoryLabel">
+        <constraints>
+          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+          <gridbag top="5" left="5" bottom="5" right="5" weightx="0.0" weighty="0.0"/>
+        </constraints>
+        <properties>
+          <focusable value="false"/>
+          <labelFor value="73c03"/>
+          <text value="Local Git Repository:"/>
+        </properties>
+      </component>
+      <component id="73c03" class="javax.swing.JComboBox" binding="gitRepositoryRootPath" custom-create="true">
+        <constraints>
+          <grid row="1" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+          <gridbag top="2" left="0" bottom="2" right="0" weightx="1.0" weighty="0.0"/>
+        </constraints>
+        <properties/>
+      </component>
+      <component id="f7bc0" class="javax.swing.JComboBox" binding="remoteGitRepositoryURL" custom-create="true">
+        <constraints>
+          <grid row="2" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+          <gridbag top="2" left="0" bottom="2" right="0" weightx="1.0" weighty="0.0"/>
+        </constraints>
+        <properties>
+          <model/>
+        </properties>
+      </component>
+      <scrollpane id="be090">
+        <constraints>
+          <grid row="5" column="1" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <gridbag top="3" left="3" bottom="3" right="3" weightx="1.0" weighty="1.0"/>
+        </constraints>
+        <properties>
+          <horizontalScrollBarPolicy value="31"/>
+        </properties>
+        <border type="bevel-lowered"/>
+        <children>
+          <component id="a734c" class="javax.swing.JTable" binding="favoriteTagsTable">
+            <constraints/>
+            <properties>
+              <autoCreateColumnsFromModel value="false"/>
+              <autoResizeMode value="4"/>
+              <autoscrolls value="true"/>
+              <cellSelectionEnabled value="true"/>
+              <fillsViewportHeight value="true"/>
+              <preferredScrollableViewportSize width="150" height="100"/>
+              <preferredSize width="150" height="100"/>
+              <showHorizontalLines value="false"/>
+              <showVerticalLines value="false"/>
+            </properties>
+          </component>
+        </children>
+      </scrollpane>
+      <grid id="40448" binding="favoriteTagsToolbar" layout-manager="GridBagLayout">
+        <constraints>
+          <grid row="5" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <gridbag top="3" left="3" bottom="3" right="3" weightx="0.0" weighty="0.0"/>
+        </constraints>
+        <properties>
+          <maximumSize width="24" height="2147483647"/>
+          <minimumSize width="24" height="86"/>
+        </properties>
+        <border type="none"/>
+        <children>
+          <component id="7899e" class="javax.swing.JButton" binding="addNewTag">
+            <constraints>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="2" use-parent-layout="false">
+                <preferred-size width="23" height="23"/>
+              </grid>
+              <gridbag weightx="0.0" weighty="0.0"/>
+            </constraints>
+            <properties>
+              <alignmentY value="0.0"/>
+              <contentAreaFilled value="true"/>
+              <defaultCapable value="true"/>
+              <maximumSize width="28" height="28"/>
+              <minimumSize width="28" height="28"/>
+              <preferredSize width="28" height="28"/>
+              <text value=""/>
+            </properties>
+          </component>
+          <component id="43f82" class="javax.swing.JButton" binding="removeTag">
+            <constraints>
+              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="0.0" weighty="0.0"/>
+            </constraints>
+            <properties>
+              <alignmentY value="0.0"/>
+              <borderPainted value="true"/>
+              <contentAreaFilled value="true"/>
+              <defaultCapable value="true"/>
+              <maximumSize width="28" height="28"/>
+              <minimumSize width="28" height="28"/>
+              <preferredSize width="28" height="28"/>
+              <text value=""/>
+            </properties>
+          </component>
+          <vspacer id="b3446">
+            <constraints>
+              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="0.0" weighty="1.0"/>
+            </constraints>
+          </vspacer>
+        </children>
+      </grid>
+      <component id="af3b2" class="javax.swing.JComboBox" binding="remoteMainBranch" custom-create="true">
+        <constraints>
+          <grid row="3" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+          <gridbag top="2" left="0" bottom="2" right="0" weightx="1.0" weighty="0.0"/>
+        </constraints>
+        <properties>
+          <model/>
+        </properties>
+      </component>
+      <component id="cbaa3" class="javax.swing.JLabel" binding="remoteMainBranchLabel">
+        <constraints>
+          <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+          <gridbag top="5" left="5" bottom="5" right="5" weightx="0.0" weighty="0.0"/>
+        </constraints>
+        <properties>
+          <focusable value="false"/>
+          <labelFor value="af3b2"/>
+          <text value="Remote Main Branch:"/>
+        </properties>
+      </component>
+    </children>
+  </grid>
+</form>
