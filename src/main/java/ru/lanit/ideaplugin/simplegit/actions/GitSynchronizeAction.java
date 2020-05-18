@@ -10,6 +10,8 @@ import com.intellij.ui.SizedIcon;
 import com.intellij.util.ui.JBUI;
 import org.jetbrains.annotations.NotNull;
 import ru.lanit.ideaplugin.simplegit.SimpleGitProjectComponent;
+import ru.lanit.ideaplugin.simplegit.features.FeatureList;
+import ru.lanit.ideaplugin.simplegit.features.FeatureModel;
 import ru.lanit.ideaplugin.simplegit.git.GitManager;
 import ru.lanit.ideaplugin.simplegit.git.SynchronizeStatus;
 
@@ -49,8 +51,18 @@ public class GitSynchronizeAction extends AnAction {
                 event.getPresentation().setEnabled(false);
                 if (status != SynchronizeStatus.READY) {
                     GitManager manager = plugin.getGitManager();
-                    if (status == SynchronizeStatus.UPDATED)
-                        manager.commit();
+                    if (status == SynchronizeStatus.UPDATED) {
+                        FeatureModel feature = FeatureList.getInstance(project).getSelectedFeature();
+                        boolean canCommit = false;
+                        if (feature != null) {
+                            canCommit = feature.getJiraTag() != null;
+                        }
+                        if (canCommit) {
+                            manager.commit();
+                        } else {
+                            setStatus(SynchronizeStatus.READY);
+                        }
+                    }
                     if (status == SynchronizeStatus.COMMITED)
                         manager.pushGit();
                 }

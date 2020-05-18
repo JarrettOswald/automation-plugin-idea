@@ -117,4 +117,8 @@ public class SettingsProvider {
     public void setRemoteGitRepositoryURL(String remoteGitRepositoryURL) {
         projectSettings.setRemoteGitRepositoryURL(remoteGitRepositoryURL);
     }
+
+    public String getRemoteMainBranch() {
+        return projectSettings.getRemoteMainBranch();
+    }
 }

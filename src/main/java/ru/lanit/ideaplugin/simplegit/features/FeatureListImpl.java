@@ -157,8 +157,14 @@ public class FeatureListImpl extends FeatureList implements BulkFileListener {
                 ScheduleForAdditionAction.addUnversioned(project, unversionedFiles, status -> true, null);
             }
             JiraTag jiraTag = selectedFeature.getJiraTag();
+            String branchName = null;
             if (jiraTag != null) {
-                String branchName = "feature/" + jiraTag.getName().toLowerCase();
+                branchName = "feature/" + jiraTag.getName().toLowerCase();
+            } else {
+                GitLocalBranch branch = plugin.getGitManager().getLocalBranchByRemoteName(plugin.getRemoteMainBranch());
+                if (branch != null) branchName = branch.getName();
+            }
+            if (branchName != null) {
                 GitManager manager = plugin.getGitManager();
                 GitLocalBranch currentBranch = manager.getCurrentBranch();
                 if (!currentBranch.getName().equalsIgnoreCase(branchName)) {

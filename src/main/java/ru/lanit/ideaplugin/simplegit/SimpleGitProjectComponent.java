@@ -203,6 +203,10 @@ public class SimpleGitProjectComponent implements ProjectComponent {
         return settings.getGitRepositoryRootPath();
     }
 
+    public String getRemoteMainBranch() {
+        return settings.getRemoteMainBranch();
+    }
+
     private class SettingsChangeListener implements PropertyChangeListener {
         @Override
         public void propertyChange(PropertyChangeEvent evt) {

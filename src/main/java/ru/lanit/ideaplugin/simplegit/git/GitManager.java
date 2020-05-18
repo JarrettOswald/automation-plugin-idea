@@ -36,6 +36,7 @@ import git4idea.commands.Git;
 import git4idea.push.GitPushSource;
 import git4idea.push.GitPushSupport;
 import git4idea.push.GitPushTarget;
+import git4idea.repo.GitBranchTrackInfo;
 import git4idea.repo.GitRemote;
 import git4idea.repo.GitRepository;
 import git4idea.repo.GitRepositoryManager;
@@ -513,6 +514,16 @@ public class GitManager {
                 }
             }.runInBackground();
         }
+    }
+
+    public GitLocalBranch getLocalBranchByRemoteName(String remoteBranchName) {
+        GitRepository repository = getGitRepository();
+        for (GitBranchTrackInfo track : repository.getBranchTrackInfos()) {
+            if (track.getRemoteBranch().getName().equals(remoteBranchName)) {
+                return track.getLocalBranch();
+            }
+        }
+        return null;
     }
 
     private static abstract class CommonBackgroundTask extends Task.Backgroundable {
