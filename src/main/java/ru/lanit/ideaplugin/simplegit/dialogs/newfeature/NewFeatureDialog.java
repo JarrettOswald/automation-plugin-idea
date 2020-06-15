@@ -5,6 +5,8 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.ValidationInfo;
+import com.intellij.openapi.util.BuildNumber;
+import com.intellij.openapi.util.IconLoader;
 import com.intellij.ui.SizedIcon;
 import com.intellij.util.ui.JBUI;
 import org.jetbrains.annotations.NonNls;
@@ -77,7 +79,14 @@ public class NewFeatureDialog extends DialogWrapper {
         addNewTag.addActionListener(this::addNewTagAction);
         removeTag.setIcon(JBUI.scale(new SizedIcon(AllIcons.General.Remove, 16, 16)));
         removeTag.addActionListener(this::removeTagAction);
-        getFavoriteTag.setIcon(JBUI.scale(new SizedIcon(AllIcons.General.SplitLeft, 16, 16)));
+
+        BuildNumber requiredBuild = BuildNumber.fromString("183.2407.10");
+        if (requiredBuild != null && SimpleGitProjectComponent.applicationInfo.getBuild().compareTo(requiredBuild) >= 0) {
+            Icon ArrowLeft = IconLoader.getIcon("/general/arrowLeft.svg");
+            getFavoriteTag.setIcon(JBUI.scale(new SizedIcon(ArrowLeft, 16, 16)));
+        } else {
+            getFavoriteTag.setIcon(JBUI.scale(new SizedIcon(AllIcons.General.SplitLeft, 16, 16)));
+        }
         getFavoriteTag.addActionListener(this::getFavoriteTagAction);
         scenarioType.setModel(new DefaultComboBoxModel<>(ScenarioType.values()));
 

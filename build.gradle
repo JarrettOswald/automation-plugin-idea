@@ -8,7 +8,7 @@ compileTestJava.options.encoding = "UTF-8"
 
 description = "This plugin helps in community development of Cucumber scenarios by simplifying process of Git interaction."
 group 'ru.lanit.ideaplugin'
-version '1.9'
+version '1.9.1'
 
 repositories {
     mavenCentral()
