@@ -8,7 +8,7 @@ compileTestJava.options.encoding = "UTF-8"
 
 description = "This plugin helps in community development of Cucumber scenarios by simplifying process of Git interaction."
 group 'ru.lanit.ideaplugin'
-version '1.10'
+version '1.10.1'
 
 repositories {
     mavenCentral()
@@ -28,6 +28,10 @@ intellij {
 
 patchPluginXml {
     changeNotes """
+          Версия 1.10.1<br><ul>
+          <li>[/] Фикс. Исправлена проблема с определением необходимости заполнения поля "Скопировать Из"</li>
+          <li>[/] Фикс. Исправлена проблема с добавлением в список сценариев, содержащих ошибки</li>
+          </ul><br>
           Версия 1.10<br><ul>
           <li>[/] Фикс. Исправлена проблема со стандартной иконкой</li>
           <li>[+] Добавлена возможность создания нового сценария путем копии из существующего</li>

@@ -1,13 +1,17 @@
 <idea-plugin>
     <id>ru.lanit.ideaplugin</id>
     <name>Simple Git</name>
-    <version>1.10</version>
+    <version>1.10.1</version>
     <idea-version since-build="172.3757.5" until-build="999.*"/>
     <vendor email="lanit@lanit.ru" url="https://lanit.ru">Ланит</vendor>
 
     <description>This plugin helps in community development of Cucumber scenarios by simplifying process of Git interaction.</description>
     <change-notes>
         <![CDATA[
+            Версия 1.10.1<br><ul>
+            <li>[/] Фикс. Исправлена проблема с определением необходимости заполнения поля "Скопировать Из"</li>
+            <li>[/] Фикс. Исправлена проблема с добавлением в список сценариев, содержащих ошибки</li>
+            </ul><br>
             Версия 1.10<br><ul>
             <li>[/] Фикс. Исправлена проблема со стандартной иконкой</li>
             <li>[+] Добавлена возможность создания нового сценария путем копии из существующего</li>
