@@ -8,7 +8,7 @@ compileTestJava.options.encoding = "UTF-8"
 
 description = "This plugin helps in community development of Cucumber scenarios by simplifying process of Git interaction."
 group 'ru.lanit.ideaplugin'
-version '1.9.1'
+version '1.10'
 
 repositories {
     mavenCentral()
@@ -28,6 +28,10 @@ intellij {
 
 patchPluginXml {
     changeNotes """
+          Версия 1.10<br><ul>
+          <li>[/] Фикс. Исправлена проблема со стандартной иконкой</li>
+          <li>[+] Добавлена возможность создания нового сценария путем копии из существующего</li>
+          </ul><br>
           Версия 1.9<br><ul>
           <li>[+] При синхронизации коммит и выгрузка изменений не производятся, если у текущего feature-файла отсутствует тег задачи JIRA</li>
           <li>[+] Если при выборе текущего feature-файла у него отсутствует тег задачи JIRA, происходит переключение в ветку по умолчанию</li>
