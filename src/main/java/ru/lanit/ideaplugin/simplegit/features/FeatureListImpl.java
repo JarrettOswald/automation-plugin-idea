@@ -44,16 +44,20 @@ public class FeatureListImpl extends FeatureList implements BulkFileListener {
     }
 
     private FeatureModel readFeatureFile(String path) {
+        FeatureFormatter formatter = new FeatureFormatter(plugin);
         try {
             String gherkin = FixJava.readReader(new InputStreamReader(
                     new FileInputStream(path), "UTF-8"));
             System.out.println("gherkin...\n" + gherkin);
-            FeatureFormatter formatter = new FeatureFormatter(plugin);
             Parser parser = new Parser(formatter, false);
             parser.parse(gherkin, path, 0);
             return formatter.getFeatureModel();
         } catch (Exception e) {
             System.out.println(e.getMessage());
+            FeatureModel model = formatter.getFeatureModel();
+            if (model.getFeature() != null) {
+                return model;
+            }
         }
         return null;
     }
@@ -78,12 +82,12 @@ public class FeatureListImpl extends FeatureList implements BulkFileListener {
         features.sort((f1, f2) -> {
             int feature = f1.getFeature().getName().compareTo(f2.getFeature().getName());
             if (feature == 0) {
-                TagStatement s1 = f1.getScenarioList().get(0);
-                TagStatement s2 = f2.getScenarioList().get(0);
-                if (s1 != null) {
-                    return s2 != null ? s1.getName().compareTo(s2.getName()) : -1;
+                List<TagStatement> s1 = f1.getScenarioList();
+                List<TagStatement> s2 = f2.getScenarioList();
+                if (s1.size() > 0) {
+                    return s2.size() > 0 ? s1.get(0).getName().compareTo(s2.get(0).getName()) : -1;
                 } else {
-                    return s2 != null ? 1 : 0;
+                    return s2.size() > 0 ? 1 : 0;
                 }
             } else {
                 return feature;
