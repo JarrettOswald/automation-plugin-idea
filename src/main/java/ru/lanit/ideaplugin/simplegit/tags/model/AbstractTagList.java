@@ -85,6 +85,10 @@ abstract public class AbstractTagList<T extends AbstractTag> extends AbstractTab
                 .findFirst().orElse(null);
     }
 
+    public <E extends T> List<T> getTagsByName(List<E> tags) {
+        return tags.stream().map(tag -> getTag(tag.getName())).collect(Collectors.toList());
+    }
+
     public void clear() {
         int size = tags.size() - 1;
         if (size >= 0) {
@@ -111,6 +115,14 @@ abstract public class AbstractTagList<T extends AbstractTag> extends AbstractTab
         T tag = tags.remove(row);
         fireTableRowsDeleted(row, row);
         return tag;
+    }
+
+    public <E extends T> void removeTags(@NotNull List<E> deletedTags) {
+        if (deletedTags.size() > 0) {
+            for (E tag : deletedTags) {
+                removeTag(getTagIndex(tag));
+            }
+        }
     }
 
     abstract public AbstractTagCellRenderer<T> getCellRenderer();

@@ -9,9 +9,13 @@ import com.intellij.openapi.util.BuildNumber;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.ui.SizedIcon;
 import com.intellij.util.ui.JBUI;
+import gherkin.formatter.model.BasicStatement;
+import gherkin.formatter.model.TagStatement;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.Nullable;
 import ru.lanit.ideaplugin.simplegit.SimpleGitProjectComponent;
+import ru.lanit.ideaplugin.simplegit.features.FeatureList;
+import ru.lanit.ideaplugin.simplegit.features.FeatureModel;
 import ru.lanit.ideaplugin.simplegit.features.ScenarioType;
 import ru.lanit.ideaplugin.simplegit.tags.model.AbstractTagList;
 import ru.lanit.ideaplugin.simplegit.tags.model.EditableFavoriteTagList;
@@ -19,9 +23,11 @@ import ru.lanit.ideaplugin.simplegit.tags.model.FixedFavoriteTagList;
 import ru.lanit.ideaplugin.simplegit.tags.tag.AbstractTag;
 import ru.lanit.ideaplugin.simplegit.tags.tag.FavoriteTag;
 import ru.lanit.ideaplugin.simplegit.tags.model.FeatureTagList;
+import ru.lanit.ideaplugin.simplegit.tags.tag.FeatureTag;
 import ru.lanit.ideaplugin.simplegit.tags.tag.JiraTag;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.AttributeSet;
@@ -30,8 +36,7 @@ import javax.swing.text.JTextComponent;
 import javax.swing.text.PlainDocument;
 import java.awt.event.ActionEvent;
 import java.io.File;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -61,12 +66,15 @@ public class NewFeatureDialog extends DialogWrapper {
     private JLabel featureFilenameLabel;
     private JLabel scenarioTagsLabel;
     private JLabel favoriteTagsLabel;
+    private JCheckBox isCopyFromScenario;
+    private JComboBox<String> copyFromScenario;
     private FeatureTagList featureTagsList = new FeatureTagList();
     private FixedFavoriteTagList favoriteTagsList;
 
     public NewFeatureDialog(@Nullable Project project) {
         super(project);
         this.plugin = project.getComponent(SimpleGitProjectComponent.class);
+        isCopyFromScenario.setText(simpleGitPluginBundle.getString("create-new-scenario.dialog.copy-from-scenario"));
         featureNameLabel.setText(simpleGitPluginBundle.getString("create-new-scenario.dialog.feature.name"));
         scenarioNameLabel.setText(simpleGitPluginBundle.getString("create-new-scenario.dialog.scenario.name"));
         scenarioTypeLabel.setText(simpleGitPluginBundle.getString("create-new-scenario.dialog.scenario.type"));
@@ -109,6 +117,8 @@ public class NewFeatureDialog extends DialogWrapper {
         ucd.setUpperCase(true);
         jiraIssueKey.setDocument(ucd);
 
+        isCopyFromScenario.addChangeListener(this::updateCopyFromScenario);
+
         setModal(true);
         pack();
         validate();
@@ -121,12 +131,50 @@ public class NewFeatureDialog extends DialogWrapper {
         return true;
     }
 
+    private void updateCopyFromScenario(ChangeEvent changeEvent) {
+        boolean enabled = isCopyFromScenario.isSelected();
+        copyFromScenario.setEnabled(enabled);
+        if (enabled) {
+            FeatureList featureList = FeatureList.getInstance(plugin.getProject());
+            List<FeatureModel> features = featureList.getFeatureList();
+            String current = (String) copyFromScenario.getSelectedItem();
+            if (current == null) {
+                FeatureModel feature = featureList.getSelectedFeature();
+                if (feature != null) {
+                    current = feature.getScenarioList().stream()
+                            .map(BasicStatement::getName)
+                            .findFirst()
+                            .orElse(feature.getFeature().getName());
+                }
+            }
+            copyFromScenario.removeAllItems();
+            FeatureModel selectedCopyFrom = null;
+            Integer selected = null;
+            for (FeatureModel feature : features) {
+                String item = feature.getScenarioList().stream()
+                        .map(BasicStatement::getName)
+                        .findFirst()
+                        .orElse(feature.getFeature().getName());
+                copyFromScenario.addItem(item);
+                if (item.equals(current)) {
+                    selected = copyFromScenario.getItemCount() - 1;
+                }
+            }
+            if (selected != null) {
+                copyFromScenario.setSelectedIndex(selected);
+            } else {
+                copyFromScenario.setSelectedIndex(-1);
+            }
+        }
+    }
+
     @Nullable
     @Override
     protected JComponent createCenterPanel() {
         AbstractTagList.prepareTable(featureTagsTable);
         featureTagsList.attachToTable(featureTagsTable);
         AbstractTagList.prepareTable(favoriteTagsTable);
+        copyFromScenario.addActionListener(this::onSelectCopyFromScenario);
         return contentPane;
     }
 
@@ -156,6 +204,55 @@ public class NewFeatureDialog extends DialogWrapper {
             jtag.setName(jiraTagName);
             featureTagsList.fireTableCellUpdated(jtag.getIndex(), 0);
         }
+    }
+
+    private void onSelectCopyFromScenario(ActionEvent actionEvent) {
+        FeatureModel selected = getCopyFromScenario();
+        if (selected != null) {
+            featureName.getEditor().setItem(selected.getFeature().getName());
+            List<TagStatement> scenarios = selected.getScenarioList();
+            if (scenarios.size() > 0) {
+                TagStatement scenario = scenarios.get(0);
+                scenarioName.setText(scenario.getName());
+                ScenarioType type = ScenarioType.getByName(scenario.getKeyword());
+                if (type != null) {
+                    scenarioType.setSelectedItem(type);
+                }
+            }
+            restoreFavorites();
+            featureTagsList.clear();
+            List<AbstractTag> tags = selected.getTags().getTags();
+            List<AbstractTag> featureTags = tags.stream().filter(FeatureTag.class::isInstance).collect(Collectors.toList());
+            featureTagsList.addTags(featureTags);
+            List<FavoriteTag> favoriteTags = favoriteTagsList.getTagsByName(
+                    tags.stream()
+                            .filter(FavoriteTag.class::isInstance).map(FavoriteTag.class::cast)
+                            .collect(Collectors.toList())
+            );
+            favoriteTagsList.removeTags(favoriteTags);
+            featureTagsList.addTags(favoriteTags);
+        }
+    }
+
+    public FeatureModel getCopyFromScenario() {
+        if (isCopyFromScenario.isEnabled()) {
+            int selected = copyFromScenario.getSelectedIndex();
+            if (selected >= 0) {
+                String current = copyFromScenario.getItemAt(selected);
+                FeatureList featureList = FeatureList.getInstance(plugin.getProject());
+                List<FeatureModel> features = featureList.getFeatureList();
+                for (FeatureModel feature : features) {
+                    String item = feature.getScenarioList().stream()
+                            .map(BasicStatement::getName)
+                            .findFirst()
+                            .orElse(feature.getFeature().getName());
+                    if (item.equals(current)) {
+                        return feature;
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     private void rebuildFeatureFilename() {
@@ -200,6 +297,13 @@ public class NewFeatureDialog extends DialogWrapper {
         }
     }
 
+    private void restoreFavorites() {
+        List<FavoriteTag> favoriteTags = featureTagsList.getTags().stream()
+                .filter(FavoriteTag.class::isInstance).map(FavoriteTag.class::cast)
+                .collect(Collectors.toList());
+        favoriteTagsList.addTags(favoriteTags);
+    }
+
     public void setFavoriteTags(EditableFavoriteTagList favoriteTagsList) {
         this.favoriteTagsList = new FixedFavoriteTagList(favoriteTagsList);
         this.favoriteTagsList.attachToTable(favoriteTagsTable);
@@ -227,6 +331,9 @@ public class NewFeatureDialog extends DialogWrapper {
 
     @Override
     public ValidationInfo doValidate() {
+        if (isCopyFromScenario.isEnabled() && copyFromScenario.getSelectedIndex() == -1) {
+            return new ValidationInfo(simpleGitPluginBundle.getString("create-new-scenario.dialog.validate-error.copy-from-scenario"), featureName);
+        }
         if (getFeatureName().isEmpty()) {
             return new ValidationInfo(simpleGitPluginBundle.getString("create-new-scenario.dialog.validate-error.name.feature"), featureName);
         }
@@ -245,6 +352,11 @@ public class NewFeatureDialog extends DialogWrapper {
             return new ValidationInfo(simpleGitPluginBundle.getString("create-new-scenario.dialog.validate-error.jira-issue-key.format"), jiraIssueKey);
         }
         return null;
+    }
+
+    private void createUIComponents() {
+        // TODO: place custom component creation code here
+        copyFromScenario = new JComboBox<>();
     }
 
     private static class UpperCaseDocument extends PlainDocument {

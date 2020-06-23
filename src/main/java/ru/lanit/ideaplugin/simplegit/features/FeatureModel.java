@@ -69,6 +69,7 @@ public class FeatureModel {
 
     public void addScenarioOutline(ScenarioOutline scenarioOutline) {
         scenarioList.add(scenarioOutline);
+        updateTags(scenarioOutline.getTags());
     }
 
     public void addExamples(Examples examples) {

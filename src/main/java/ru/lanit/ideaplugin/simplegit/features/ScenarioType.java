@@ -20,4 +20,13 @@ public enum ScenarioType {
     public String toString() {
         return name;
     }
+
+    public static ScenarioType getByName(String name) {
+        for (ScenarioType scenarioType : values()) {
+            if (scenarioType.name.equalsIgnoreCase(name)) {
+                return scenarioType;
+            }
+        }
+        return null;
+    }
 }

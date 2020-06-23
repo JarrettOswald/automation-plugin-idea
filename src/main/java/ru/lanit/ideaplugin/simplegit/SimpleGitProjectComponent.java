@@ -15,10 +15,13 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileSystem;
 import com.intellij.openapi.vfs.newvfs.RefreshSession;
+import gherkin.formatter.model.Range;
+import gherkin.formatter.model.TagStatement;
 import org.jetbrains.annotations.NotNull;
 import ru.lanit.ideaplugin.simplegit.dialogs.newfeature.NewFeatureDialog;
 import ru.lanit.ideaplugin.simplegit.dialogs.pluginsettings.PluginSettingsDialog;
 import ru.lanit.ideaplugin.simplegit.features.FeatureList;
+import ru.lanit.ideaplugin.simplegit.features.FeatureModel;
 import ru.lanit.ideaplugin.simplegit.features.ScenarioType;
 import ru.lanit.ideaplugin.simplegit.git.GitManager;
 import ru.lanit.ideaplugin.simplegit.settings.ProjectSettings;
@@ -32,8 +35,11 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class SimpleGitProjectComponent implements ProjectComponent {
     private static final Logger log = Logger.getInstance(SimpleGitProjectComponent.class);
@@ -108,9 +114,25 @@ public class SimpleGitProjectComponent implements ProjectComponent {
                         printWriter.printf("    %s: %s\n",
                                 newFeatureDialog.getScenarioType().getName(),
                                 newFeatureDialog.getScenarioName());
-                        printWriter.println("      #Сценарий");
-                        if (newFeatureDialog.getScenarioType() == ScenarioType.SCENARIO_OUTLINE) {
-                            printWriter.println("\n    Примеры:\n      | Имя1 | Имя2 |\n      |      |      |");
+                        FeatureModel copyFrom = newFeatureDialog.getCopyFromScenario();
+                        if (copyFrom != null) {
+                            List<TagStatement> scenarios = copyFrom.getScenarioList();
+                            if (scenarios.size() > 0) {
+                                TagStatement scenario = scenarios.get(0);
+                                Range copyRange = scenario.getLineRange();
+                                try (BufferedReader reader = Files.newBufferedReader(Paths.get(copyFrom.getPath()), StandardCharsets.UTF_8)) {
+                                    reader.lines()
+                                            .skip(copyRange.getLast())
+                                            .forEachOrdered(printWriter::println);
+                                } catch (IOException e) {
+                                    log.error(e);
+                                }
+                            }
+                        } else {
+                            printWriter.println("      #Сценарий");
+                            if (newFeatureDialog.getScenarioType() == ScenarioType.SCENARIO_OUTLINE) {
+                                printWriter.println("\n    Примеры:\n      | Имя1 | Имя2 |\n      |      |      |");
+                            }
                         }
                         printWriter.close();
                         VirtualFileSystem fileSystem = LocalFileSystem.getInstance();

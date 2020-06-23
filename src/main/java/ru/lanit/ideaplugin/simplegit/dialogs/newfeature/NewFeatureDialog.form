@@ -14,7 +14,7 @@
     <children>
       <component id="cb909" class="javax.swing.JLabel" binding="featureNameLabel">
         <constraints>
-          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
           <gridbag top="5" left="5" bottom="5" right="5" weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties>
@@ -25,7 +25,7 @@
       </component>
       <component id="81788" class="javax.swing.JTextField" binding="scenarioName">
         <constraints>
-          <grid row="1" column="1" row-span="1" col-span="4" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+          <grid row="2" column="1" row-span="1" col-span="4" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
             <preferred-size width="150" height="-1"/>
           </grid>
           <gridbag weightx="1.0" weighty="0.0"/>
@@ -36,7 +36,7 @@
       </component>
       <component id="9ad6d" class="javax.swing.JLabel" binding="scenarioNameLabel">
         <constraints>
-          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
           <gridbag top="5" left="5" bottom="5" right="5" weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties>
@@ -47,7 +47,7 @@
       </component>
       <component id="b11c" class="javax.swing.JTextField" binding="featureFilename">
         <constraints>
-          <grid row="3" column="1" row-span="1" col-span="4" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+          <grid row="4" column="1" row-span="1" col-span="4" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
             <preferred-size width="150" height="-1"/>
           </grid>
           <gridbag weightx="1.0" weighty="0.0"/>
@@ -61,7 +61,7 @@
       </component>
       <component id="a21e1" class="javax.swing.JLabel" binding="featureFilenameLabel">
         <constraints>
-          <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
           <gridbag top="5" left="5" bottom="5" right="5" weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties>
@@ -72,7 +72,7 @@
       </component>
       <component id="96d1e" class="javax.swing.JLabel" binding="favoriteTagsLabel">
         <constraints>
-          <grid row="4" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="5" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
           <gridbag top="5" left="5" bottom="5" right="5" weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties>
@@ -83,7 +83,7 @@
       </component>
       <grid id="2ebef" layout-manager="GridBagLayout">
         <constraints>
-          <grid row="5" column="3" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="6" column="3" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
           <gridbag top="3" left="3" bottom="3" right="3" weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties>
@@ -150,7 +150,7 @@
       </grid>
       <scrollpane id="a827d">
         <constraints>
-          <grid row="5" column="1" row-span="1" col-span="2" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="6" column="1" row-span="1" col-span="2" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
           <gridbag top="3" left="3" bottom="3" right="3" weightx="2.0" weighty="1.0"/>
         </constraints>
         <properties>
@@ -176,7 +176,7 @@
       </scrollpane>
       <scrollpane id="3bbd9">
         <constraints>
-          <grid row="5" column="4" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="6" column="4" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
           <gridbag top="3" left="3" bottom="3" right="3" weightx="1.0" weighty="1.0"/>
         </constraints>
         <properties/>
@@ -200,7 +200,7 @@
       </scrollpane>
       <component id="d7f16" class="javax.swing.JComboBox" binding="featureName">
         <constraints>
-          <grid row="0" column="1" row-span="1" col-span="4" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+          <grid row="1" column="1" row-span="1" col-span="4" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
           <gridbag weightx="1.0" weighty="0.0"/>
         </constraints>
         <properties>
@@ -209,7 +209,7 @@
       </component>
       <component id="91a95" class="javax.swing.JLabel" binding="scenarioTypeLabel">
         <constraints>
-          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
           <gridbag top="5" left="5" bottom="5" right="5" weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties>
@@ -220,7 +220,7 @@
       </component>
       <component id="30392" class="javax.swing.JLabel" binding="jiraIssueKeyLabel">
         <constraints>
-          <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="3" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
           <gridbag top="5" left="5" bottom="5" right="5" weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties>
@@ -231,7 +231,7 @@
       </component>
       <component id="d0be4" class="javax.swing.JComboBox" binding="scenarioType">
         <constraints>
-          <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+          <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
           <gridbag weightx="1.0" weighty="0.0"/>
         </constraints>
         <properties>
@@ -240,7 +240,7 @@
       </component>
       <component id="8b4f7" class="javax.swing.JLabel" binding="scenarioTagsLabel">
         <constraints>
-          <grid row="4" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="5" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
           <gridbag top="5" left="5" bottom="5" right="5" weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties>
@@ -251,7 +251,7 @@
       </component>
       <component id="82eba" class="javax.swing.JTextField" binding="jiraIssueKey">
         <constraints>
-          <grid row="2" column="3" row-span="1" col-span="2" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+          <grid row="3" column="3" row-span="1" col-span="2" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
             <preferred-size width="150" height="-1"/>
           </grid>
           <gridbag weightx="1.0" weighty="0.0"/>
@@ -262,10 +262,32 @@
       </component>
       <vspacer id="d8a47">
         <constraints>
-          <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="1" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="1" fill="0" indent="0" use-parent-layout="false"/>
           <gridbag weightx="0.0" weighty="0.0"/>
         </constraints>
       </vspacer>
+      <component id="bf83b" class="javax.swing.JComboBox" binding="copyFromScenario" custom-create="true">
+        <constraints>
+          <grid row="0" column="1" row-span="1" col-span="4" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+          <gridbag weightx="1.0" weighty="0.0"/>
+        </constraints>
+        <properties>
+          <editable value="false"/>
+          <enabled value="false"/>
+        </properties>
+      </component>
+      <component id="b689e" class="javax.swing.JCheckBox" binding="isCopyFromScenario">
+        <constraints>
+          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+          <gridbag top="5" left="5" bottom="5" right="5" weightx="0.0" weighty="0.0"/>
+        </constraints>
+        <properties>
+          <text value="Copy From:"/>
+        </properties>
+        <clientProperties>
+          <hideActionText class="java.lang.Boolean" value="false"/>
+        </clientProperties>
+      </component>
     </children>
   </grid>
 </form>
