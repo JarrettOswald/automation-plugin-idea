@@ -235,7 +235,7 @@ public class NewFeatureDialog extends DialogWrapper {
     }
 
     public FeatureModel getCopyFromScenario() {
-        if (isCopyFromScenario.isEnabled()) {
+        if (isCopyFromScenario.isSelected()) {
             int selected = copyFromScenario.getSelectedIndex();
             if (selected >= 0) {
                 String current = copyFromScenario.getItemAt(selected);
@@ -331,7 +331,7 @@ public class NewFeatureDialog extends DialogWrapper {
 
     @Override
     public ValidationInfo doValidate() {
-        if (isCopyFromScenario.isEnabled() && copyFromScenario.getSelectedIndex() == -1) {
+        if (isCopyFromScenario.isSelected() && copyFromScenario.getSelectedIndex() == -1) {
             return new ValidationInfo(simpleGitPluginBundle.getString("create-new-scenario.dialog.validate-error.copy-from-scenario"), featureName);
         }
         if (getFeatureName().isEmpty()) {
