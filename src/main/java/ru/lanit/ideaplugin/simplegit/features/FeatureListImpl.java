@@ -51,13 +51,12 @@ public class FeatureListImpl extends FeatureList implements BulkFileListener {
             System.out.println("gherkin...\n" + gherkin);
             Parser parser = new Parser(formatter, false);
             parser.parse(gherkin, path, 0);
-            return formatter.getFeatureModel();
         } catch (Exception e) {
-            System.out.println(e.getMessage());
-            FeatureModel model = formatter.getFeatureModel();
-            if (model.getFeature() != null) {
-                return model;
-            }
+            log.warn(e.getMessage());
+        }
+        FeatureModel model = formatter.getFeatureModel();
+        if (model != null && model.getFeature() != null && model.getFeature().getName() != null) {
+            return model;
         }
         return null;
     }
