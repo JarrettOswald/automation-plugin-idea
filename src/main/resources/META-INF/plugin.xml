@@ -1,13 +1,18 @@
 <idea-plugin>
     <id>ru.lanit.ideaplugin</id>
     <name>Simple Git</name>
-    <version>1.10.1</version>
+    <version>1.10.3</version>
     <idea-version since-build="172.3757.5" until-build="999.*"/>
     <vendor email="lanit@lanit.ru" url="https://lanit.ru">Ланит</vendor>
 
     <description>This plugin helps in community development of Cucumber scenarios by simplifying process of Git interaction.</description>
     <change-notes>
         <![CDATA[
+            Версия 1.10.3<br><ul>
+            <li>[-] отключена процедура добавления новых файлов в список отслеживаемых гитом в связи с несовместимостью API идеи</li>
+            <li>[/] Исправлена проблема с отсутствием в списке невалидных сценариев</li>
+            <li>[-] Удалены неиспользуемые методы и классы</li>
+            </ul><br>
             Версия 1.10.1<br><ul>
             <li>[/] Фикс. Исправлена проблема с определением необходимости заполнения поля "Скопировать Из"</li>
             <li>[/] Фикс. Исправлена проблема с добавлением в список сценариев, содержащих ошибки</li>
