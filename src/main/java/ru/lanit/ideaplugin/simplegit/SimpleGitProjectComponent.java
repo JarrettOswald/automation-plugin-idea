@@ -188,8 +188,8 @@ public class SimpleGitProjectComponent implements ProjectComponent {
         return baseDir.findFileByRelativePath(settings.getFeaturePath());
     }
 
-    public void updateFeatures() {
-        featureList.updateFeatures();
+//    public void updateFeatures() {
+//        featureList.updateFeatures();
         /*
         final SvnVcs vcs = SvnVcs.getInstance(project);
         VirtualFile file = getFeatureDir().findChild("a.feature");
@@ -207,7 +207,7 @@ public class SimpleGitProjectComponent implements ProjectComponent {
                 exceptions.add(e);
             }
         }*/
-    }
+//    }
 
     public void projectClosed() {
         // called when project is being closed
@@ -234,7 +234,7 @@ public class SimpleGitProjectComponent implements ProjectComponent {
         public void propertyChange(PropertyChangeEvent evt) {
             String propertyName = evt.getPropertyName();
             if (ProjectSettings.FEATURE_PATH.equals(propertyName) && isPluginActive()) {
-                featureList.updateFeatures();
+                featureList.updateFeatures(null);
             }
         }
     }

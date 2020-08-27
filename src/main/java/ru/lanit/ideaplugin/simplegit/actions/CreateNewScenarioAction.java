@@ -36,9 +36,16 @@ public class CreateNewScenarioAction extends AnAction {
             SimpleGitProjectComponent plugin = project.getComponent(SimpleGitProjectComponent.class);
             VirtualFile scenarioFile = plugin.createNewScenario();
             if (scenarioFile != null) {
-                registerFeatureReadyListener(project, scenarioFile);
-                List<VirtualFile> unversionedFiles = Collections.singletonList(scenarioFile);
-                ScheduleForAdditionAction.addUnversioned(project, unversionedFiles, this::isStatusForAddition, null);
+                FeatureList featureList = FeatureList.getInstance(project);
+                featureList.updateFeaturesAndSelectByFile(scenarioFile, event);
+//                event.getData()
+
+//                registerFeatureReadyListener(project, scenarioFile);
+//                event.getData()
+//                event.getData()
+//                new GitAdd().actionPerformed(event);
+//                List<VirtualFile> unversionedFiles = Collections.singletonList(scenarioFile);
+//                ScheduleForAdditionAction.addUnversioned(project, unversionedFiles, this::isStatusForAddition, null);
             }
         }
     }
@@ -51,20 +58,20 @@ public class CreateNewScenarioAction extends AnAction {
         }
     }
 
-    private void registerFeatureReadyListener(Project project, VirtualFile file) {
-        ChangeListManager manager = ChangeListManager.getInstance(project);
-        FeatureList featureList = FeatureList.getInstance(project);
-        ChangeListAdapter listener = new ChangeListAdapter() {
-            @Override public void changeListUpdateDone() {
-                Change change = manager.getChange(file);
-                if (change != null && change.getFileStatus() == FileStatus.ADDED) {
-                    featureList.updateFeaturesAndSelectByFile(file);
-                    manager.removeChangeListListener(this);
-                }
-            }
-        };
-        manager.addChangeListListener(listener);
-    }
+//    private void registerFeatureReadyListener(Project project, VirtualFile file) {
+//        ChangeListManager manager = ChangeListManager.getInstance(project);
+//        FeatureList featureList = FeatureList.getInstance(project);
+//        ChangeListAdapter listener = new ChangeListAdapter() {
+//            @Override public void changeListUpdateDone() {
+//                Change change = manager.getChange(file);
+//                if (change != null && change.getFileStatus() == FileStatus.ADDED) {
+//                    featureList.updateFeaturesAndSelectByFile(file, null);
+//                    manager.removeChangeListListener(this);
+//                }
+//            }
+//        };
+//        manager.addChangeListListener(listener);
+//    }
 
     protected boolean isStatusForAddition(FileStatus status) {
         return status == FileStatus.UNKNOWN || status == FileStatus.NOT_CHANGED;

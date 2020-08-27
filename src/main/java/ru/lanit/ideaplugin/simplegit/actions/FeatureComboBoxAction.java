@@ -194,7 +194,7 @@ public class FeatureComboBoxAction extends ComboBoxAction implements DumbAware {
 
         @Override
         public void actionPerformed(@NotNull final AnActionEvent e) {
-            FeatureList.getInstance(myProject).setSelectedFeature(myFeature);
+            FeatureList.getInstance(myProject).setSelectedFeature(myFeature, e);
             updatePresentation(myFeature, myProject, e.getPresentation());
         }
 

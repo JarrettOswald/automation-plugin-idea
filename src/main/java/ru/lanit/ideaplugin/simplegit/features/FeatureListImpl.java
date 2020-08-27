@@ -1,10 +1,10 @@
 package ru.lanit.ideaplugin.simplegit.features;
 
+import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vcs.changes.ChangeListManagerImpl;
-import com.intellij.openapi.vcs.changes.actions.ScheduleForAdditionAction;
 import com.intellij.openapi.vfs.*;
 import com.intellij.openapi.vfs.newvfs.BulkFileListener;
 import com.intellij.openapi.vfs.newvfs.RefreshQueue;
@@ -15,6 +15,7 @@ import gherkin.formatter.model.TagStatement;
 import gherkin.parser.Parser;
 import gherkin.util.FixJava;
 import git4idea.GitLocalBranch;
+import git4idea.actions.GitAdd;
 import org.jetbrains.annotations.NotNull;
 import ru.lanit.ideaplugin.simplegit.SimpleGitProjectComponent;
 import ru.lanit.ideaplugin.simplegit.git.GitManager;
@@ -22,7 +23,6 @@ import ru.lanit.ideaplugin.simplegit.tags.tag.JiraTag;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class FeatureListImpl extends FeatureList implements BulkFileListener {
@@ -39,7 +39,7 @@ public class FeatureListImpl extends FeatureList implements BulkFileListener {
         this.plugin = project.getComponent(SimpleGitProjectComponent.class);
         //TODO: check feature is dirty on startup
         this.editFeature = false;
-        updateFeatures();
+        updateFeatures(null);
         plugin.getProject().getMessageBus().connect().subscribe(VirtualFileManager.VFS_CHANGES, this);
     }
 
@@ -91,7 +91,7 @@ public class FeatureListImpl extends FeatureList implements BulkFileListener {
             } else {
                 return feature;
             }
-        });
+        }); /*
         for (FeatureModel feature : features) {
             System.out.println("New feature found at " + feature.getPath());
 //            System.out.println("  Language: " + feature.getI18n().getIsoCode());
@@ -99,12 +99,12 @@ public class FeatureListImpl extends FeatureList implements BulkFileListener {
             for (TagStatement segment : feature.getScenarioList()) {
                 System.out.println("    " + segment.getKeyword() + ": " + segment.getName());
             }
-        }
+        }*/
         this.featureList = features;
     }
 
     @Override
-    public void updateFeatures() {
+    public void updateFeatures(AnActionEvent event) {
         updateFeaturesList();
         FeatureModel select = null;
         if (selectedFeature != null) {
@@ -113,11 +113,11 @@ public class FeatureListImpl extends FeatureList implements BulkFileListener {
                     .filter(feature -> feature.getPath().equals(path))
                     .findFirst().orElse(null);
         }
-        if (select != null) selectFeature(select);
+        if (select != null) selectFeature(select, event);
     }
 
     @Override
-    public void updateFeaturesAndSelectByFile(VirtualFile file) {
+    public void updateFeaturesAndSelectByFile(VirtualFile file, AnActionEvent event) {
         updateFeaturesList();
         String filename = file.getPath();
         FeatureModel select = featureList.stream()
@@ -130,7 +130,7 @@ public class FeatureListImpl extends FeatureList implements BulkFileListener {
                     .filter(feature -> feature.getPath().equals(path))
                     .findFirst().orElse(null);
         }
-        if (select != null) selectFeature(select);
+        if (select != null) selectFeature(select, event);
     }
 
     public void addNewFiles() {
@@ -150,14 +150,16 @@ public class FeatureListImpl extends FeatureList implements BulkFileListener {
         return selectedFeature;
     }
 
-    private void selectFeature(FeatureModel selectedFeature) {
+    private void selectFeature(FeatureModel selectedFeature, AnActionEvent event) {
         this.selectedFeature = selectedFeature;
         if (selectedFeature != null) {
             VirtualFile file = LocalFileSystem.getInstance().refreshAndFindFileByPath(selectedFeature.getPath());
             boolean unv = ChangeListManagerImpl.getInstanceImpl(project).getUnversionedFiles().stream().anyMatch(unversioned -> unversioned.equals(file));
             if (unv) {
-                List<VirtualFile> unversionedFiles = Collections.singletonList(file);
-                ScheduleForAdditionAction.addUnversioned(project, unversionedFiles, status -> true, null);
+                if (event != null) new GitAdd().actionPerformed(event);
+//                event.getData(VcsDataKeys.VIRTUAL_FILE_STREAM).
+//                List<VirtualFile> unversionedFiles = Collections.singletonList(file);
+//                ScheduleForAdditionAction.addUnversioned(project, unversionedFiles, status -> true, null);
             }
             JiraTag jiraTag = selectedFeature.getJiraTag();
             String branchName = null;
@@ -177,8 +179,8 @@ public class FeatureListImpl extends FeatureList implements BulkFileListener {
         }
     }
     @Override
-    public void setSelectedFeature(FeatureModel selectedFeature) {
-        selectFeature(selectedFeature);
+    public void setSelectedFeature(FeatureModel selectedFeature, AnActionEvent event) {
+        selectFeature(selectedFeature, event);
         VirtualFileSystem fileSystem = LocalFileSystem.getInstance();
         VirtualFile file = fileSystem.refreshAndFindFileByPath(selectedFeature.getPath());
         if (file != null)
@@ -207,11 +209,11 @@ public class FeatureListImpl extends FeatureList implements BulkFileListener {
 
     public void before(@NotNull List<? extends VFileEvent> events) {
         System.out.println("Updating features");
-        this.updateFeatures();
+        this.updateFeatures(null);
     }
 
     public void after(@NotNull List<? extends VFileEvent> events) {
         System.out.println("Updating features");
-        this.updateFeatures();
+        this.updateFeatures(null);
     }
 }

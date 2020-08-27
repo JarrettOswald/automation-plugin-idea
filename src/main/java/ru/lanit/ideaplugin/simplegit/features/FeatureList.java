@@ -1,5 +1,6 @@
 package ru.lanit.ideaplugin.simplegit.features;
 
+import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -14,9 +15,9 @@ public abstract class FeatureList {
 
     }
 
-    public abstract void updateFeatures();
+    public abstract void updateFeatures(AnActionEvent event);
 
-    public abstract void updateFeaturesAndSelectByFile(VirtualFile file);
+    public abstract void updateFeaturesAndSelectByFile(VirtualFile file, AnActionEvent event);
 
     public abstract FeatureModel getSelectedFeature();
 
@@ -24,7 +25,7 @@ public abstract class FeatureList {
 
     public abstract List<FeatureModel> getFeatureList();
 
-    public abstract void setSelectedFeature(FeatureModel selectedFeature);
+    public abstract void setSelectedFeature(FeatureModel selectedFeature, AnActionEvent event);
 
     public abstract boolean isEnabledFeature(FeatureModel myFeature);
 }
