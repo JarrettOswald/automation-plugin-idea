@@ -84,10 +84,6 @@ public class GitManager {
         settings.setRemoteGitRepositoryURL("");
     }
 
-    public boolean gitRepositoryExists() {
-        return getGitRepository() != null;
-    }
-
     public List<GitRepository> getGitRepositories() {
         VirtualFile gitRoot = plugin.getProject().getBaseDir();
         return repositoryManager.getRepositories();
@@ -106,61 +102,6 @@ public class GitManager {
         VirtualFile gitRoot = plugin.getProject().getBaseDir();
         repositoryManager.getRepositories();
         return repositoryManager.getRepositoryForRoot(gitRoot);
-    }
-
-    private GitRemote getRemote(@NotNull Collection<GitRemote> gitRemoteCollections, String remoteUrl) {
-        for (GitRemote gitRemote : gitRemoteCollections) {
-            int remoteIndex = gitRemote.getUrls().indexOf(remoteUrl);
-            if (remoteIndex != -1) {
-                return gitRemote;
-            }
-        }
-        return null;
-    }
-
-    private void fetchGit(ProgressIndicator indicator) {
-        Project project = plugin.getProject();
-        GitRepository repository = getGitRepository();
-
-        GitFetcher fetcher = new GitFetcher(project, indicator, true);
-        GitFetchResult result = fetcher.fetch(repository);
-
-        if (!result.isSuccess()) {
-            SwingUtilities.invokeLater(
-                    () -> {
-                        Notification notification =
-                                new Notification(
-                                        NOTIFICATION_GROUP_ID.getDisplayId(),
-                                        "Fetch failed",
-                                        "Fail to fetch " + repository.toString(),
-                                        NotificationType.ERROR);
-                        notification.notify(project);
-                    });
-        }
-        repository.update();
-    }
-
-    @NonNls
-    @NotNull
-    private GitRemoteBranch getBranch(@NotNull GitRepository repository, @NotNull GitRemote remote) {
-        for (GitRemoteBranch remoteBranch : repository.getBranches().getRemoteBranches()) {
-            if (remoteBranch.getRemote().equals(remote) && remoteBranch.getName().equals("master")) return remoteBranch;
-        }
-        return new GitStandardRemoteBranch(remote, "master");
-    }
-
-    public boolean setGit() {
-        ProjectLevelVcsManagerImpl vcsManager = plugin.getProject().getComponent(ProjectLevelVcsManagerImpl.class);
-        if (vcsManager != null) {
-            GitRepositoryManager gitRepoManager;
-            GitPushSupport pushSupport = ServiceManager.getService(plugin.getProject(), GitPushSupport.class);/*
-            GitPushSource source = pushSupport.getSource(repository); // this simply creates the GitPushSource wrapper around the current branch or current revision in case of the detached HEAD
-            GitPushTarget target = // create target either directly, or by using some methods from GitPushSupport. Just check them, most probably you'll find what's needed.
-            Map<GitRepository, PushSpec<PushSource, GitPushTarget> pushSpecs = Collections.singletonMap(repository, new PushSpec(source, target));
-            pushSupport.getPusher().push(specs, null, false);*/
-            return true;
-        }
-        return false;
     }
 
     private void subscribeToRepoChangeEvents() {
@@ -280,29 +221,6 @@ public class GitManager {
         return false;
     }
 
-    private static String getAllFilesAreUpToDateMessage(FilePath[] roots) {
-        if (roots.length == 1 && !roots[0].isDirectory()) {
-            return VcsBundle.message("message.text.file.is.up.to.date");
-        }
-        else {
-            return VcsBundle.message("message.text.all.files.are.up.to.date");
-        }
-    }
-
-    @NotNull
-    private static Collection<Repository> collectRepositories(@NotNull VcsRepositoryManager vcsRepositoryManager,
-                                                              @Nullable VirtualFile[] files) {
-        if (files == null) return Collections.emptyList();
-        Collection<Repository> repositories = ContainerUtil.newHashSet();
-        for (VirtualFile file : files) {
-            Repository repo = vcsRepositoryManager.getRepositoryForFile(file);
-            if (repo != null) {
-                repositories.add(repo);
-            }
-        }
-        return repositories;
-    }
-
     @CalledInAwt
     public void pushGit() {
         GitSynchronizeAction.setStatus(SynchronizeStatus.PUSHING);
@@ -322,7 +240,6 @@ public class GitManager {
 
         GitPushSource source = pushSupport.getSource(repository.get());
         GitPushTarget target = pushSupport.getDefaultTarget(repository.get());
-//        GitPushTarget target = new GitPushTarget(branch, false);
 
         PushSpec<GitPushSource, GitPushTarget> pushSourceGitPushTargetPushSpec = new PushSpec<>(source, target);
         Map<GitRepository, PushSpec<GitPushSource, GitPushTarget>> pushSpecs =
@@ -330,104 +247,7 @@ public class GitManager {
 
         pushSupport.getPusher().push(pushSpecs, null, false);
         GitSynchronizeAction.setStatus(SynchronizeStatus.READY);
-
-//        Project project = plugin.getProject();
-//        String repositoryPath = plugin.getGitRepositoryRootPath();
-//        List<GitRepository> repositories = getGitRepositories();
-//        Optional<GitRepository> repository = repositories.stream()
-//                .filter(repo -> repo.getRoot().getPath().equals(repositoryPath))
-//                .findFirst();
-//
-//        List<? extends Repository> selectedRepositories = DvcsUtil.sortRepositories(repositories);
-//
-//        if (repository.isPresent()) {
-//            final Pusher myController = new Pusher(plugin, selectedRepositories, repository.get());
-//            FileDocumentManager.getInstance().saveAllDocuments();
-//            AtomicReference<PrePushHandler.Result> result = new AtomicReference<>(PrePushHandler.Result.OK);
-//            new Task.Modal(project, "Checking Commits...", true) {
-//                @Override
-//                public void run(@NotNull ProgressIndicator indicator) {
-//                    result.set(myController.executeHandlers(indicator));
-//                }
-//
-//                @Override
-//                public void onSuccess() {
-//                    super.onSuccess();
-//                    if (result.get() == PrePushHandler.Result.OK) {
-//                        doPush();
-//                    }
-//                    else if (result.get() == PrePushHandler.Result.ABORT_AND_CLOSE) {
-//                        afterPush();
-//                    }
-//                    else if (result.get() == PrePushHandler.Result.ABORT) {
-//                        afterPush();
-//                    }
-//                }
-//
-//                private void doPush() {
-//                    myController.push(false);
-//                }
-//
-//                @Override
-//                public void onThrowable(@NotNull Throwable error) {
-//                    if (error instanceof PushController.HandlerException) {
-//                        super.onThrowable(error.getCause());
-//
-//                        String handlerName = ((PushController.HandlerException)error).getHandlerName();
-//                        suggestToSkipOrPush(handlerName + " has failed. See log for more details.\n" +
-//                                "Would you like to skip pre-push checking and continue or cancel push completely?");
-//                    } else {
-//                        super.onThrowable(error);
-//                    }
-//                }
-//
-//                @Override
-//                public void onCancel() {
-//                    super.onCancel();
-//                    suggestToSkipOrPush("Would you like to skip pre-push checking and continue or cancel push completely?");
-//                }
-//
-//                private void suggestToSkipOrPush(@NotNull String message) {
-//                    if (Messages.showOkCancelDialog(myProject,
-//                            message,
-//                            "Push",
-//                            "&Push Anyway",
-//                            "&Cancel",
-//                            UIUtil.getWarningIcon()) == Messages.OK) {
-//                        doPush();
-//                    }
-//                }
-//            }.queue();
-//        }
     }
-
-    public void afterPush() {
-        GitSynchronizeAction.setStatus(SynchronizeStatus.READY);
-    }
-
-    /**
-     * Adds a new line of text to a file and adds/commits it
-     *
-     * @param file
-     * @param repository
-     * @param project
-     * @throws IOException
-     * @throws IOException
-     */
-    public static void editAndCommitFile(final File file, final git4idea.repo.GitRepository repository, final Project project) throws IOException {
-        // edits file
-        final VirtualFile readmeVirtualFile = LocalFileSystem.getInstance().findFileByIoFile(file);
-        FileUtil.writeToFile(file, "\nnew line", true);
-        // adds and commits the change
-        final LocalChangeListImpl localChangeList = LocalChangeListImpl.createEmptyChangeListImpl(project, "TestCommit", "12345");
-        final ChangeListManagerImpl changeListManager = ChangeListManagerImpl.getInstanceImpl(project);
-        VcsDirtyScopeManager.getInstance(project).markEverythingDirty();
-        changeListManager.ensureUpToDate(false);
-        changeListManager.addUnversionedFiles(localChangeList, ImmutableList.of(readmeVirtualFile));
-        final Change change = changeListManager.getChange(LocalFileSystem.getInstance().findFileByIoFile(file));
-        repository.getVcs().getCheckinEnvironment().commit(ImmutableList.of(change), "test commit");
-    }
-
 
     public void commit() {
         GitSynchronizeAction.setStatus(SynchronizeStatus.COMMITING);
@@ -455,39 +275,6 @@ public class GitManager {
         } else {
             GitSynchronizeAction.setStatus(SynchronizeStatus.READY);
         }
-
-//        if (ProjectLevelVcsManager.getInstance(project).isBackgroundVcsOperationRunning()) {
-//            log.debug("Background operation is running. returning.");
-////            GitSynchronizeAction.status = SynchronizeStatus.READY;
-//        }
-//        FilePath[] roots = prepareRootsForCommit(getRoots(project), project);
-//        ApplicationManager.getApplication().invokeLater(() -> {
-//            ChangeListManager.getInstance(project)
-//                    .invokeAfterUpdate(() -> performCheckIn(project, roots), InvokeAfterUpdateMode.BACKGROUND_CANCELLABLE,
-//                            VcsBundle.message("waiting.changelists.update.for.show.commit.dialog.message"), ModalityState.current());
-//        }, ModalityState.stateForComponent());
-    }
-
-    @NotNull
-    protected FilePath[] prepareRootsForCommit(@NotNull FilePath[] roots, @NotNull Project project) {
-        ApplicationManager.getApplication().saveAll();
-        return DescindingFilesFilter.filterDescindingFiles(roots, project);
-    }
-
-    protected void performCheckIn(@NotNull Project project, @NotNull FilePath[] roots) {
-        log.debug("invoking commit dialog after update");
-        ChangeListManager manager = ChangeListManager.getInstance(project);
-        LocalChangeList initialSelection = manager.getDefaultChangeList();
-        String filePath = FeatureList.getInstance(project).getSelectedFeature().getPath();
-        Collection<Change> changesToCommit = Collections.singletonList(manager.getChange(
-                new LocalFilePath(filePath, false)
-        ));
-
-        boolean result = Commiter.commitChanges(project, changesToCommit, initialSelection, null, "comment",
-                new MyCommitResultHandler()
-        );
-        if (!result)
-            GitSynchronizeAction.setStatus(SynchronizeStatus.READY);
     }
 
     public GitLocalBranch getCurrentBranch() {
@@ -496,7 +283,6 @@ public class GitManager {
     }
 
     public void checkoutExistingOrNewBranch(String branchName, Runnable callInAwtAfterExecution) {
-//        fetchGit();
         GitRepository repository = getGitRepository();
         GitLocalBranch branch = repository.getBranches().findLocalBranch(branchName);
         if (branch == null) {
@@ -505,8 +291,6 @@ public class GitManager {
                     newWorker(indicator).checkoutNewBranch(branchName, Collections.singletonList(repository));
                 }
             }.runInBackground();
-//            GitBrancher brancher = GitBrancher.getInstance(plugin.getProject());
-//            brancher.checkoutNewBranch(branchName, Collections.singletonList(repository));
         } else {
             new CommonBackgroundTask(plugin.getProject(), "Checking out new branch " + branchName, callInAwtAfterExecution) {
                 @Override public void execute(@NotNull ProgressIndicator indicator) {
@@ -560,28 +344,5 @@ public class GitManager {
     private GitBranchWorker newWorker(ProgressIndicator indicator) {
         Project project = plugin.getProject();
         return new GitBranchWorker(project, git, new GitBranchUiHandlerImpl(project, git, indicator));
-    }
-
-    static private class MyCommitResultHandler implements CommitResultHandler {
-        @Override
-        public void onSuccess(@NotNull String commitMessage) {
-            GitSynchronizeAction.setStatus(SynchronizeStatus.COMMITED);
-        }
-
-        @Override
-        public void onFailure() {
-            GitSynchronizeAction.setStatus(SynchronizeStatus.READY);
-        }
-    }
-
-    @NotNull
-    protected FilePath[] getRoots(@NotNull Project project) {
-        ProjectLevelVcsManager manager = ProjectLevelVcsManager.getInstance(project);
-
-        return Stream.of(manager.getAllActiveVcss())
-                .filter(vcs -> vcs.getCheckinEnvironment() != null)
-                .flatMap(vcs -> Stream.of(manager.getRootsUnderVcs(vcs)))
-                .map(VcsUtil::getFilePath)
-                .toArray(FilePath[]::new);
     }
 }
