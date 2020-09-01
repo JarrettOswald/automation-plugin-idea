@@ -5,7 +5,9 @@
     <idea-version since-build="172.3757.5" until-build="999.*"/>
     <vendor email="lanit@lanit.ru" url="https://lanit.ru">Ланит</vendor>
 
-    <description>This plugin helps in community development of Cucumber scenarios by simplifying process of Git interaction.</description>
+    <description>This plugin helps in community development of Cucumber scenarios by simplifying process of Git
+        interaction.
+    </description>
     <change-notes>
         <![CDATA[
             Версия 1.10.3<br><ul>
@@ -106,13 +108,17 @@
     </change-notes>
 
     <depends>com.intellij.modules.lang</depends>
-        <!--<depends optional="true" config-file="idea.xml">com.intellij.modules.java</depends>-->
+    <!--<depends optional="true" config-file="idea.xml">com.intellij.modules.java</depends>-->
     <depends>Git4Idea</depends>
 
     <extensions defaultExtensionNs="com.intellij">
         <postStartupActivity implementation="ru.lanit.ideaplugin.simplegit.activity.PluginStartupActivity"/>
         <projectService serviceInterface="ru.lanit.ideaplugin.simplegit.features.FeatureList"
-                        serviceImplementation="ru.lanit.ideaplugin.simplegit.features.FeatureListImpl" />
+                        serviceImplementation="ru.lanit.ideaplugin.simplegit.features.FeatureListImpl"/>
+        <toolWindow id="Настройки плагина"
+                    icon="/icon/3.png"
+                    anchor="right"
+                    factoryClass="ru.lanit.ideaplugin.simplegit.ToolWindow.ToolWindowReplace"/>
     </extensions>
 
     <project-components>
@@ -127,18 +133,46 @@
             <!--<keyboard-shortcut keymap="$default" first-keystroke="ctrl P"/>-->
             <add-to-group group-id="ToolbarRunGroup" anchor="first"/>
         </action>
+
         <action id="ru.lanit.ideaplugin.simplegit.actions.GitSynchronizeAction"
                 class="ru.lanit.ideaplugin.simplegit.actions.GitSynchronizeAction">
-                <!--<keyboard-shortcut keymap="$default" first-keystroke="ctrl P"/>-->
+            <!--<keyboard-shortcut keymap="$default" first-keystroke="ctrl P"/>-->
             <add-to-group group-id="ToolbarRunGroup" anchor="first"/>
         </action>
+
         <action id="ru.lanit.ideaplugin.simplegit.actions.CreateNewScenarioAction"
                 class="ru.lanit.ideaplugin.simplegit.actions.CreateNewScenarioAction">
-        <add-to-group group-id="ToolbarRunGroup" anchor="first"/>
+            <add-to-group group-id="ToolbarRunGroup" anchor="first"/>
         </action>
+
         <action id="ru.lanit.ideaplugin.simplegit.actions.FeatureComboBoxAction"
                 class="ru.lanit.ideaplugin.simplegit.actions.FeatureComboBoxAction">
             <add-to-group group-id="ToolbarRunGroup" anchor="first"/>
         </action>
+
+        <action id="ru.lanit.ideaplugin.simplegit.actions.ReplaceStepsAction"
+                class="ru.lanit.ideaplugin.simplegit.actions.ReplaceStepsAction"
+                text="Step"
+                icon="/icon/1.png">
+            <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+            <keyboard-shortcut keymap="$default" first-keystroke="alt D"/>
+        </action>
+
+        <action id="ru.lanit.ideaplugin.simplegit.actions.DataGeneratorRenderAction"
+                class="ru.lanit.ideaplugin.simplegit.actions.DataGeneratorRenderAction"
+                text="Get Data"
+                icon="/icon/4.png">
+            <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+            <keyboard-shortcut keymap="$default" first-keystroke="ctrl shift D"/>
+        </action>
+
+        <action id="ru.lanit.ideaplugin.simplegit.actions.MirrorStepAction"
+                class="ru.lanit.ideaplugin.simplegit.actions.MirrorStepAction"
+                text="Mirror"
+                icon="/icon/2.png">
+            <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+            <keyboard-shortcut keymap="$default" first-keystroke="ctrl P"/>
+        </action>
+
     </actions>
 </idea-plugin>
