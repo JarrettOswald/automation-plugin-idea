@@ -116,7 +116,7 @@
         <projectService serviceInterface="ru.lanit.ideaplugin.simplegit.features.FeatureList"
                         serviceImplementation="ru.lanit.ideaplugin.simplegit.features.FeatureListImpl"/>
         <toolWindow id="Настройки плагина"
-                    icon="/icon/3.png"
+                    icon="/icon/tool-window-replace.png"
                     anchor="right"
                     factoryClass="ru.lanit.ideaplugin.simplegit.ToolWindow.ToolWindowReplace"/>
     </extensions>
@@ -153,7 +153,7 @@
         <action id="ru.lanit.ideaplugin.simplegit.actions.ReplaceStepsAction"
                 class="ru.lanit.ideaplugin.simplegit.actions.ReplaceStepsAction"
                 text="Step"
-                icon="/icon/1.png">
+                icon="/icon/replace-steps-action.png">
             <add-to-group group-id="EditorPopupMenu" anchor="last"/>
             <keyboard-shortcut keymap="$default" first-keystroke="alt D"/>
         </action>
