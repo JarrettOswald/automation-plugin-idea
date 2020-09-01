@@ -161,7 +161,7 @@
         <action id="ru.lanit.ideaplugin.simplegit.actions.DataGeneratorRenderAction"
                 class="ru.lanit.ideaplugin.simplegit.actions.DataGeneratorRenderAction"
                 text="Get Data"
-                icon="/icon/4.png">
+                icon="/icon/data-generator-render-action.png">
             <add-to-group group-id="EditorPopupMenu" anchor="last"/>
             <keyboard-shortcut keymap="$default" first-keystroke="ctrl shift D"/>
         </action>
