@@ -169,7 +169,7 @@
         <action id="ru.lanit.ideaplugin.simplegit.actions.MirrorStepAction"
                 class="ru.lanit.ideaplugin.simplegit.actions.MirrorStepAction"
                 text="Mirror"
-                icon="/icon/2.png">
+                icon="/icon/mirror-step-action.png">
             <add-to-group group-id="EditorPopupMenu" anchor="last"/>
             <keyboard-shortcut keymap="$default" first-keystroke="ctrl P"/>
         </action>
