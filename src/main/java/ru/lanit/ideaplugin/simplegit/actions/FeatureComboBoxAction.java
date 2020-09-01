@@ -13,8 +13,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.ui.IdeBorderFactory;
 import com.intellij.ui.SizedIcon;
 import com.intellij.ui.components.panels.NonOpaquePanel;
+import com.intellij.ui.scale.JBUIScale;
 import com.intellij.util.ui.EmptyIcon;
-import com.intellij.util.ui.JBUI;
 import gherkin.formatter.model.BasicStatement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -31,14 +31,14 @@ import static ru.lanit.ideaplugin.simplegit.localization.Language.simpleGitPlugi
 public class FeatureComboBoxAction extends ComboBoxAction implements DumbAware {
     private static final Logger log = Logger.getInstance(FeatureComboBoxAction.class);
 
-    private static final Icon CHECKED_ICON = JBUI.scale(new SizedIcon(AllIcons.Actions.Checked, 16, 16));
-    private static final Icon EDITED_ICON = JBUI.scale(new SizedIcon(AllIcons.Actions.Edit, 16, 16));
+    private static final Icon CHECKED_ICON = JBUIScale.scaleIcon(new SizedIcon(AllIcons.Actions.Checked, 16, 16));
+    private static final Icon EDITED_ICON = JBUIScale.scaleIcon(new SizedIcon(AllIcons.Actions.Edit, 16, 16));
     private static final Icon EMPTY_ICON = EmptyIcon.ICON_16;
 
     @Override
     public void update(@NotNull AnActionEvent e) {
         Presentation presentation = e.getPresentation();
-        Project project = e.getData(CommonDataKeys.PROJECT);
+        Project project = e.getProject();
         presentation.setText(simpleGitPluginBundle.getString("scenario.combobox.action.text"));
         presentation.setDescription(simpleGitPluginBundle.getString("scenario.combobox.action.description"));
         if (ActionPlaces.isMainMenuOrActionSearch(e.getPlace())) {

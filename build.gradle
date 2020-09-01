@@ -20,8 +20,8 @@ dependencies {
 }
 
 intellij {
-    version 'IC-2017.2.2'
-//    version 'IC-2019.1'
+//    version 'IC-2017.2.2'
+    version 'IC-2020.1.4'
     updateSinceUntilBuild false
     plugins 'git4idea'
 }

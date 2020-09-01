@@ -8,6 +8,7 @@ import com.intellij.openapi.ui.ValidationInfo;
 import com.intellij.openapi.util.BuildNumber;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.ui.SizedIcon;
+import com.intellij.ui.scale.JBUIScale;
 import com.intellij.util.ui.JBUI;
 import gherkin.formatter.model.BasicStatement;
 import gherkin.formatter.model.TagStatement;
@@ -83,17 +84,17 @@ public class NewFeatureDialog extends DialogWrapper {
         scenarioTagsLabel.setText(simpleGitPluginBundle.getString("create-new-scenario.dialog.tags.scenario"));
         favoriteTagsLabel.setText(simpleGitPluginBundle.getString("create-new-scenario.dialog.tags.favorite"));
 
-        addNewTag.setIcon(JBUI.scale(new SizedIcon(AllIcons.General.Add, 16, 16)));
+        addNewTag.setIcon(JBUIScale.scaleIcon(new SizedIcon(AllIcons.General.Add, 16, 16)));
         addNewTag.addActionListener(this::addNewTagAction);
-        removeTag.setIcon(JBUI.scale(new SizedIcon(AllIcons.General.Remove, 16, 16)));
+        removeTag.setIcon(JBUIScale.scaleIcon(new SizedIcon(AllIcons.General.Remove, 16, 16)));
         removeTag.addActionListener(this::removeTagAction);
 
         BuildNumber requiredBuild = BuildNumber.fromString("183.2407.10");
         if (requiredBuild != null && SimpleGitProjectComponent.applicationInfo.getBuild().compareTo(requiredBuild) >= 0) {
             Icon ArrowLeft = IconLoader.getIcon("/general/arrowLeft.svg");
-            getFavoriteTag.setIcon(JBUI.scale(new SizedIcon(ArrowLeft, 16, 16)));
+            getFavoriteTag.setIcon(JBUIScale.scaleIcon(new SizedIcon(ArrowLeft, 16, 16)));
         } else {
-            getFavoriteTag.setIcon(JBUI.scale(new SizedIcon(AllIcons.General.SplitLeft, 16, 16)));
+            getFavoriteTag.setIcon(JBUIScale.scaleIcon(new SizedIcon(AllIcons.General.ArrowLeft, 16, 16)));
         }
         getFavoriteTag.addActionListener(this::getFavoriteTagAction);
         scenarioType.setModel(new DefaultComboBoxModel<>(ScenarioType.values()));

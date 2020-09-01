@@ -178,7 +178,7 @@ public class GitManager {
 
         final Map<AbstractVcs, Collection<FilePath>> result = new THashMap<>();
         for (Map.Entry<AbstractVcs, Collection<FilePath>> entry : resultPrep.entrySet()) {
-            AbstractVcs<?> vcs = entry.getKey();
+            AbstractVcs vcs = entry.getKey();
             result.put(vcs, vcs.filterUniqueRoots(new ArrayList<>(entry.getValue()), FilePath::getVirtualFile));
         }
         return result;

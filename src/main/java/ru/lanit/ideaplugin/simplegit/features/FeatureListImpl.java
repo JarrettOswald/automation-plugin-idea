@@ -4,7 +4,9 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vcs.VcsDataKeys;
 import com.intellij.openapi.vcs.changes.ChangeListManagerImpl;
+import com.intellij.openapi.vcs.changes.actions.ScheduleForAdditionAction;
 import com.intellij.openapi.vfs.*;
 import com.intellij.openapi.vfs.newvfs.BulkFileListener;
 import com.intellij.openapi.vfs.newvfs.RefreshQueue;
@@ -23,6 +25,7 @@ import ru.lanit.ideaplugin.simplegit.tags.tag.JiraTag;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class FeatureListImpl extends FeatureList implements BulkFileListener {
@@ -156,7 +159,7 @@ public class FeatureListImpl extends FeatureList implements BulkFileListener {
             VirtualFile file = LocalFileSystem.getInstance().refreshAndFindFileByPath(selectedFeature.getPath());
             boolean unv = ChangeListManagerImpl.getInstanceImpl(project).getUnversionedFiles().stream().anyMatch(unversioned -> unversioned.equals(file));
             if (unv) {
-                if (event != null) new GitAdd().actionPerformed(event);
+//                if (event != null) new GitAdd().actionPerformed(event);
 //                event.getData(VcsDataKeys.VIRTUAL_FILE_STREAM).
 //                List<VirtualFile> unversionedFiles = Collections.singletonList(file);
 //                ScheduleForAdditionAction.addUnversioned(project, unversionedFiles, status -> true, null);
