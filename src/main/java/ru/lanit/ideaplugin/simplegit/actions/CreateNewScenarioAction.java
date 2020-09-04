@@ -7,17 +7,17 @@ import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vcs.FileStatus;
-import com.intellij.openapi.vcs.changes.*;
-import com.intellij.openapi.vcs.changes.actions.ScheduleForAdditionAction;
+import com.intellij.openapi.vcs.VcsException;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.SizedIcon;
-import com.intellij.util.ui.JBUI;
+import com.intellij.ui.scale.JBUIScale;
+import com.intellij.vcsUtil.VcsUtil;
+import git4idea.actions.GitAdd;
 import org.jetbrains.annotations.NotNull;
 import ru.lanit.ideaplugin.simplegit.SimpleGitProjectComponent;
 import ru.lanit.ideaplugin.simplegit.features.FeatureList;
 
 import java.util.Collections;
-import java.util.List;
 
 import static ru.lanit.ideaplugin.simplegit.localization.Language.simpleGitPluginBundle;
 
@@ -27,7 +27,7 @@ public class CreateNewScenarioAction extends AnAction {
     public CreateNewScenarioAction() {
         super(simpleGitPluginBundle.getString("create-new-scenario.action.text"),
                 simpleGitPluginBundle.getString("create-new-scenario.action.description"),
-                JBUI.scale(new SizedIcon(AllIcons.General.Add, 16, 16)));
+                JBUIScale.scaleIcon(new SizedIcon(AllIcons.General.Add, 16, 16)));
     }
 
     public void actionPerformed(@NotNull AnActionEvent event) {
@@ -43,8 +43,13 @@ public class CreateNewScenarioAction extends AnAction {
 //                registerFeatureReadyListener(project, scenarioFile);
 //                event.getData()
 //                event.getData()
-//                new GitAdd().actionPerformed(event);
 //                List<VirtualFile> unversionedFiles = Collections.singletonList(scenarioFile);
+
+                try {
+                    new GitAdd().doAddFiles(project, scenarioFile.getParent(), Collections.singletonList(VcsUtil.getFilePath(scenarioFile.getParent())), false);
+                } catch (VcsException e) {
+                    throw new RuntimeException("Жопа какая то с асертом " + e.getMessage());
+                }
 //                ScheduleForAdditionAction.addUnversioned(project, unversionedFiles, this::isStatusForAddition, null);
             }
         }
