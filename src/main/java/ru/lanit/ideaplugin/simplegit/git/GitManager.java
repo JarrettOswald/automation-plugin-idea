@@ -1,12 +1,7 @@
 package ru.lanit.ideaplugin.simplegit.git;
 
-import com.google.common.collect.ImmutableList;
 import com.intellij.dvcs.DvcsUtil;
 import com.intellij.dvcs.push.PushSpec;
-import com.intellij.dvcs.repo.Repository;
-import com.intellij.dvcs.repo.VcsRepositoryManager;
-import com.intellij.notification.Notification;
-import com.intellij.notification.NotificationType;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
@@ -14,22 +9,25 @@ import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.*;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vcs.*;
 import com.intellij.openapi.vcs.actions.DescindingFilesFilter;
 import com.intellij.openapi.vcs.actions.VcsContext;
 import com.intellij.openapi.vcs.actions.VcsContextWrapper;
-import com.intellij.openapi.vcs.changes.*;
-import com.intellij.openapi.vcs.impl.ProjectLevelVcsManagerImpl;
-import com.intellij.openapi.vcs.update.*;
-import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vcs.changes.Change;
+import com.intellij.openapi.vcs.changes.ChangeListManager;
+import com.intellij.openapi.vcs.changes.ChangesUtil;
+import com.intellij.openapi.vcs.changes.VcsDirtyScopeManager;
+import com.intellij.openapi.vcs.update.ActionInfo;
+import com.intellij.openapi.vcs.update.ScopeInfo;
+import com.intellij.openapi.vcs.update.UpdateEnvironment;
+import com.intellij.openapi.vcs.update.UpdateSession;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ObjectUtils;
-import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
 import com.intellij.vcsUtil.VcsUtil;
-import git4idea.*;
+import git4idea.GitLocalBranch;
+import git4idea.GitVcs;
 import git4idea.branch.GitBranchUiHandlerImpl;
 import git4idea.branch.GitBranchWorker;
 import git4idea.commands.Git;
@@ -40,11 +38,8 @@ import git4idea.repo.GitBranchTrackInfo;
 import git4idea.repo.GitRemote;
 import git4idea.repo.GitRepository;
 import git4idea.repo.GitRepositoryManager;
-import git4idea.update.GitFetchResult;
-import git4idea.update.GitFetcher;
 import gnu.trove.THashMap;
 import org.jetbrains.annotations.CalledInAwt;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.lanit.ideaplugin.simplegit.SimpleGitProjectComponent;
@@ -52,13 +47,8 @@ import ru.lanit.ideaplugin.simplegit.actions.GitSynchronizeAction;
 import ru.lanit.ideaplugin.simplegit.features.FeatureList;
 import ru.lanit.ideaplugin.simplegit.settings.SettingsProvider;
 
-import javax.swing.*;
 import java.io.File;
-import java.io.IOException;
 import java.util.*;
-import java.util.stream.Stream;
-
-import static com.intellij.openapi.vcs.VcsNotifier.NOTIFICATION_GROUP_ID;
 
 public class GitManager {
     private static final Logger log = Logger.getInstance(GitManager.class);
@@ -101,7 +91,7 @@ public class GitManager {
     private GitRepository getGitRepository() {
         VirtualFile gitRoot = plugin.getProject().getBaseDir();
         repositoryManager.getRepositories();
-        return repositoryManager.getRepositoryForRoot(gitRoot);
+        return repositoryManager.getRepositoryForRootQuick(gitRoot);
     }
 
     private void subscribeToRepoChangeEvents() {
@@ -287,13 +277,16 @@ public class GitManager {
         GitLocalBranch branch = repository.getBranches().findLocalBranch(branchName);
         if (branch == null) {
             new CommonBackgroundTask(plugin.getProject(), "Checking out new branch " + branchName, this::pushGit) {
-                @Override public void execute(@NotNull ProgressIndicator indicator) {
+                @Override
+                public void execute(@NotNull ProgressIndicator indicator) {
+                    newWorker(indicator).checkout("dev",false, Collections.singletonList(repository));
                     newWorker(indicator).checkoutNewBranch(branchName, Collections.singletonList(repository));
                 }
             }.runInBackground();
         } else {
             new CommonBackgroundTask(plugin.getProject(), "Checking out new branch " + branchName, callInAwtAfterExecution) {
-                @Override public void execute(@NotNull ProgressIndicator indicator) {
+                @Override
+                public void execute(@NotNull ProgressIndicator indicator) {
                     newWorker(indicator).checkout(branchName, false, Collections.singletonList(repository));
                 }
             }.runInBackground();
@@ -312,7 +305,8 @@ public class GitManager {
 
     private static abstract class CommonBackgroundTask extends Task.Backgroundable {
 
-        @Nullable private final Runnable myCallInAwtAfterExecution;
+        @Nullable
+        private final Runnable myCallInAwtAfterExecution;
 
         private CommonBackgroundTask(@Nullable final Project project, @NotNull final String title, @Nullable Runnable callInAwtAfterExecution) {
             super(project, title);
@@ -326,8 +320,7 @@ public class GitManager {
                 Application application = ApplicationManager.getApplication();
                 if (application.isUnitTestMode()) {
                     myCallInAwtAfterExecution.run();
-                }
-                else {
+                } else {
                     application.invokeLater(myCallInAwtAfterExecution, application.getDefaultModalityState());
                 }
             }
