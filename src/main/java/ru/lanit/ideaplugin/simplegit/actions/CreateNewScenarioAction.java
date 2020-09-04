@@ -6,6 +6,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.vcs.FileStatus;
 import com.intellij.openapi.vcs.VcsException;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -16,6 +17,7 @@ import git4idea.actions.GitAdd;
 import org.jetbrains.annotations.NotNull;
 import ru.lanit.ideaplugin.simplegit.SimpleGitProjectComponent;
 import ru.lanit.ideaplugin.simplegit.features.FeatureList;
+import ru.lanit.ideaplugin.simplegit.popup.JBPopup;
 
 import java.util.Collections;
 
@@ -44,11 +46,10 @@ public class CreateNewScenarioAction extends AnAction {
 //                event.getData()
 //                event.getData()
 //                List<VirtualFile> unversionedFiles = Collections.singletonList(scenarioFile);
-
                 try {
                     new GitAdd().doAddFiles(project, scenarioFile.getParent(), Collections.singletonList(VcsUtil.getFilePath(scenarioFile.getParent())), false);
                 } catch (VcsException e) {
-                    throw new RuntimeException("Жопа какая то с асертом " + e.getMessage());
+                    new JBPopup(event,"Не удалось добавить файл в Git", MessageType.ERROR);
                 }
 //                ScheduleForAdditionAction.addUnversioned(project, unversionedFiles, this::isStatusForAddition, null);
             }
