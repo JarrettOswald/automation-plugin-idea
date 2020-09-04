@@ -7,6 +7,7 @@ import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.SizedIcon;
+import com.intellij.ui.scale.JBUIScale;
 import com.intellij.util.ui.JBUI;
 import org.jetbrains.annotations.NotNull;
 import ru.lanit.ideaplugin.simplegit.SimpleGitProjectComponent;
@@ -24,7 +25,7 @@ public class GitSynchronizeAction extends AnAction {
     public GitSynchronizeAction() {
         super(simpleGitPluginBundle.getString("git-synchronize.action.text"),
                 simpleGitPluginBundle.getString("git-synchronize.action.description"),
-                JBUI.scale(new SizedIcon(AllIcons.Actions.Refresh, 16, 16)));
+                JBUIScale.scaleIcon(new SizedIcon(AllIcons.Actions.Refresh, 16, 16)));
         status = SynchronizeStatus.READY;
     }
     public void actionPerformed(@NotNull AnActionEvent event) {
