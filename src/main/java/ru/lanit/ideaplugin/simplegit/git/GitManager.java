@@ -28,6 +28,7 @@ import com.intellij.util.containers.MultiMap;
 import com.intellij.vcsUtil.VcsUtil;
 import git4idea.GitLocalBranch;
 import git4idea.GitVcs;
+import git4idea.actions.GitPull;
 import git4idea.branch.GitBranchUiHandlerImpl;
 import git4idea.branch.GitBranchWorker;
 import git4idea.commands.Git;
@@ -272,14 +273,17 @@ public class GitManager {
         return repository.getCurrentBranch();
     }
 
-    public void checkoutExistingOrNewBranch(String branchName, Runnable callInAwtAfterExecution) {
+    public void checkoutExistingOrNewBranch(String branchName, Runnable callInAwtAfterExecution, AnActionEvent e) {
         GitRepository repository = getGitRepository();
         GitLocalBranch branch = repository.getBranches().findLocalBranch(branchName);
         if (branch == null) {
             new CommonBackgroundTask(plugin.getProject(), "Checking out new branch " + branchName, this::pushGit) {
                 @Override
                 public void execute(@NotNull ProgressIndicator indicator) {
-                    newWorker(indicator).checkout("dev",false, Collections.singletonList(repository));
+                    newWorker(indicator).checkout("dev", false, Collections.singletonList(repository));
+
+                    ApplicationManager.getApplication().invokeLater(() -> new GitPull().actionPerformed(e));
+
                     newWorker(indicator).checkoutNewBranch(branchName, Collections.singletonList(repository));
                 }
             }.runInBackground();
