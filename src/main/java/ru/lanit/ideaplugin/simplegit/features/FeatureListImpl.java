@@ -4,9 +4,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vcs.VcsDataKeys;
 import com.intellij.openapi.vcs.changes.ChangeListManagerImpl;
-import com.intellij.openapi.vcs.changes.actions.ScheduleForAdditionAction;
 import com.intellij.openapi.vfs.*;
 import com.intellij.openapi.vfs.newvfs.BulkFileListener;
 import com.intellij.openapi.vfs.newvfs.RefreshQueue;
@@ -25,7 +23,6 @@ import ru.lanit.ideaplugin.simplegit.tags.tag.JiraTag;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class FeatureListImpl extends FeatureList implements BulkFileListener {
@@ -176,7 +173,7 @@ public class FeatureListImpl extends FeatureList implements BulkFileListener {
                 GitManager manager = plugin.getGitManager();
                 GitLocalBranch currentBranch = manager.getCurrentBranch();
                 if (!currentBranch.getName().equalsIgnoreCase(branchName)) {
-                    manager.checkoutExistingOrNewBranch(branchName, null);
+                    manager.checkoutExistingOrNewBranch(branchName, null, event);
                 }
             }
         }
