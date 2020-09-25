@@ -47,7 +47,7 @@ public class CreateNewScenarioAction extends AnAction {
 //                event.getData()
 //                List<VirtualFile> unversionedFiles = Collections.singletonList(scenarioFile);
                 try {
-                    new GitAdd().doAddFiles(project, scenarioFile.getParent(), Collections.singletonList(VcsUtil.getFilePath(scenarioFile.getParent())), false);
+                    new GitAdd().doAddFiles(project, scenarioFile.getParent(), Collections.singletonList(VcsUtil.getFilePath(scenarioFile.getParent())), true);
                 } catch (VcsException e) {
                     new JBPopup(event,"Не удалось добавить файл в Git", MessageType.ERROR);
                 }
