@@ -106,9 +106,20 @@
             </ul>
         ]]>
     </change-notes>
+<!--    <version>1.10.4</version>-->
+<!--    <idea-version since-build="201" until-build="202.*"/>-->
+<!--    <vendor email="lanit@lanit.ru" url="https://lanit.ru">Ланит</vendor>-->
+
+    <description>This plugin helps in community development of Cucumber scenarios by simplifying process of Git
+        interaction.
+    </description>
+
 
     <depends>com.intellij.modules.lang</depends>
     <!--<depends optional="true" config-file="idea.xml">com.intellij.modules.java</depends>-->
+    <depends>com.intellij.modules.externalSystem</depends>
+    <depends>com.intellij.modules.lang</depends>
+    <depends>com.intellij.modules.platform</depends>
     <depends>Git4Idea</depends>
 
     <extensions defaultExtensionNs="com.intellij">
