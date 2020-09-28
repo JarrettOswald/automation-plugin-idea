@@ -1,6 +1,7 @@
 package ru.lanit.ideaplugin.simplegit.features;
 
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
@@ -105,6 +106,8 @@ public class FeatureListImpl extends FeatureList implements BulkFileListener {
 
     @Override
     public void updateFeatures(AnActionEvent event) {
+
+
         updateFeaturesList();
         FeatureModel select = null;
         if (selectedFeature != null) {
@@ -114,6 +117,7 @@ public class FeatureListImpl extends FeatureList implements BulkFileListener {
                     .findFirst().orElse(null);
         }
         if (select != null) selectFeature(select, event);
+
     }
 
     @Override
@@ -209,11 +213,13 @@ public class FeatureListImpl extends FeatureList implements BulkFileListener {
 
     public void before(@NotNull List<? extends VFileEvent> events) {
         System.out.println("Updating features");
-        this.updateFeatures(null);
+        Runnable task = ()-> this.updateFeatures(null);
+        task.run();
     }
 
     public void after(@NotNull List<? extends VFileEvent> events) {
         System.out.println("Updating features");
-        this.updateFeatures(null);
+        Runnable task = ()-> this.updateFeatures(null);
+        task.run();
     }
 }

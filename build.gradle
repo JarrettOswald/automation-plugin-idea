@@ -8,7 +8,7 @@ compileTestJava.options.encoding = "UTF-8"
 
 description = "This plugin helps in community development of Cucumber scenarios by simplifying process of Git interaction."
 group 'ru.lanit.ideaplugin'
-version '1.10.3'
+version '1.2'
 
 repositories {
     mavenCentral()
@@ -20,7 +20,6 @@ dependencies {
 }
 
 intellij {
-//    version 'IC-2017.2.2'
     version 'IC-2020.1.4'
     updateSinceUntilBuild false
     plugins 'git4idea'
@@ -28,8 +27,12 @@ intellij {
 
 patchPluginXml {
     changeNotes """
+          Версия 1.2<br><ul>
+          <li>[-] Переход на версию идеи 2020.1.4</li>
+          <li>[-] Добавлена функция нумерации шагов</li>
+          <li>[-] Добавлена функция вывода генерируемых значений</li>
+          <li>[-] Добавлена функция создания шага с ожидаемой реакцией</li>
           Версия 1.10.3<br><ul>
-          <li>[-] отключена процедура добавления новых файлов в список отслеживаемых гитом в связи с несовместимостью API идеи</li>
           <li>[/] Исправлена проблема с отсутствием в списке невалидных сценариев</li>
           <li>[-] Удалены неиспользуемые методы и классы</li>
           </ul><br>

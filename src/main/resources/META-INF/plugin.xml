@@ -1,7 +1,7 @@
 <idea-plugin>
     <id>ru.lanit.ideaplugin</id>
     <name>Simple Git</name>
-    <version>1.10.3</version>
+    <version>1.2</version>
     <idea-version since-build="201.8743.12" until-build="201.8743.12"/>
     <vendor email="lanit@lanit.ru" url="https://lanit.ru">Ланит</vendor>
 
@@ -10,8 +10,12 @@
     </description>
     <change-notes>
         <![CDATA[
+            Версия 1.2<br><ul>
+            <li>[-] Переход на версию идеи 2020.1.4</li>
+            <li>[-] Добавлена функция нумерации шагов</li>
+            <li>[-] Добавлена функция вывода генерируемых значений</li>
+            <li>[-] Добавлена функция создания шага с ожидаемой реакцией</li>
             Версия 1.10.3<br><ul>
-            <li>[-] отключена процедура добавления новых файлов в список отслеживаемых гитом в связи с несовместимостью API идеи</li>
             <li>[/] Исправлена проблема с отсутствием в списке невалидных сценариев</li>
             <li>[-] Удалены неиспользуемые методы и классы</li>
             </ul><br>
@@ -106,9 +110,9 @@
             </ul>
         ]]>
     </change-notes>
-<!--    <version>1.10.4</version>-->
-<!--    <idea-version since-build="201" until-build="202.*"/>-->
-<!--    <vendor email="lanit@lanit.ru" url="https://lanit.ru">Ланит</vendor>-->
+    <!--    <version>1.10.4</version>-->
+    <!--    <idea-version since-build="201" until-build="202.*"/>-->
+    <!--    <vendor email="lanit@lanit.ru" url="https://lanit.ru">Ланит</vendor>-->
 
     <description>This plugin helps in community development of Cucumber scenarios by simplifying process of Git
         interaction.
